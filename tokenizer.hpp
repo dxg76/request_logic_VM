@@ -1,9 +1,13 @@
 #ifndef TOKENIZER_HPP
 #define TOKENIZER_HPP
 #include <cstring>
-
+#include <iostream>
 class Tokenizer{
-   void set_debug(bool mode); 
+    public:
+    void set_debug(bool mode); 
+    Tokenizer();
+    Tokenizer(bool mode);
+
     private:
     bool debug_mode = false;
 };
