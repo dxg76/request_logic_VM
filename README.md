@@ -14,4 +14,5 @@ make -f token.mk
 
 run tokenizer:
 ./main 
-add -d for debug mode
+for debug mode
+./main -d 

@@ -15,5 +15,7 @@ int main(int argc, const char** argv){
         debug_mode = true;
     }
     Tokenizer alpha(debug_mode);
+
+    alpha.parse();
     return 0;
 }
