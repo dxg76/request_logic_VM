@@ -1,10 +1,10 @@
-#ifndef TOKEN_HPP
-#define TOKEN_HPP
+#ifndef TOKENIZER_HPP
+#define TOKENIZER_HPP
 #include <cstring>
 
-class Token{
+class Tokenizer{
    void set_debug(bool mode); 
     private:
     bool debug_mode = false;
-}
-#endif //TOKEN_HPP
+};
+#endif //TOKENIZERZ_HPP
