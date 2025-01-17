@@ -7,6 +7,8 @@ Devan Rivera
 10/013/24
 
 
+
+*VENDING ALGORITHM*
 This is the directory for the MRSTV logic 
 
 Compile the tokenizer using:
@@ -22,3 +24,17 @@ Basic loop created,
 The program requests a string from the command line. and compares each token to certain request words
 currently there is an error with the token vector where it the tokens have changed unexpectedly
 
+*AUDIO*
+
+1/17/25
+
+Added miniaudio beta
+
+Currently supports single wav file audio generation 
+
+Needs Multifile, Interfacing, and file conversion
+
+*Serial*
+
+1/17/25
+folder created

@@ -2,10 +2,10 @@ X = g++
 F = -std=c++14 -Wall -g
 
 
-main: main.o 
+main: audio_test.o 
 	$(X) -g -o $@ $^
 
-main.o: main.cpp miniaudio.h
+audio_test.o: audio_test.cpp miniaudio.h
 	$(X) $(F) -c $<
 
 clean:
