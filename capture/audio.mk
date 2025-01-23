@@ -9,4 +9,4 @@ audio_test.o: audio_test.cpp miniaudio.h
 	$(X) $(F) -c $<
 
 clean:
-	rm -rf *.o *.csv main
+	rm -rf *.o *.csv *.wav main
