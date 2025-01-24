@@ -1,9 +1,9 @@
 # request_logic_VM
 This is the directory for all MRSTV logic 
 
-
-Dante Gordon dxg2@students.uwf.edu\n
-Devan Rivera\n
+## Contributors
+Dante Gordon dxg2@students.uwf.edu
+Devan Rivera
 Repo Creation Date 10/13/24
 
 
@@ -16,7 +16,7 @@ Repo Creation Date 10/13/24
 The intention of this program is to run as a beta of the vending logic used for communicating with the customer. 
 Currently the program supports parsing and checking strings for a few key words. These key words will be used to navigate a tree data structure representing menus in which to communicate with the machine. These will include a  main menu which will act as the root node of the tree with pointers to each of the submenus. These submenus will include the menus for each type of snack as well as a help menu.
 
-### DEV INFO:
+### Dev Info:
 Compile the tokenizer using:
 make -f token.mk
 
@@ -46,7 +46,7 @@ Currently the beta I programmed runs as its own executable and supports the gene
 This must eventually be adapted to handle the initiation of recording, saving of files and transcribing using Whisper.cpp when necessary in our vending logic
 
 
-### DEV INFO:
+### Dev Info:
 *Dante Gordon*:
 Currently supports single wav file audio generation 
 compile with mingw using: 
@@ -70,7 +70,7 @@ Added miniaudio beta
 Multifile added
 Needs  Interfacing, and file conversion, adaption to linux and transcribing etc.
 
-## Serial
+## SERIAL
 
 #### Dante Gordon
 ### Overview:
