@@ -10,8 +10,7 @@ Devan Rivera
 
 
 
-## VENDING ALGORITHM
-
+## VENDING_LOGIC
 
 #### Dante Gordon
 ### Overview:  
@@ -38,7 +37,7 @@ currently there is an error with the token vector where it the tokens have chang
 *Dante Gordon*:
 Fixed vector error working on implementing menu data structure
 
-## AUDIO
+## CAPTURE
 
 #### Dante Gordon
 ### Overview:
