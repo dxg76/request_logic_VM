@@ -1,4 +1,5 @@
 # request_logic_VM
+---
 This is the directory for all MRSTV logic  
  Repo Creation Date 10/13/24  
 
@@ -10,11 +11,10 @@ Devan Rivera
 
 
 ## VENDING ALGORITHM
-
+---
 
 #### Dante Gordon
-### Overview:
-===
+### Overview:  
 The intention of this program is to run as a beta of the vending logic used for communicating with the customer. 
 Currently the program supports parsing and checking strings for a few key words. These key words will be used to navigate a tree data structure representing menus in which to communicate with the machine. These will include a  main menu which will act as the root node of the tree with pointers to each of the submenus. These submenus will include the menus for each type of snack as well as a help menu.
 
@@ -39,7 +39,7 @@ currently there is an error with the token vector where it the tokens have chang
 Fixed vector error working on implementing menu data structure
 
 ## AUDIO
-
+---
 #### Dante Gordon
 ### Overview:
 
@@ -73,7 +73,7 @@ Multifile added
 Needs  Interfacing, and file conversion, adaption to linux and transcribing etc.
 
 ## SERIAL
-
+---
 #### Dante Gordon
 ### Overview:
 This program will be intended to initiate a serial connection via usb with the MDB interface. 
