@@ -1,23 +1,23 @@
-#include "vendor.hpp"
+#include "Vendor.hpp"
 using namespace std;
-vendor::vendor(){
+Vendor::Vendor(){
 
 }
-vendor::vendor(bool mode){
+Vendor::Vendor(bool mode){
     set_debug(mode);
     if(mode == true){
         cout << GREETING_STRING << endl;
     }
 }
 
-void vendor::set_debug(bool mode){
+void Vendor::set_debug(bool mode){
     debug_mode = mode;
     if(mode){
         cout<<"DEBUG MODE ENABLED" << endl;
     }
 }
 
-void vendor::parse(){
+void Vendor::parse(){
     string request;
     char* token;
     
@@ -42,7 +42,7 @@ void vendor::parse(){
     }
 }
 
-void vendor::print_tokens(){
+void Vendor::print_tokens(){
     for(auto i : tokens){
         cout << i << endl;
     }
@@ -50,7 +50,7 @@ void vendor::print_tokens(){
 }
 
 
-string vendor::read_tokens(){
+string Vendor::read_tokens(){
     for(std::string i : tokens){
         if(i == CHIPS_MENU_STRING){
             cout << "Of course here are the chips available ..." << endl;
@@ -67,7 +67,7 @@ string vendor::read_tokens(){
     return "I'm sorry, I didn't quite understand that, please repeat your request.";
 }
 
-void vendor::empty_tokens(){
+void Vendor::empty_tokens(){
     tokens.clear();
     if(debug_mode){
         cout << "Tokens Dumped" << endl;

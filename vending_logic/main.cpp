@@ -16,7 +16,7 @@ int main(int argc, const char** argv){
     if(argc>1 && strcmp(argv[1], "-d")==0){
         debug_mode = true;
     }
-    vendor alpha(debug_mode);
+    Vendor alpha(debug_mode);
     string response = "temp"; //variable holding response from MRSTV
     //setup end
 

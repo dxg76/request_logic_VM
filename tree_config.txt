@@ -1,0 +1,13 @@
+Default tree configuration
+key:
+
+node: child, child, child
+
+
+ROOT (main menu): help, candy-menu, chip-menu
+
+CHIP-MENU: Doritos, Cheetos, Pretzels
+
+CANDY-MENU: Snickers, Reese's, Twix
+
+HELP: TBD

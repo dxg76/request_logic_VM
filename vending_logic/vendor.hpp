@@ -1,16 +1,16 @@
-#ifndef vendor_HPP
-#define vendor_HPP
+#ifndef VENDOR_HPP
+#define VENDOR_HPP
 #include <cstring>
 #include <iostream>
 #include <vector>
 #include <string>
 
 using namespace std;
-class vendor{
+class Vendor{
     public:
     void set_debug(bool mode); 
-    vendor();
-    vendor(bool mode);
+    Vendor();
+    Vendor(bool mode);
     void parse();
     string read_tokens();
     void empty_tokens();
@@ -33,4 +33,4 @@ class vendor{
     
 
 };
-#endif //vendor_HPP
+#endif //VENDOR_HPP
