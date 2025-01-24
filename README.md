@@ -11,8 +11,8 @@ Repo Creation Date 10/13/24
 ## VENDING ALGORITHM
 
 
-### Dante Gordon
-#### Overview:
+#### Dante Gordon
+### Overview:
 The intention of this program is to run as a beta of the vending logic used for communicating with the customer. 
 Currently the program supports parsing and checking strings for a few key words. These key words will be used to navigate a tree data structure representing menus in which to communicate with the machine. These will include a  main menu which will act as the root node of the tree with pointers to each of the submenus. These submenus will include the menus for each type of snack as well as a help menu.
 
@@ -27,18 +27,18 @@ for debug mode
 
 ### Program History:
 11/14/24 
-*Dante Gordon*
+*Dante Gordon*:
 Basic loop created,
 The program requests a string from the command line. and compares each token to certain request words
 currently there is an error with the token vector where it the tokens have changed unexpectedly
 
 1/23/25
-*Dante Gordon*
+*Dante Gordon*:
 Fixed vector error working on implementing menu data structure
 
 ## AUDIO
 
-### Dante Gordon
+#### Dante Gordon
 ### Overview:
 
 This program is inteded to handle the audio programming necessary for interacting with machine via voice. 
@@ -47,7 +47,7 @@ This must eventually be adapted to handle the initiation of recording, saving of
 
 
 ### DEV INFO:
-*Dante Gordon*
+*Dante Gordon*:
 Currently supports single wav file audio generation 
 compile with mingw using: 
 
@@ -62,17 +62,17 @@ make clean -f audio.mk
 
 ### Program History:
 1/17/25
-*Dante Gordon*
+*Dante Gordon*:
 Added miniaudio beta
 
 1/23/25
-*Dante Gordon*
+*Dante Gordon*:
 Multifile added
 Needs  Interfacing, and file conversion, adaption to linux and transcribing etc.
 
 ## Serial
 
-### Dante Gordon
+#### Dante Gordon
 ### Overview:
 This program will be intended to initiate a serial connection via usb with the MDB interface. 
 It will interface with the vending algorithm and send the correct commands via the serial connection
@@ -80,6 +80,7 @@ This must be done for a linux system, complications may occur using a linux subs
 
 ### Program History:
 1/17/25
+*Dante Gordon*:
 folder created
 
 MDB device Serial communication information
