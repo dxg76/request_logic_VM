@@ -11,5 +11,7 @@ main.o: main.cpp tokenizer.hpp
 tokenizer.o: tokenizer.cpp tokenizer.hpp
 	$(X) $(F) -c $<
 
+
+.phony = clean
 clean:
 	rm -rf *.o *.csv main
