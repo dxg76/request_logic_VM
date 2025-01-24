@@ -2,7 +2,7 @@
 This is the directory for all MRSTV logic, Repo Creation Date 10/13/24
 
 ## Contributors
-Dante Gordon dxg2@students.uwf.edu,
+Dante Gordon dxg2@students.uwf.edu  
 Devan Rivera
 
 
@@ -13,6 +13,7 @@ Devan Rivera
 
 #### Dante Gordon
 ### Overview:
+---
 The intention of this program is to run as a beta of the vending logic used for communicating with the customer. 
 Currently the program supports parsing and checking strings for a few key words. These key words will be used to navigate a tree data structure representing menus in which to communicate with the machine. These will include a  main menu which will act as the root node of the tree with pointers to each of the submenus. These submenus will include the menus for each type of snack as well as a help menu.
 
