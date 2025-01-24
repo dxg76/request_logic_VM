@@ -11,7 +11,7 @@ Devan Rivera
 
 
 ## VENDING ALGORITHM
----
+
 
 #### Dante Gordon
 ### Overview:  
@@ -39,7 +39,7 @@ currently there is an error with the token vector where it the tokens have chang
 Fixed vector error working on implementing menu data structure
 
 ## AUDIO
----
+
 #### Dante Gordon
 ### Overview:
 
@@ -73,7 +73,7 @@ Multifile added
 Needs  Interfacing, and file conversion, adaption to linux and transcribing etc.
 
 ## SERIAL
----
+
 #### Dante Gordon
 ### Overview:
 This program will be intended to initiate a serial connection via usb with the MDB interface. 
