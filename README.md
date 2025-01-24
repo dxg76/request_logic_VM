@@ -31,11 +31,16 @@ for debug mode
 *Dante Gordon*:
 Basic loop created,
 The program requests a string from the command line. and compares each token to certain request words
-currently there is an error with the token vector where it the tokens have changed unexpectedly
+currently there is an error with the token vector where it the tokens have changed unexpectedly  
 
 1/23/25
 *Dante Gordon*:
 Fixed vector error working on implementing menu data structure
+
+1/24/25
+*Dante Gordon*:  
+Started header for tree, and node classes
+Added plaintext tree config plan
 
 ## CAPTURE
 
