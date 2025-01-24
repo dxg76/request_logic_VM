@@ -1,23 +1,23 @@
-#include "tokenizer.hpp"
+#include "vendor.hpp"
 using namespace std;
-Tokenizer::Tokenizer(){
+vendor::vendor(){
 
 }
-Tokenizer::Tokenizer(bool mode){
+vendor::vendor(bool mode){
     set_debug(mode);
     if(mode == true){
         cout << GREETING_STRING << endl;
     }
 }
 
-void Tokenizer::set_debug(bool mode){
+void vendor::set_debug(bool mode){
     debug_mode = mode;
     if(mode){
         cout<<"DEBUG MODE ENABLED" << endl;
     }
 }
 
-void Tokenizer::parse(){
+void vendor::parse(){
     string request;
     char* token;
     
@@ -42,7 +42,7 @@ void Tokenizer::parse(){
     }
 }
 
-void Tokenizer::print_tokens(){
+void vendor::print_tokens(){
     for(auto i : tokens){
         cout << i << endl;
     }
@@ -50,7 +50,7 @@ void Tokenizer::print_tokens(){
 }
 
 
-string Tokenizer::read_tokens(){
+string vendor::read_tokens(){
     for(std::string i : tokens){
         if(i == CHIPS_MENU_STRING){
             cout << "Of course here are the chips available ..." << endl;
@@ -67,7 +67,7 @@ string Tokenizer::read_tokens(){
     return "I'm sorry, I didn't quite understand that, please repeat your request.";
 }
 
-void Tokenizer::empty_tokens(){
+void vendor::empty_tokens(){
     tokens.clear();
     if(debug_mode){
         cout << "Tokens Dumped" << endl;

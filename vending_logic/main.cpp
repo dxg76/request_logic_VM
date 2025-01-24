@@ -1,4 +1,4 @@
-#include "tokenizer.hpp"
+#include "vendor.hpp"
 
 /*
 
@@ -7,7 +7,7 @@ Devan Rivera
 10/013/24
 
 This is the driver file for the MRSTV logic 
-Until more elements are fleshed out this will stand as a testing ground for the tokenizer
+Until more elements are fleshed out this will stand as a testing ground for the vendor
 */
 int main(int argc, const char** argv){
    
@@ -16,7 +16,7 @@ int main(int argc, const char** argv){
     if(argc>1 && strcmp(argv[1], "-d")==0){
         debug_mode = true;
     }
-    Tokenizer alpha(debug_mode);
+    vendor alpha(debug_mode);
     string response = "temp"; //variable holding response from MRSTV
     //setup end
 

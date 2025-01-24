@@ -1,16 +1,16 @@
-#ifndef TOKENIZER_HPP
-#define TOKENIZER_HPP
+#ifndef vendor_HPP
+#define vendor_HPP
 #include <cstring>
 #include <iostream>
 #include <vector>
 #include <string>
 
 using namespace std;
-class Tokenizer{
+class vendor{
     public:
     void set_debug(bool mode); 
-    Tokenizer();
-    Tokenizer(bool mode);
+    vendor();
+    vendor(bool mode);
     void parse();
     string read_tokens();
     void empty_tokens();
@@ -33,4 +33,4 @@ class Tokenizer{
     
 
 };
-#endif //TOKENIZER_HPP
+#endif //vendor_HPP

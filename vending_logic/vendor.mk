@@ -2,13 +2,13 @@ X = g++
 F = -std=c++14 -Wall -g
 
 
-main: main.o tokenizer.o
+main: main.o vendor.o
 	$(X) -g -o $@ $^
 
-main.o: main.cpp tokenizer.hpp
+main.o: main.cpp vendor.hpp
 	$(X) $(F) -c $<
 
-tokenizer.o: tokenizer.cpp tokenizer.hpp
+vendor.o: vendor.cpp vendor.hpp
 	$(X) $(F) -c $<
 
 
