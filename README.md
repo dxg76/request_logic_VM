@@ -31,6 +31,17 @@ currently there is an error with the token vector where it the tokens have chang
 Added miniaudio beta
 
 Currently supports single wav file audio generation 
+compile with:
+
+make -f audio.mk
+
+run with: 
+./main
+
+to remove unused files:
+
+make clean -f audio.mk
+
 
 Needs Multifile, Interfacing, and file conversion
 
