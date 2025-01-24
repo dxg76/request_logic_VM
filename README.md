@@ -1,10 +1,10 @@
 # request_logic_VM
-This is the directory for all MRSTV logic 
+This is the directory for all MRSTV logic, Repo Creation Date 10/13/24
 
 ## Contributors
-Dante Gordon dxg2@students.uwf.edu
+Dante Gordon dxg2@students.uwf.edu,
 Devan Rivera
-Repo Creation Date 10/13/24
+
 
 
 
