@@ -62,7 +62,7 @@ void Node::remove_child(const std::string& id){
         for(auto iter = it; iter !+ children.end; ++iter){
             delete *iter;
         }
-        
+
         delete *it;
         children.erase(it, children.end());
 
