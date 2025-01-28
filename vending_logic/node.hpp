@@ -9,7 +9,7 @@
 class Node{
     public:
 
-        Node(const std::string& id, std::string loc = "", float price = 0.0, int quantity = 0);
+        Node(const std::string& id,  const std::string loc = "", float price = 0.0, int quantity = 0);
         
         std::string get_id() const;
         std::string get_loc() const;
@@ -29,7 +29,7 @@ class Node{
 
     private:
 
-        const std::string id;
+        std::string id;
         std::string loc;
         float price;
         int quantity; 

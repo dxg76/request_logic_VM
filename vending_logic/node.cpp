@@ -1,13 +1,6 @@
 #include "node.hpp"
 
-Node::Node(const std::string& id, std::string loc, float price, int quantity){
-
-    this->id = id;
-    this->loc = loc;
-    this->price = price;
-    this->quantity = quantity;
-
-}
+Node::Node(const std::string& id, std::string loc, float price, int quantity) : id(id), loc(loc), price(price), quantity(quantity) {}
 
 std::string Node::get_id() const{
 
@@ -66,6 +59,10 @@ void Node::remove_child(const std::string& id){
 
     if(it != children.end()){
 
+        for(auto iter = it; iter !+ children.end; ++iter){
+            delete *iter;
+        }
+        
         delete *it;
         children.erase(it, children.end());
 

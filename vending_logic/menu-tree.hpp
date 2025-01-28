@@ -15,12 +15,12 @@ Class Header file for the menu tree data structure
 class Menu_tree{
 public:
 
-    Menu_Tree();
+    Menu_tree();
 
     void selection_menu(Node* node, int level = 0) const;
     Node* get_root() const;
 
-    ~Menu_Tree();
+    ~Menu_tree();
 
 private:
 
