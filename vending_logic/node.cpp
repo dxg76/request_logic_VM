@@ -1,35 +1,33 @@
 #include "node.hpp"
 
-Node::Node(std::string id, std::string loc, float price, int quantity){
+Node::Node(const std::string& id, std::string loc, float price, int quantity){
 
     this->id = id;
     this->loc = loc;
     this->price = price;
     this->quantity = quantity;
-    this->left_child = nullptr;
-    this->right_child = nullptr;
 
 }
 
-std::string Node::get_id(){
+std::string Node::get_id() const{
 
     return id;
 
 }
 
-std::string Node::get_loc(){
+std::string Node::get_loc() const{
 
     return loc;
 
 }
 
-float Node::get_price(){
+float Node::get_price() const{
 
     return price;
 
 }
 
-int Node::get_quantity(){
+int Node::get_quantity() const{
 
     return quantity;
 
@@ -54,10 +52,44 @@ void Node::set_quantity(int quantity){
 
 }
 
-Node* Node::find_child(const std::string& id) const {
+void Node::add_child(Node* child){
 
-    
+    children.push_back(child);
 
 }
 
-Node::~Node(){}
+void Node::remove_child(const std::string& id){
+
+    auto it = std::remove_if(children.begin(), children.end(), [&](Node* child){
+        return child->get_id() == id;
+    })
+
+    if(it != children.end()){
+
+        delete *it;
+        children.erase(it, children.end());
+
+    }
+
+}
+
+Node* Node::find_child(const std::string& id) const {
+
+    for(Node* child: children){
+
+        if(child->get_id() == id){
+            return child;
+        }
+
+    }
+
+    return nullptr;
+}
+
+Node::~Node(){
+
+    for(Node* child : children){
+        delete child;
+    }
+
+}

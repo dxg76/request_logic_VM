@@ -45,7 +45,12 @@ Added plaintext tree config plan
 1/25/25
 *Devan Rivera*:
 Worked on Node class
-Worked on Tree class (to do)
+Worked on Tree class (In Progress)
+
+1/28/25
+*Devan Rivera*:
+Worked on Tree class 
+Worked on Node functions
 
 ## CAPTURE
 
