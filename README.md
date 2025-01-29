@@ -5,7 +5,7 @@ This is the directory for all MRSTV logic
 
 ## Contributors
 Dante Gordon dxg2@students.uwf.edu  
-Devan Rivera
+Devan Rivera dmr76@students.uwf.edu
 
 
 
@@ -42,9 +42,15 @@ Fixed vector error working on implementing menu data structure
 Started header for tree, and node classes
 Added plaintext tree config plan
 
-1/25/25  
-*Dante Gordon*:  
-Added miniaudio header 
+1/25/25
+*Devan Rivera*:
+Worked on Node class
+Worked on Tree class (In Progress)
+
+1/28/25
+*Devan Rivera*:
+Worked on Tree class 
+Worked on Node functions
 
 ## CAPTURE
 
