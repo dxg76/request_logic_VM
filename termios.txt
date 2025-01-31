@@ -1,0 +1,21 @@
+This plaintext serves as Developer notes for the termious struct
+
+tcflag_t c_iflag;      /* input modes */
+tcflag_t c_oflag;      /* output modes */
+tcflag_t c_cflag;      /* control modes */
+tcflag_t c_lflag;      /* local modes */
+cc_t     c_cc[NCCS];   /* special characters */
+
+c_cflag = termios control flags:
+    Baud Rate
+    Character size (number of data bits)
+    Parity enabling
+    Stop bits
+    Flow Control
+
+c_iflag = termios input flags:
+    Break condition handling: break conditon occurs when no data is transmitted for multiple characters intentionally
+    signaling an interrupt
+    Parity error handling
+    Canonical mode processing
+    Software flow control
