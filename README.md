@@ -111,3 +111,7 @@ Parity - none
 Stop Bits - 1
 
 Need Linux Machine
+
+1/30/25 
+*Dante Gordon*
+Fleshing out and annotating serial connection using POSIX commands
