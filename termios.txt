@@ -1,4 +1,4 @@
-This plaintext serves as Developer notes for the termious struct
+This plaintext serves as Developer notes for the termios struct
 
 tcflag_t c_iflag;      /* input modes */
 tcflag_t c_oflag;      /* output modes */
@@ -19,3 +19,20 @@ c_iflag = termios input flags:
     Parity error handling
     Canonical mode processing
     Software flow control
+
+c_lflag: local terminal flags
+
+    canonical processing: Terminal waits for user to hit enter before processing input. 
+    when disabled each character is available as soon as its transmitted
+
+    Echo: input is not re-output in the terminal
+
+    Signal generation: special  keys send signals ex:(Ctrl^C terminating process)
+
+c_oflag: output flags
+    Key remapping: maps certain keys such as linking newline to carriage return
+    Delays - self explanatory
+
+cc_t: special character array with symbolic indices
+    vmin: minimum nuber of characters necessary for non-canoncial read()
+    vtime: timeout in dewciseconds for read()

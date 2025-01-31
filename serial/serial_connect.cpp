@@ -31,6 +31,14 @@ bool configure_serial(int abstract, int speed){
     tty.c_cflag =  (tty.c_cflag &  ~CSIZE) | CS8; //clears size config and sets to 8 bit data chunks
 
     tty.c_iflag &= ~IGNBRK; //ignore break processing
+    
+    tty.c_lflag = 0 //no signal keys, no echo, no canonical processing
+    tty.c_iflag &= ~(IXON | IXOFF| IXANY); // disable flow control
+
+    tty.c_oflag = 0 // no remap, no delays
+
+    tty.c_cc[VMIN] = 0; // no block on read even if no characters are available
+    tty.c_cc[VTIME] = 5; // 0.5 seconds read timeout
 
     return true;
 }
