@@ -4,17 +4,24 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <miniaudio.h>
 
 using namespace std;
 class Vendor{
     public:
-    void set_debug(bool mode); 
+    
     Vendor();
     Vendor(bool mode);
+
+    //token methods
     void parse();
     string read_tokens();
     void empty_tokens();
-
+    
+    //audio
+    //void record_wav
+    //setter
+    void set_debug(bool mode); 
 
     private:
     bool debug_mode = false;

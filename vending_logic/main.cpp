@@ -6,8 +6,7 @@ Dante Gordon dxg2@students.uwf.edu
 Devan Rivera
 10/013/24
 
-This is the driver file for the MRSTV logic 
-Until more elements are fleshed out this will stand as a testing ground for the vendor
+This is the driver file for the MRSTV logic
 */
 int main(int argc, const char** argv){
    
