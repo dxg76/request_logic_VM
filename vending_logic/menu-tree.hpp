@@ -1,32 +1,49 @@
 #ifndef MENU_TREE_HPP
 #define MENU_TREE_HPP
+
 #include "node.hpp"
+#include <iostream>
 
 
 /*
-Dante Gordon
-1/24/25
-
-Class Header file for the menu tree data structure
+*Dante Gordon
+*1/24/25
+*
+*Class Header file for the menu tree data structure
 */
 
-//Devan was here 1/28/25 
+/*
+*Devan Rivera
+*1/28/25
+*
+*The menu tree class is used to create a tree structure 
+*for the vending machine menu.
+*
+*Updated 1/29/25
+*Updated 2/1/25
+*Updated 2/3/25
+*/
 
 class Menu_tree{
-public:
 
-    Menu_tree();
+    public:
 
-    void selection_menu(Node* node, int level = 0) const;
-    Node* get_root() const;
+        //Default constructor
+        Menu_tree();
 
-    ~Menu_tree();
+        //Displays the menu at a specific node
+        void selection_menu(Node* node, int level = 0) const;
 
-private:
+        //Returns root node
+        Node* get_root() const;
 
-    Node* root;
+        //Destructor
+        ~Menu_tree();
+
+    private:
+
+        Node* root;
 
 };
 
 #endif //MENU_TREE_HPP
-

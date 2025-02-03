@@ -3,28 +3,45 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
+#include <algorithm> //need to identify
 
-//Devan was here 1/26-28/25
+/*
+*Devan Rivera 1/28/25 
+*
+*Node class is used to create a tree structure 
+*for the vending machine menu. Each node has information 
+*stored and can be manipulated.
+*
+*Updated 1/29/25
+*Updated 2/1/25
+*Updated 2/3/25
+*/
 
 class Node{
     public:
 
+        //Default constructor
         Node(const std::string& id,  const std::string loc = "", float price = 0.0, int quantity = 0);
         
+        //Accessors
         std::string get_id() const;
         std::string get_loc() const;
-        void set_loc(const std::string& loc);
         float get_price() const;
-        void set_price(float price);
         int get_quantity() const;
-        void set_quantity(int quantity);
+        const std::vector<Node*>& get_children() const{return children;}
 
+        //Mutators
+        void set_loc(const std::string& loc);
+        void set_quantity(int quantity);
+        void set_price(float price);
+
+        //Functions to manipulate children
         void add_child(Node* child);
         void remove_child(const std::string& id);
         Node* find_child(const std::string& id) const;
-        const std::vector<Node*>& get_children() const;
 
-    
+        //Destructor
         ~Node();
 
     private:

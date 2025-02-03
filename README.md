@@ -52,6 +52,15 @@ Worked on Tree class (In Progress)
 Worked on Tree class 
 Worked on Node functions
 
+2/2/25 
+*Devan Rivera*:
+Implemented Tree manipulation functions 
+Fixed general errors within Node class
+
+2/3/25
+*Devan Rivera*:
+
+
 ## CAPTURE
 
 #### Dante Gordon

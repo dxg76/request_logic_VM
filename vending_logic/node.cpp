@@ -1,6 +1,16 @@
+// Node.cpp
 #include "node.hpp"
 
-Node::Node(const std::string& id, std::string loc, float price, int quantity) : id(id), loc(loc), price(price), quantity(quantity) {}
+/*
+*Devan Rivera (See ReadME for details)
+*Updated 1/28/25
+*Updated 1/29/25
+*Updated 2/1/25
+*Updated 2/3/25
+*/
+
+Node::Node(const std::string& id,const std::string loc, float price, int quantity) 
+    : id(id), loc(loc), price(price), quantity(quantity) {}
 
 std::string Node::get_id() const{
 
@@ -53,24 +63,25 @@ void Node::add_child(Node* child){
 
 void Node::remove_child(const std::string& id){
 
+    //remove_if removes any children with the same id
     auto it = std::remove_if(children.begin(), children.end(), [&](Node* child){
+
         return child->get_id() == id;
-    })
+    
+    });
 
-    if(it != children.end()){
+    //Removed nodes are deleted
+        for(auto iter = it; iter != children.end; ++iter){
 
-        for(auto iter = it; iter !+ children.end; ++iter){
             delete *iter;
+
         }
 
-        delete *it;
         children.erase(it, children.end());
-
-    }
 
 }
 
-Node* Node::find_child(const std::string& id) const {
+Node* Node::find_child(const std::string& id) const{
 
     for(Node* child: children){
 
