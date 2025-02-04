@@ -67,7 +67,8 @@ Updated main.cpp to accomodate for the Main Menu
 2/4/25
 *Devan Rivera*
 Identified Makefile Errors
-Debugging Main Menu 
+Began Debugging of Main Menu 
+Corrected Minor Errors in Main Driver
 
 
 ## CAPTURE
