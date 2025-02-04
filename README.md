@@ -59,7 +59,8 @@ Fixed general errors within Node class
 
 2/3/25
 *Devan Rivera*:
-
+Began creating Main menu to take in cin to travel the tree
+Fixed general errors within Tree class
 
 ## CAPTURE
 
