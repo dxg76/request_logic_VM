@@ -64,6 +64,12 @@ Fixed general errors within Tree class
 Updated Makefile to accomodate for the Tree and Node class
 Updated main.cpp to accomodate for the Main Menu
 
+2/4/25
+*Devan Rivera*
+Identified Makefile Errors
+Debugging Main Menu 
+
+
 ## CAPTURE
 
 #### Dante Gordon
