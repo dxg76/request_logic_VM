@@ -44,13 +44,13 @@ Added plaintext tree config plan
 
 1/25/25
 *Devan Rivera*:
-Worked on Node class
-Worked on Tree class (In Progress)
+Worked on Node class (node.hpp)
+Worked on Tree class (menu-tree.hpp)
 
 1/28/25
 *Devan Rivera*:
-Worked on Tree class 
-Worked on Node functions
+Worked on Node class (node.cpp)
+Worked on Tree class (menu-tree.cpp)
 
 2/2/25 
 *Devan Rivera*:
@@ -61,6 +61,8 @@ Fixed general errors within Node class
 *Devan Rivera*:
 Began creating Main menu to take in cin to travel the tree
 Fixed general errors within Tree class
+Updated Makefile to accomodate for the Tree and Node class
+Updated main.cpp to accomodate for the Main Menu
 
 ## CAPTURE
 

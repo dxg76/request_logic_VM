@@ -47,24 +47,24 @@ int main(int argc, const char** argv){
         if(currentNode->get_children().empty()){
 
             //If the current node has no children, then it is a leaf node at the end of the menu
-            std::cout << "You have selected: " << currentNode->get_id() << " " << endl;
+            std::cout << "You have selected: " << currentNode->get_id() << " " << std::endl;
 
             if(currentNode->get_price() > 0.0){
 
-                cout << "Price: $" << currentNode->get_price() << "\nQuantity: " << currentNode->get_quantity() << endl;
+                std::cout << "Price: $" << currentNode->get_price() << "\nQuantity: " << currentNode->get_quantity() << std::endl;
 
             }
             else{
 
-                cout << "This can not be read, please select a product." << endl;
+                std::cout << "This can not be read, please select a product." << std::endl;
 
             }
 
             //This prompts the user to go back to the previous menu
-            cout << "\nEnter b to go back to the previous menu: " << endl;
+            std::cout << "\nEnter b to go back to the previous menu: " << std::endl;
             
             char userChoice;
-            cin >> userChoice;
+            std::cin >> userChoice;
 
             if(userChoice == 'b' || userChoice == 'B'){
 
@@ -78,16 +78,62 @@ int main(int argc, const char** argv){
                 }
                 else{
 
-                    cout << "Currently at Main Menu. Exiting program." << endl;
+                    std::cout << "Currently at Main Menu. Exiting program." << std::endl;
                     break;
 
                 }
 
             }
-            else{break;}
+            else{
+
+                break;
+
+            }
+        }
+        else{
+
+        //Displays the menu at the current node
+        std::cout << "\nMenu: " << currentNode->get_id() << std::endl;
+        const auto& children = currentNode->get_children();
+
+        for(size_t i = 0; i < children.size(); ++i){
+
+            std::cout << i + 1 << ". " << children[i]->get_id() << std::endl;
 
         }
-    }
 
+        std::cout << "\nEnter your choice: ";
+        int choice;
+        std::cin >> choice;
+
+        if(choice == 0){
+
+            if(currentNode != vendingMenu.get_root() && !navigateStack.empty()){
+
+                currentNode = navigateStack.back();
+                navigateStack.pop_back();
+
+            }
+            else{
+
+                break;  //Exit loop if at root
+
+            }
+        }
+        else if(choice > 0 && static_cast<size_t>(choice) <= children.size()){
+            //If the user selects a valid choice, then the current node is set to the selected child
+            navigateStack.push_back(currentNode);
+            currentNode = children[choice - 1];
+
+        }
+        else{
+
+            std::cout << "Invalid choice. Please try again." << std::endl;
+            
+        }
+    }
+}
+
+    std::cout << "\nMr. Steve bids you farewell!" << std::endl;
     return 0;
 }
