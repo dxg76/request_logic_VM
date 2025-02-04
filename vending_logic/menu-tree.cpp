@@ -1,7 +1,6 @@
 //menu-tree.cpp
 
 #include "menu-tree.hpp"
-
 /*
 *Devan Rivera (See ReadME for details)
 *Updated 1/29/25
@@ -11,7 +10,7 @@
 Menu_tree::Menu_tree(){
 
     //Creating the root node
-    root = ned Node("Main Menu");
+    root = new Node("Main Menu");
 
     //Creating the Candy nodes
     Node* candy = new Node("Candy");

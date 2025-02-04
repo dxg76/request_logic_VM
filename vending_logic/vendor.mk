@@ -1,7 +1,7 @@
 X = g++
 F = -std=c++14 -Wall -g
 
-main: main.o vendor.o
+main: main.o vendor.o menu-tree.o
 	$(X) -g -o $@ $^
 
 main.o: main.cpp menu-tree.hpp node.hpp vendor.hpp

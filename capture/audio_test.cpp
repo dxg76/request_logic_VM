@@ -4,7 +4,8 @@
 #include <stdlib.h>
 #include <string>
 #include <iostream>
-
+#include <chrono>
+#include <thread>
 /*
 Dante Gordon
 1/11/24
@@ -14,6 +15,7 @@ single file generation complete
 
 working towards multifile compilation
 */
+using namespace std::chrono_literals;
 
 int new_file(char* filename, ma_encoder_config encoder_config,  ma_encoder encoder){
 
@@ -123,13 +125,21 @@ int main(int argc, char** argv)
             return -3;
         }
 
+        /*
         std::cout << "Enter any key to stop recording";
         std::cin >> prompt; //placeholder
+        */
+        const auto start = std::chrono::high_resolution_clock::now();
+        std::this_thread::sleep_for(5000ms);
+        const auto end = std::chrono::high_resolution_clock::now();
+        const std::chrono::duration<double, std::milli> elapsed = end - start;
         ma_device_uninit(&device);
         ma_encoder_uninit(&encoder);
 
         std::cout << "New file? [y/n]: ";
         std::cin >> prompt;
+
+        ma_device
 
         if(strcmp(prompt, "y") != 0){
             exit = true;
