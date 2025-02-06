@@ -7,6 +7,8 @@
 *Updated 1/29/25
 *Updated 2/1/25
 *Updated 2/3/25
+*Updated 2/5/25
+*Updated 2/6/25
 */
 
 Node::Node(const std::string& id,const std::string loc, float price, int quantity) 
@@ -71,7 +73,7 @@ void Node::remove_child(const std::string& id){
     });
 
     //Removed nodes are deleted
-        for(auto iter = it; iter != children.end; ++iter){
+        for(auto iter = it; iter != children.end(); ++iter){
 
             delete *iter;
 

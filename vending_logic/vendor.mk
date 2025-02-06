@@ -16,6 +16,6 @@ node.o: node.cpp node.hpp
 vendor.o: vendor.cpp vendor.hpp
 	$(X) $(F) -c $<
 
-.phony = clean
+.PHONY: clean
 clean:
 	rm -rf *.o *.csv main
