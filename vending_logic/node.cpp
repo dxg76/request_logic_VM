@@ -71,7 +71,7 @@ void Node::remove_child(const std::string& id){
     });
 
     //Removed nodes are deleted
-        for(auto iter = it; iter != children.end; ++iter){
+        for(auto iter = it; iter != children.end(); ++iter){
 
             delete *iter;
 
