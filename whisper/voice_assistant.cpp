@@ -1,5 +1,5 @@
 #include <iostream>
-#include "whisper.h"
+#include "whisper.h" 
 #include <fstream>
 
 size_t file_read(void * ctx, void * output, size_t read_size) {
@@ -17,11 +17,23 @@ void file_close(void * ctx){
 }
 int main(){
     whisper_model_loader loader;
-        loader.context = fopen("ggml-base-en", "rb"); // Open file
+        loader.context = fopen("whisper.cpp-master/models/ggml-base.en.bin", "rb"); // Open file
         loader.read = file_read;
         loader.eof = file_eof;
         loader.close = file_close;
-    WHISPER_API struct whisper_context_params params = whisper_context_default_params();
+    struct whisper_context_params params = whisper_context_default_params();
 
-    WHISPER_API struct whisper_context* ctx = whisper_init_with_params(&loader, params);
+    struct whisper_context* ctx = whisper_init_with_params(&loader, params);
+
+    if (!ctx) {
+        std::cerr << "Failed to initialize Whisper context!" << std::endl;
+        file_close(loader.context);
+        return -1;
+    }
+
+    std::cout << "/nWhisper context initialized successfully!" << std::endl;
+
+    // Cleanup
+    whisper_free(ctx);
+    
 }
