@@ -6,6 +6,7 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
+#include <cstdio>
 /*
 Dante Gordon
 1/11/24
@@ -57,11 +58,11 @@ void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uin
     (void)pOutput;
 }
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv){
     //interaction var
     bool debug_mode = false;
-    
+    int index = 0;
+    char filenames[10][10]; 
     bool exit = false;
     //Encoder Config
     ma_result result;
@@ -79,25 +80,30 @@ int main(int argc, char** argv)
         std::cout <<"Debug mode enabled" << std::endl;
     }
 
+    //populate filenames
+    for(int i  = 0; i< 10;++i){
+        snprintf(filenames[i], sizeof(filenames[i]), "%d.wav", i + 1); //load array
+    }
 
-
+    if(debug_mode){
+        std:: cout << "recording Ctrl^C to stop" << std::endl;
+    }
     //Main
     while(!exit){
-        char prompt[100];
-        std::cout << "Enter new filename: ";
-        std::cin >> prompt;
+    
+        
 
         //ENCODER CONFIGURATION
         // initializing 2 channel, wave file, 32bit floating point format encoder with sample rate of 44.1 kHz
         encoder_config = ma_encoder_config_init(ma_encoding_format_wav, ma_format_s16, 2, 16000); 
 
         //file failure
-        if (ma_encoder_init_file(prompt, &encoder_config, &encoder) != MA_SUCCESS) {
+        if (ma_encoder_init_file(filenames[index], &encoder_config, &encoder) != MA_SUCCESS) {
             std::cout << "Failed to initialize output file." <<std::endl ;
             return -1;
         }
         if(debug_mode){
-            std::cout << prompt << " created successfully" << std::endl;
+            std::cout << filenames[index] << " created successfully" << std::endl;
         }
     
  
@@ -125,10 +131,7 @@ int main(int argc, char** argv)
             return -3;
         }
 
-        /*
-        std::cout << "Enter any key to stop recording";
-        std::cin >> prompt; //placeholder
-        */
+        
         const auto start = std::chrono::high_resolution_clock::now();
         std::this_thread::sleep_for(5000ms);
         const auto end = std::chrono::high_resolution_clock::now();
@@ -136,19 +139,12 @@ int main(int argc, char** argv)
         ma_device_uninit(&device);
         ma_encoder_uninit(&encoder);
 
-        std::cout << "New file? [y/n]: ";
-        std::cin >> prompt;
-
-        ma_device
-
-        if(strcmp(prompt, "y") != 0){
-            exit = true;
-            if(debug_mode){
-                std:: cout << prompt << std::endl;
-                std::cout << "exiting..." << std::endl;
-            }
+        index++;
+        if(index>9){
+            index = 0;
         }
+        remove(filenames[index]);
     }
-
     return 0;
+
 }
