@@ -20,19 +20,21 @@ void Vendor::set_debug(bool mode){
 void Vendor::parse(){
     string request;
     char* token;
-    
+    string pass_token;
     request.clear();
 
     if(debug_mode){
-        cout << "Enter input to be tokenized: ";
+        std:: cout << "Enter input to be tokenized: ";
     }
+
     getline(cin,request);
 
     token = strtok((char*)request.c_str(), " ");
 
     while(token != NULL){
         //std::cout << token << std::endl;
-        tokens.push_back(token);
+        pass_token = token;
+        tokens.push_back(pass_token);
         token = strtok(NULL,  " ");
     }
 
@@ -40,6 +42,7 @@ void Vendor::parse(){
        std::cout << "Tokens: \n";
        print_tokens();
     }
+
 }
 
 void Vendor::print_tokens(){
@@ -51,15 +54,21 @@ void Vendor::print_tokens(){
 
 
 string Vendor::read_tokens(){
-    for(std::string i : tokens){
-        if(i == CHIPS_MENU_STRING){
+    for(long unsigned int i = 0; i <tokens.size(); ++i){
+        if(debug_mode){
+            std::cout << "comparing: " << '"' << tokens[i] << '"' << " to: " 
+                      << CHIPS_MENU_STRING << ", " 
+                      << CANDY_MENU_STRING << ", "
+                      << KILL_STRING << "\n" << std::endl;
+        }
+        if(tokens[i] == CHIPS_MENU_STRING){
             cout << "Of course here are the chips available ..." << endl;
             return "chip";
         }
-        else if(i == CANDY_MENU_STRING){
+        else if(tokens[i] == CANDY_MENU_STRING){
             cout << "Of course here are the candies available ..." << endl;
             return "candy";
-        }else if(i == KILL_STRING){
+        }else if(tokens[i] == KILL_STRING){
             return "critical";
         }
     }

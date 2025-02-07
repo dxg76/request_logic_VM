@@ -25,7 +25,7 @@ class Vendor{
 
     private:
     bool debug_mode = false;
-    vector<char*> tokens;
+    vector<string> tokens;
     void print_tokens();
 
     //string constants
