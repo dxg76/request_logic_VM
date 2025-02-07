@@ -70,6 +70,10 @@ Identified Makefile Errors
 Began Debugging of Main Menu 
 Corrected Minor Errors in Main Driver
 
+2/6/26
+*Devan Rivera*
+Fixed Clean Rule in Makefile
+Finsished Most Debugging of Main Menu
 
 ## CAPTURE
 
@@ -113,6 +117,11 @@ It worked well, the total time for whisper to process one 18 sec query was 1.47 
 *Dante Gordon*:  
 Audio buffer created. Supports a 10 file buffer of 5 second clips, upon reaching the 10th file the buffer overrides  
 older files starting from the first file. 
+
+2/6/25
+*Devan Rivera*
+Researched Arguments and Methods to use in whisper.cpp
+(Plan to add notes file)
 
 ## SERIAL
 
