@@ -70,10 +70,15 @@ Identified Makefile Errors
 Began Debugging of Main Menu 
 Corrected Minor Errors in Main Driver
 
-2/6/26
+2/6/25
 *Devan Rivera*
 Fixed Clean Rule in Makefile
 Finsished Most Debugging of Main Menu
+
+2/7/25
+*Dante Gordon*:  
+Tokenizer patch for unpredictable output  
+
 
 ## CAPTURE
 
@@ -147,3 +152,11 @@ Need Linux Machine
 1/30/25 
 *Dante Gordon*
 Fleshing out and annotating serial connection using POSIX commands
+
+## Whisper
+### Overview
+Working on live audio detection and command detection
+
+2/7/25
+*Dante Gordon*:  
+working on initializing whisper. Needs more dependencies I think  
