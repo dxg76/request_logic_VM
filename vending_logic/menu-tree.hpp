@@ -34,14 +34,10 @@ class Menu_tree{
         //Displays the menu at a specific node
         void selection_menu(Node* node, int level = 0) const;
 
-        //Returns root node
-        Node* get_root() const;
-
         //Destructor
         ~Menu_tree();
-
-    private:
-
+        
+        //Root Node
         Node* root;
 
 };

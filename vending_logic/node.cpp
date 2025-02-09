@@ -63,12 +63,12 @@ void Node::add_child(Node* child){
 
 }
 
-void Node::remove_child(const std::string& id){
+void Node::remove_child(const std::string& target_id){
 
     //remove_if removes any children with the same id
     auto it = std::remove_if(children.begin(), children.end(), [&](Node* child){
 
-        return child->get_id() == id;
+        return child->get_id() == target_id;
     
     });
 
@@ -83,11 +83,10 @@ void Node::remove_child(const std::string& id){
 
 }
 
-Node* Node::find_child(const std::string& id) const{
+Node* Node::find_child(const std::string target_id) const{
 
     for(Node* child: children){
-
-        if(child->get_id() == id){
+        if(child->get_id() == target_id){
             return child;
         }
 

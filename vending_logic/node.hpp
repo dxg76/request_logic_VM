@@ -21,7 +21,7 @@
 class Node{
     public:
 
-        //Default constructor
+        //constructor
         Node(const std::string& id,  const std::string loc = "", float price = 0.0, int quantity = 0);
         
         //Accessors
@@ -38,8 +38,8 @@ class Node{
 
         //Functions to manipulate children
         void add_child(Node* child);
-        void remove_child(const std::string& id);
-        Node* find_child(const std::string& id) const;
+        void remove_child(const std::string& target_id);
+        Node* find_child(const std::string target_id) const;
 
         //Destructor
         ~Node();
