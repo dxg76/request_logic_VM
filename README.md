@@ -79,6 +79,13 @@ Finsished Most Debugging of Main Menu
 *Dante Gordon*:  
 Tokenizer patch for unpredictable output  
 
+2/8/25
+*Dante Gordon*: 
+Patched bugs, completed vending selection sequence 
+Unified menu tree with vendor 
+Still need dispense, Pay, Audio
+
+
 
 ## CAPTURE
 
@@ -160,3 +167,7 @@ Working on live audio detection and command detection
 2/7/25
 *Dante Gordon*:  
 working on initializing whisper. Needs more dependencies I think  
+
+2/8/25
+*Dante Gordon*:  
+Building steps complete working on programming live audio transcription

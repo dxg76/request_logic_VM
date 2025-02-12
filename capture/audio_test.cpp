@@ -22,7 +22,7 @@ int new_file(char* filename, ma_encoder_config encoder_config,  ma_encoder encod
 
     //ENCODER CONFIGURATION
     // initializing 2 channel, wave file, 32bit floating point format encoder with sample rate of 44.1 kHz
-    encoder_config = ma_encoder_config_init(ma_encoding_format_wav, ma_format_s16, 2, 16000); 
+    encoder_config = ma_encoder_config_init(ma_encoding_format_wav, ma_format_f32, 1, 16000); 
 
     //file failure
     if (ma_encoder_init_file(filename, &encoder_config, &encoder) != MA_SUCCESS) {
@@ -95,7 +95,7 @@ int main(int argc, char** argv){
 
         //ENCODER CONFIGURATION
         // initializing 2 channel, wave file, 32bit floating point format encoder with sample rate of 44.1 kHz
-        encoder_config = ma_encoder_config_init(ma_encoding_format_wav, ma_format_s16, 2, 16000); 
+        encoder_config = ma_encoder_config_init(ma_encoding_format_wav, ma_format_f32, 1, 16000); 
 
         //file failure
         if (ma_encoder_init_file(filenames[index], &encoder_config, &encoder) != MA_SUCCESS) {
@@ -109,8 +109,8 @@ int main(int argc, char** argv){
  
         //Device Config 
         device_config                  = ma_device_config_init(ma_device_type_capture); //sets up device configuration as audio capture
-        device_config.capture.format   = ma_format_s16; // matching encoder configuration
-        device_config.capture.channels = 2; // matching encoder channels
+        device_config.capture.format   = ma_format_f32; // matching encoder configuration
+        device_config.capture.channels = 1; // matching encoder channels
         device_config.sampleRate       = 16000; // matching encoder sample rate
         device_config.dataCallback     = data_callback; //assigning data call back method to device configuration
         device_config.pUserData        = &encoder; //TBD
