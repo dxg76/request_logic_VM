@@ -85,7 +85,11 @@ Patched bugs, completed vending selection sequence
 Unified menu tree with vendor 
 Still need dispense, Pay, Audio
 
-
+2/17/25
+*Devan Rivera*
+Removed unecessary functionality
+Began Dispense and Pay functions
+Updated helper functions for the node class
 
 ## CAPTURE
 
