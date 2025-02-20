@@ -99,7 +99,6 @@ This must eventually be adapted to handle the initiation of recording, saving of
 
 ### Dev Info:
 *Dante Gordon*:
-Currently supports single wav file audio generation 
 compile with mingw using: 
 
 make -f audio.mk
@@ -143,6 +142,9 @@ This program will be intended to initiate a serial connection via usb with the M
 It will interface with the vending algorithm and send the correct commands via the serial connection
 This must be done for a linux system, complications may occur using a linux subsystem
 
+
+
+
 ### Program History:
 1/17/25
 *Dante Gordon*:
@@ -157,13 +159,29 @@ Stop Bits - 1
 Need Linux Machine
 
 1/30/25 
-*Dante Gordon*
+*Dante Gordon*:  
 Fleshing out and annotating serial connection using POSIX commands
 
 ## Whisper
 ### Overview
 Working on live audio detection and command detection
+### Dev Info
 
+compile: 
+
+make voice_assistant -f whisper.mk 
+
+pre-run:  
+
+*WIP*:  
+Potential removal of the former:  
+echo 'export LD_LIBRARY_PATH=./whisper.cpp-master/build/src:$LD_LIBRARY_PATH' >> ~/.bashrc
+source ~/.bashrc  
+
+run:  
+./voice_assistant
+
+### Program History
 2/7/25
 *Dante Gordon*:  
 working on initializing whisper. Needs more dependencies I think  
@@ -171,3 +189,14 @@ working on initializing whisper. Needs more dependencies I think
 2/8/25
 *Dante Gordon*:  
 Building steps complete working on programming live audio transcription
+
+2/9/25
+*Dante Gordon*:  
+Transcription complete whisper stores transcription in char* segments  
+
+2/12/26
+*Dante Gordon*:  
+Begin unifying capture and transcription  
+Convert filename vector to linked list Where the capture adds new nodes and follows  
+the tail of the linked list and the transcriber reads the file at the head before deleting  
+that node from the list  

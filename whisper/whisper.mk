@@ -8,8 +8,8 @@ T = voice_assistant
 $(T): $(O)
 	$(X) $(O) -o $(T) $(L)
 
-%.o: %.cpp
+voice_assistant.o: voice_assistant.cpp miniaudio.h
 	$(X) -c $(F) $< -o $@
 
 clean:
-	rm -f $(O) $(T)
+	rm -f $(O) $(T) *.wav
