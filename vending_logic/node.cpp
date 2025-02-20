@@ -9,11 +9,13 @@
 *Updated 2/3/25
 *Updated 2/5/25
 *Updated 2/6/25
+*Updated 2/17/25
 */
 
 Node::Node(const std::string& id,const std::string loc, float price, int quantity) 
     : id(id), loc(loc), price(price), quantity(quantity) {}
 
+//Getters
 std::string Node::get_id() const{
 
     return id;
@@ -38,7 +40,7 @@ int Node::get_quantity() const{
 
 }
 
-
+//Setters
 void Node::set_loc(const std::string& loc){
 
     this->loc = loc;
@@ -57,6 +59,7 @@ void Node::set_quantity(int quantity){
 
 }
 
+//Tree Functions
 void Node::add_child(Node* child){
 
     children.push_back(child);
