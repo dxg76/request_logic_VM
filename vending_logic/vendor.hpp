@@ -1,9 +1,6 @@
 #ifndef VENDOR_HPP
 #define VENDOR_HPP
 #include <cstring>
-#include <iostream>
-#include <vector>
-#include <string>
 #include "miniaudio.h"
 #include "menu-tree.hpp"
 

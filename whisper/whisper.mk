@@ -12,4 +12,5 @@ voice_assistant.o: voice_assistant.cpp miniaudio.h
 	$(X) -c $(F) $< -o $@
 
 clean:
-	rm -f $(O) $(T) *.wav
+	rm -f $(O) $(T) *.wav whisper.cpp-master/models/ggml-base.en.bin
+	rm -rf whisper.cpp-master/build

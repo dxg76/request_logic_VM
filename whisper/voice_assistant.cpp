@@ -40,7 +40,7 @@ std::vector<float> pcm_buster(std::string filename){
         std::cerr << "Error opening file: " << sf_strerror(file) << std::endl;
         return {};
     }
-    printSFInfo(sfinfo);
+    //printSFInfo(sfinfo); print wav file input
     // Read samples into a float vector
     std::vector<float> samples(sfinfo.frames * sfinfo.channels);
     sf_readf_float(file, samples.data(), sfinfo.frames);
@@ -130,9 +130,10 @@ std::atomic<bool> exit_recording(false);
 std::mutex mtx;
 bool debug_mode = true; //placeholder before unification with main program
 int list_size = 0;
-list_node* head = new list_node("placholder",nullptr);
+list_node* head = new list_node("placeholder",nullptr);
 
 void ma_stream(){
+    //list vars
     int index = 1;
     list_node*tail = head;
     exit_recording = false;
@@ -142,22 +143,23 @@ void ma_stream(){
     ma_encoder encoder;  //encodes audio samples to wav files
     ma_device_config device_config;
     ma_device device; //wrapper for interacting with audio devices
+
+    //Audio Capture Loop
     while(!exit_recording){
         
         std::string audio_file = std::to_string(index) + ".wav";
-        mtx.lock();
-        tail->filename = audio_file;
+        
         //ENCODER CONFIGURATION
-        // initializing 2 channel, wave file, 32bit floating point format encoder with sample rate of 44.1 kHz
+        // initializing mono, wave file, 32bit floating point format encoder with sample rate of 44.1 kHz
         encoder_config = ma_encoder_config_init(ma_encoding_format_wav, ma_format_f32, 1, 16000); 
 
         //file failure
-        if (ma_encoder_init_file(tail->filename.c_str(), &encoder_config, &encoder) != MA_SUCCESS) {
+        if (ma_encoder_init_file(audio_file.c_str(), &encoder_config, &encoder) != MA_SUCCESS) {
             std::cout << "Failed to initialize output file." <<std::endl ;
             return;
         }
         if(debug_mode){
-            std::cout << tail->filename << " created successfully" << std::endl;
+            //std::cout << audio_file << " created successfully" << std::endl;
         }
     
  
@@ -194,14 +196,14 @@ void ma_stream(){
         ma_device_uninit(&device);
         ma_encoder_uninit(&encoder);
 
-        list_size ++;
-        mtx.unlock();
+       
 
         index++;
-        if(index>9){
+        if(index > 30){
             index = 1;
         }
-        tail->next_node = new list_node("placeholder", nullptr);
+        tail->filename = audio_file;
+        tail->next_node = new list_node("placeholder",nullptr);
         tail = tail->next_node;
 
         
@@ -211,6 +213,15 @@ void ma_stream(){
 
 }
 //CAPTURE END
+
+/*
+
+
+
+MAIN /////////////////////////////////////////////////////////////////////////////////////
+
+
+*/
 int main(){
     std::thread audio_thread(ma_stream);
     
@@ -250,8 +261,11 @@ int main(){
     //transcribe loop
     while(true){
     //get list head
-    while(list_size < 1){
-        std::cout << "waiting on capture" << std::endl;
+    //std::cout << "head filename " << head->filename <<std:: endl;
+    while(head->filename == "placeholder"){
+        //std::cout << "in loop" << std::endl;
+        //std::cout << "waiting on capture" << std::endl;
+        //sleep(1);
     }
 
     //get samples
@@ -270,7 +284,7 @@ int main(){
         const char *text = whisper_full_get_segment_text(ctx, i);
         script += text;
     }
-    std::cout << "speech: " << script << std::endl;
+    std::cout <<  script << std::endl;
 
     //delete head, delete file and move
     list_node* temp = head;
@@ -278,9 +292,7 @@ int main(){
     head = head->next_node;
     delete temp; //delete head
     remove(expired_file.c_str());
-    mtx.lock();
-    list_size--;
-    mtx.unlock();
+
 
     } //end transcribe loop
 

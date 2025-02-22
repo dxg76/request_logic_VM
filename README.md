@@ -1,4 +1,4 @@
-# request_logic_VM
+ # request_logic_VM
 ---
 This is the directory for all MRSTV logic  
  Repo Creation Date 10/13/24  
@@ -138,6 +138,10 @@ older files starting from the first file.
 Researched Arguments and Methods to use in whisper.cpp
 (Plan to add notes file)
 
+2/17/25
+*Dante Gordon*:  
+Fully integrated with whisper section closed  
+
 ## SERIAL
 
 #### Dante Gordon
@@ -176,6 +180,7 @@ compile:
 make voice_assistant -f whisper.mk 
 
 pre-run:  
+export LD_LIBRARY_PATH=./whisper.cpp-master/build/src:$LD_LIBRARY_PATH
 
 *WIP*:  
 Potential removal of the former:  
