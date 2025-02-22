@@ -172,11 +172,17 @@ Fleshing out and annotating serial connection using POSIX commands
 
 ## Whisper
 ### Overview
-Working on live audio detection and command detection
+Capture and transcription program is written.  
+Upon running the program the users voice is recorded and echoed to the command line.  
+Clip sizes are adjustable but are currently set to 5 seconds. This will be tweaked as we
+go on the process of unifying this program and the main program has begun. 
 ### Dev Info
 
 compile: 
 
+cd whisper.cpp-master
+make base.en
+cd ..
 make voice_assistant -f whisper.mk 
 
 pre-run:  
@@ -209,3 +215,7 @@ Begin unifying capture and transcription
 Convert filename vector to linked list Where the capture adds new nodes and follows  
 the tail of the linked list and the transcriber reads the file at the head before deleting  
 that node from the list  
+
+2/17/26
+*Dante Gordon*:  
+Fully unified capture and transcription
