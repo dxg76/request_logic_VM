@@ -136,7 +136,6 @@ void ma_stream(){
     //list vars
     int index = 1;
     list_node*tail = head;
-    exit_recording = false;
     //Encoder Config
     ma_result result;
     ma_encoder_config encoder_config;
@@ -223,11 +222,8 @@ MAIN ///////////////////////////////////////////////////////////////////////////
 
 */
 int main(){
+    //setup
     std::thread audio_thread(ma_stream);
-    
-    //ref float vector of samples
-    // std::vector<float> samples = pcm_buster("2.wav");
-    //loader struct
     whisper_model_loader loader; 
         loader.context = fopen("whisper.cpp-master/models/ggml-base.en.bin", "rb"); // Open model file in raw binary
         loader.read = file_read; //assign read method
@@ -254,14 +250,13 @@ int main(){
         full_params.translate      = false;  // do not translate to English
         full_params.language       = "en";   //language
         full_params.print_progress = false; //show progress
-
+    //setup end
     
     
 
     //transcribe loop
     while(true){
-    //get list head
-    //std::cout << "head filename " << head->filename <<std:: endl;
+
     while(head->filename == "placeholder"){
         //std::cout << "in loop" << std::endl;
         //std::cout << "waiting on capture" << std::endl;
@@ -279,13 +274,13 @@ int main(){
     }
 
     int segments =  whisper_full_n_segments(ctx);
-    std::string script;
-    for (int i = 0; i < segments; i++) {
-        const char *text = whisper_full_get_segment_text(ctx, i);
-        script += text;
-    }
-    std::cout <<  script << std::endl;
+    /*
+    if(whisper_full_get_segment_text(ctx, i) == "Mr."
+    && whisper_full_get_segment_text(ctx, i+1) == "steve");
+    */
+    std::string text = whisper_full_get_segment_text(ctx, 0);
 
+    std::cout << text << std::endl;
     //delete head, delete file and move
     list_node* temp = head;
     std::string expired_file = head->filename;

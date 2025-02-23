@@ -1,8 +1,24 @@
 #ifndef VENDOR_HPP
 #define VENDOR_HPP
+#define MINIAUDIO_IMPLEMENTATION
 #include <cstring>
+#include <vector>
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <string>
+#include <thread>
+#include <mutex>
+#include <atomic>
+#include <chrono>
+#include <stdlib.h>
+#include <sndfile.h>
+
 #include "miniaudio.h"
 #include "menu-tree.hpp"
+#include "whisper.h" 
+
 
 using namespace std;
 class Vendor{
@@ -28,13 +44,48 @@ class Vendor{
     float selection_price;
     std::string selection_loc;
 
-    //audio
-    //void record_wav
-    //setter 
+    //linked list struct
+    struct list_node{
+        std::string filename;
+        list_node* next_node;
+        list_node(std::string filename) : filename(filename), next_node(nullptr) {}
+        list_node(std::string filename, list_node* next_node) : filename(filename), next_node(next_node) {}
+    };
+    //list head
+    list_node* head;
 
     private:
     bool debug_mode = false;
+    /*
+    declaration for transcriber methods and vars using whisper.cpp
+    */
+   
+    //audio
+    static size_t file_read(void * ctx, void * output, size_t read_size);
+    static bool file_eof(void * ctx);
+    static void file_close(void * ctx);
+    void ma_stream();
+
+    //whisper context and params
+    whisper_model_loader loader;
+    whisper_full_params full_params;
+    struct whisper_context_params params;
+    struct whisper_context* ctx;
+
+    //atomic bool to quit recording
+    std::atomic<bool> quit_recording;
+    int list_size = 0;
     
+    std::string get_command();
+    
+    int device_start(ma_device& device, ma_device_config device_config, ma_result& result);
+    int new_file(char* filename, ma_encoder_config encoder_config,  ma_encoder encoder);
+    static void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount);
+    void configure_all();
+    void destroy_all();
+    std::vector<float> pcm_buster(std::string filename);
+    //end transcriber data
+
     //string constants
     const string GREETING_STRING = "Hello my name is MRSTV, I am a vending machine specializing in accessibility.\n"   //mrstv intro greeting 
                                    "To begin, you may call my name and speak a request word, such as chips or candy.\n" 

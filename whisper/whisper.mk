@@ -6,6 +6,7 @@ SRCS = voice_assistant.cpp
 O = $(SRCS:.cpp=.o)
 T = voice_assistant
 $(T): $(O)
+	cd whisper.cpp-master && make base.en
 	$(X) $(O) -o $(T) $(L)
 
 voice_assistant.o: voice_assistant.cpp miniaudio.h
