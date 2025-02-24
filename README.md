@@ -170,6 +170,19 @@ Need Linux Machine
 *Dante Gordon*:  
 Fleshing out and annotating serial connection using POSIX commands
 
+2/17/25
+*Devan Rivera*:
+Researched possible MDB commands to be passed through qibbix to the card reader
+
+2/18/25
+*Devan Rivera*:
+Determined appropriate command format through Generic Master
+Began Setup/Config Process Commands
+
+2/23/25
+Setup/Config Process Commands
+Vend Process Commands
+
 ## Whisper
 ### Overview
 Capture and transcription program is written.  
