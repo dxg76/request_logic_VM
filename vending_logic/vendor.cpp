@@ -1,6 +1,6 @@
 #include "vendor.hpp"
 
-using namespace std;
+
 Vendor::Vendor(){
 
 }
@@ -11,16 +11,14 @@ Vendor::Vendor(bool mode){
 void Vendor::set_debug(bool mode){
     debug_mode = mode;
     if(mode){
-        cout<<"DEBUG MODE ENABLED" << endl;
+        std::cout<<"DEBUG MODE ENABLED" << std::endl;
     }
 }
 
-void Vendor::parse(Node* current_node){
-    string request;
-    char* token;
-    string pass_token;
+void Vendor::parse(std::string request, Node* current_node){
 
-    request.clear();
+    char* token;
+    std::string pass_token;
     
     //Prompt Generation
 
@@ -38,29 +36,29 @@ void Vendor::parse(Node* current_node){
         std:: cout << "Enter input to be tokenized: ";
     }
     
-    /*
-    getline(cin,request);
 
     token = strtok((char*)request.c_str(), " ");
 
     while(token != NULL){
         pass_token = token;
+        //remove punctuation from tokens
+        pass_token.erase(std::remove_if(pass_token.begin(), pass_token.end(), ::ispunct), pass_token.end());
         tokens.push_back(pass_token);
         token = strtok(NULL,  " ");
-    }*/
+    }
     print_tokens();
 
 }
 
 void Vendor::print_tokens(){
     for(auto i : tokens){
-        cout << i << endl;
+        std::cout << i << std::endl;
     }
-    cout << "\n\n\n" << endl;
+    std::cout << "\n\n\n" << std::endl;
 }
 
 
-string Vendor::read_tokens(Node* current_node){
+std::string Vendor::read_tokens(Node* current_node){
     if(current_node == vendor_menu.root){
         for(long unsigned int i = 0; i <tokens.size(); ++i){
 
@@ -89,7 +87,7 @@ string Vendor::read_tokens(Node* current_node){
         }
     }else if(current_node->get_price() < .1){ //in menu searching for item
         for(long unsigned int i = 0; i <tokens.size(); ++i){
-            vector<Node*> items = current_node->get_children();
+            std::vector<Node*> items = current_node->get_children();
             for(long unsigned int j = 0; j <items.size(); ++j){
                 if(tokens[i] == items[j]->get_id()){
                     return tokens[i];
@@ -120,11 +118,11 @@ string Vendor::read_tokens(Node* current_node){
 void Vendor::empty_tokens(){
     tokens.clear();
     if(debug_mode){
-        cout << "Tokens Dumped" << endl;
+        std::cout << "Tokens Dumped" << std::endl;
     }
 }
 
-void Vendor::vend(string loc, float price){
+void Vendor::vend(std::string loc, float price){
     //fill in with vending sequence
     if(debug_mode){
         std::cout << "Vending..." << std::endl;

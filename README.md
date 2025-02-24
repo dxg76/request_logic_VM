@@ -183,6 +183,11 @@ Began Setup/Config Process Commands
 Setup/Config Process Commands
 Vend Process Commands
 
+2/24/25
+*Dante Gordon*: 
+Crypto Key error fixed
+Full vend communication testing can begin 
+
 ## Whisper
 ### Overview
 Capture and transcription program is written.  
@@ -232,3 +237,9 @@ that node from the list
 2/17/26
 *Dante Gordon*:  
 Fully unified capture and transcription
+
+2/24/25
+*Dante Gordon*:  
+Unified with main vending logic  
+Program history will remain open to address changes in latency.  
+Strategy to try to reduce this is padding the audio files allowing the recordings to be done faster  

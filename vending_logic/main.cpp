@@ -30,7 +30,7 @@ struct whisper_context* ctx;
 //atomic bool to quit recording
 std::atomic<bool> exit_recording(false);
 int list_size = 0;
-list_node* head = new list_node("placeholder",nullptr);
+
 
 /*
 Transcriber Methods
@@ -100,7 +100,7 @@ std::vector<float> pcm_buster(std::string filename){
 
 }
 
-void ma_stream(){
+void ma_stream(list_node* head){
     //list vars
     int index = 1;
     list_node*tail = head;
@@ -176,15 +176,28 @@ void ma_stream(){
 
 
 }
+
+void destroy_list(list_node* head){
+    while(head != nullptr){
+        list_node* temp = head;
+        std::string expired_file = head->filename;
+        head = head->next_node;
+        delete temp; //delete head
+        remove(expired_file.c_str());
+    }
+}
 std::string get_command(){
+    list_node* head = new list_node("placeholder",nullptr);
     //audio thread start
-    std::thread audio_thread(ma_stream);
+    exit_recording.store(false);
+    std::thread audio_thread(ma_stream,head);
     
     //quit bool
     bool exit_transcription = false;
     //transcribed text
     std::string text;
 
+    std::cout << "starting transcription..."  << std::endl;
     //transcribe loop
     while(!exit_transcription){
 
@@ -222,6 +235,8 @@ std::string get_command(){
     audio_thread.join();
     std::cout << "thread joined" <<std::endl;
     
+    //destroy list leftovers
+    destroy_list(head);
     return text;
 }
 
@@ -271,9 +286,7 @@ void configure_all(){
 
 }
 
-void destroy_all(){
-    whisper_free(ctx);
-}
+
 
 /*
 *
@@ -302,7 +315,10 @@ int main(int argc, const char** argv){
     
     //Start at the root ("Main Menu")
     Node* current_node = vendor.vendor_menu.root;
-    string vendor_result;
+    std::string vendor_result;
+
+    //configure whisper
+    configure_all();
 
     //setup end
 
@@ -314,7 +330,7 @@ int main(int argc, const char** argv){
         
         //error handling for parse and read
         do{
-            vendor.parse(current_node);
+            vendor.parse(get_command(), current_node);
             vendor_result = vendor.read_tokens(current_node);
         }while(vendor_result == "err");
 
@@ -338,7 +354,7 @@ int main(int argc, const char** argv){
         }else if(current_node != vendor.vendor_menu.root){ //making selection
             vendor.empty_tokens();
             do{
-                vendor.parse(current_node);
+                vendor.parse(get_command(), current_node);
                 vendor_result = vendor.read_tokens(current_node);
             }while(vendor_result == "err");
             if(vendor_result == "y"){
