@@ -91,6 +91,12 @@ Removed unecessary functionality
 Began Dispense and Pay functions
 Updated helper functions for the node class
 
+2/24/25
+*Dante Gordon*:  
+Integrated transcription instead of command line prompts.  
+Removed namespaces and adjusted product names to better align  
+with whispers output.
+
 ## CAPTURE
 
 #### Dante Gordon
@@ -140,7 +146,7 @@ Researched Arguments and Methods to use in whisper.cpp
 
 2/17/25
 *Dante Gordon*:  
-Fully integrated with whisper section closed  
+Fully integrated with whisper. section closed  
 
 ## SERIAL
 

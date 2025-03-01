@@ -5,6 +5,7 @@
 #include <errno.h>
 #include <cstring>
 
+#define BUFFER_SIZE 256
 int open_serial(const char* port_name){
     //open serial port for  synchronous IO, read/write, checks it is not a controlling terminal
     int abstract = open(port_name, O_RDWR | O_NOCTTY | O_SYNC); 
@@ -38,8 +39,8 @@ bool configure_serial(int abstract, int speed){
     tty.c_oflag = 0; // no remap, no delays
     tty.c_iflag &= ~(IXON | IXOFF| IXANY); // disable flow control
 
-    tty.c_cc[VMIN] = 0; // no block on read even if no characters are available
-    tty.c_cc[VTIME] = 5; // 0.5 seconds read timeout
+    tty.c_cc[VMIN] = 1; //block on read until 1 byte transmitted
+    tty.c_cc[VTIME] = 10; // 1 second read timeout
 
     tty.c_cflag |= (CLOCAL | CREAD); // ignore modem controls, enable reading for receiver
 
@@ -62,9 +63,12 @@ int write_serial(int abstract, const char* buffer,size_t size){
     return write(abstract, buffer, size);
 }
 
-int read_serial(int abstract, char* buffer, size_t size){
-    return read(abstract, buffer, size); //retirns number of bits read
+int configure_card_reader(int abstract){
+    const char* message = "D,2";
+    write(abstract,message, strlen(message));
+    return 0;
 }
+
 
 int main(){
     const char* port_name = "/dev/ttyACM0";
@@ -79,22 +83,26 @@ int main(){
         close_serial(abstract);
         return -1;
     }
-    /*
-    const char* message = "Hello, Serial Port!";
-    if (write_serial(abstract, message, strlen(message)) < 0) {
-        std::cerr << "write error: "
-                  << strerror(errno) << std::endl;
-    }
-    */
+    
+
    while(true){
-        char read_buffer[100];
-        int bytes = read_serial(abstract, read_buffer, sizeof(read_buffer));
-        if(bytes < 0){
-            std::cerr << "read error: " 
-                      << strerror(errno) <<std::endl;
-        }else{
-            std::cout << std::string(read_buffer, bytes) << std::endl;
+        char c;
+        std::string buffer = "";
+        const char* message = "PING";
+
+        //send message
+        if (write_serial(abstract, message, strlen(message)) < 0) {
+            std::cerr << "write error: "
+                      << strerror(errno) << std::endl;
         }
+
+        //read response
+        while(c != '\n' && buffer.size() > BUFFER_SIZE){
+            read(abstract,&c,1);
+            buffer += c;
+        }
+        std::cout << "read: " << buffer;
+
    }
 
     close_serial(abstract);
