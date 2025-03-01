@@ -84,26 +84,33 @@ int main(){
         return -1;
     }
     
-
-   while(true){
-        char c;
+    bool waiting_for_response = false;
+    while(true){
+        char c = 't';
         std::string buffer = "";
         const char* message = "PING";
 
         //send message
-        if (write_serial(abstract, message, strlen(message)) < 0) {
-            std::cerr << "write error: "
-                      << strerror(errno) << std::endl;
+        if(!waiting_for_response){
+            if (write_serial(abstract, message, strlen(message)) < 0) {
+                std::cerr << "write error: "
+                        << strerror(errno) << std::endl;
+            }
+            std::cout << "\nsending message...\n";
         }
-
+        waiting_for_response = true;
         //read response
-        while(c != '\n' && buffer.size() > BUFFER_SIZE){
+        while(c != '\n' && buffer.size() < BUFFER_SIZE){
             read(abstract,&c,1);
             buffer += c;
+            
         }
-        std::cout << "read: " << buffer;
+            std::cout << "read{\n " << buffer <<" }\n\n";
+            if(buffer == "PONG\r\n"){
+                waiting_for_response = false;
+            }else std::cout << "\nno match...\n";
 
-   }
+    }
 
     close_serial(abstract);
     return 0;
