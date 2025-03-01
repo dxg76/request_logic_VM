@@ -76,5 +76,6 @@
         "typeinfo": "cpp",
         "valarray": "cpp",
         "variant": "cpp"
-    }
+    },
+    "cmake.sourceDirectory": "C:/Users/dante/OneDrive/Desktop/MRSTV_LOCAL/request_logic_VM/whisper/whisper.cpp-master/ggml"
 }
