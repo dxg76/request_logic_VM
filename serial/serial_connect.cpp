@@ -6,6 +6,7 @@
 #include <cstring>
 
 #define BUFFER_SIZE 256
+//int abstract;
 int open_serial(const char* port_name){
     //open serial port for  synchronous IO, read/write, checks it is not a controlling terminal
     int abstract = open(port_name, O_RDWR | O_NOCTTY | O_SYNC); 
@@ -39,8 +40,8 @@ bool configure_serial(int abstract, int speed){
     tty.c_oflag = 0; // no remap, no delays
     tty.c_iflag &= ~(IXON | IXOFF| IXANY); // disable flow control
 
-    tty.c_cc[VMIN] = 1; //block on read until 1 byte transmitted
-    tty.c_cc[VTIME] = 10; // 1 second read timeout
+    tty.c_cc[VMIN] = 0; //block on read until 1 byte transmitted
+    tty.c_cc[VTIME] = 3; // 1 second read timeout
 
     tty.c_cflag |= (CLOCAL | CREAD); // ignore modem controls, enable reading for receiver
 
@@ -69,6 +70,7 @@ int configure_card_reader(int abstract){
     return 0;
 }
 
+int write_to_MDB()
 
 int main(){
     const char* port_name = "/dev/ttyACM0";
@@ -79,36 +81,44 @@ int main(){
     }
 
     //configure_serial port 
-    if(!configure_serial(abstract, B9600)){ // baud rate = 9600
+    if(!configure_serial(abstract, B115200)){ // baud rate = 115200
         close_serial(abstract);
         return -1;
     }
-    
-    bool waiting_for_response = false;
-    while(true){
-        char c = 't';
-        std::string buffer = "";
-        const char* message = "PING";
-
-        //send message
-        if(!waiting_for_response){
-            if (write_serial(abstract, message, strlen(message)) < 0) {
+    bool exit_loop =  false;
+    while(!exit_loop){
+        char buffer[BUFFER_SIZE] = "";
+        std::string message = "";
+        std::cout << "Enter: ";
+        std::cin >> message;
+        if(message ==  "q")
+            exit_loop = true;
+        
+        message = message + '\n';
+        const char* message_ready = message.c_str();
+        if(!exit_loop){
+            //send message
+            if (write_serial(abstract, message_ready, strlen(message_ready)) < 0) {
                 std::cerr << "write error: "
                         << strerror(errno) << std::endl;
             }
-            std::cout << "\nsending message...\n";
+
+            int bytes_read = 1;
+            while(bytes_read>0){
+                bytes_read = read(abstract,buffer,BUFFER_SIZE);
+            }
+            /*
+            //read response
+            while(c!= '\n' && buffer.size() < BUFFER_SIZE){
+                read(abstract, &c,1);
+                buffer += c;
+                std::cout << "\nlooping\n";
+            }
+            */
+            if(strlen(buffer) != 0){
+                std::cout << "read{\n " << buffer <<"}\n\n";
+            }else std::cout << "\nnothing to read\n" << std::endl;
         }
-        waiting_for_response = true;
-        //read response
-        while(c != '\n' && buffer.size() < BUFFER_SIZE){
-            read(abstract,&c,1);
-            buffer += c;
-            
-        }
-            std::cout << "read{\n " << buffer <<" }\n\n";
-            if(buffer == "PONG\r\n"){
-                waiting_for_response = false;
-            }else std::cout << "\nno match...\n";
 
     }
 
