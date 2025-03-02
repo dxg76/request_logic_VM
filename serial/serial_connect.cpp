@@ -6,7 +6,8 @@
 #include <cstring>
 
 #define BUFFER_SIZE 256
-//int abstract;
+int abstract;
+std::string response;
 int open_serial(const char* port_name){
     //open serial port for  synchronous IO, read/write, checks it is not a controlling terminal
     int abstract = open(port_name, O_RDWR | O_NOCTTY | O_SYNC); 
@@ -18,11 +19,11 @@ int open_serial(const char* port_name){
     return abstract;
 }
 
-void close_serial(int abstract){
+void close_serial(){
     close(abstract);
 }
 
-bool configure_serial(int abstract, int speed){
+bool configure_serial(int speed){
     struct termios tty; //structure to hold serial port attributes
 
     if(tcgetattr(abstract, &tty) != 0){ //store attributes
@@ -41,7 +42,7 @@ bool configure_serial(int abstract, int speed){
     tty.c_iflag &= ~(IXON | IXOFF| IXANY); // disable flow control
 
     tty.c_cc[VMIN] = 0; //block on read until 1 byte transmitted
-    tty.c_cc[VTIME] = 3; // 1 second read timeout
+    tty.c_cc[VTIME] = 10; // 1 second read timeout
 
     tty.c_cflag |= (CLOCAL | CREAD); // ignore modem controls, enable reading for receiver
 
@@ -60,68 +61,94 @@ bool configure_serial(int abstract, int speed){
     return true;
 }
 
-int write_serial(int abstract, const char* buffer,size_t size){
-    return write(abstract, buffer, size);
-}
-
-int configure_card_reader(int abstract){
-    const char* message = "D,2";
-    write(abstract,message, strlen(message));
+int write_to_MDB(std::string msg){
+    msg = msg + '\n';
+    const char* msg_ready = msg.c_str();
+    if (write(abstract, msg_ready, strlen(msg_ready)) < 0) {
+        std::cerr << "write error: "
+                << strerror(errno) << std::endl;
+                return -1;
+    }
     return 0;
 }
 
-int write_to_MDB()
+int read_from_mdb(){
+    char buffer[BUFFER_SIZE] = "";
+    int bytes_read = 1;
+    while(bytes_read>0){
+        bytes_read = read(abstract,buffer,BUFFER_SIZE);
+    }
+    if(strlen(buffer) == 0){
+        std::cout << "nothing read" << std::endl;
+        return -1;
+    }
+
+
+
+    std::cout << "this is the buffer: " << buffer << "the number of bytes transmitted is: " <<strlen(buffer) <<std::endl;
+    response = buffer;
+    return strlen(buffer); //success
+}
+
+int configure_card_reader(){
+    std::string c_master =  "D,2";
+    std::string c_peripheral = "C,1";
+    std::string enable_reader = "D,READER,1";
+
+    tcflush(abstract,TCIOFLUSH);
+    //enable cashless master
+    if(write_to_MDB(c_master) != 0){
+        return -1;
+    }
+    //MDB response to initialization
+    if(read_from_mdb() > 0){
+        std::cout << "mdb response: " << response;
+    }else std::cout << "no response from " << c_master <<std::endl;
+    
+    //enable cashless peripheral
+    if(write_to_MDB(c_peripheral) != 0){
+        return -1;
+    }
+    //MDB response to initialization
+    if(read_from_mdb() > 0){
+        std::cout << "mdb response: " <<  response;
+    }else std::cout << "no response to " << c_peripheral <<std::endl;
+
+    if(write_to_MDB(enable_reader) != 0){
+        return -1;
+    }
+    //MDB response to initialization
+    if(read_from_mdb() > 0){
+        std::cout << "mdb response: " <<  response;
+    }else std::cout << "no response from " << enable_reader <<std::endl;
+
+    return 0;
+}
+
+
 
 int main(){
     const char* port_name = "/dev/ttyACM0";
+    //open serial connection
+    abstract = open_serial(port_name);
 
-    int abstract = open_serial(port_name);
+    //serial port failure
     if(abstract < 0){
         return -1;
     }
 
     //configure_serial port 
-    if(!configure_serial(abstract, B115200)){ // baud rate = 115200
-        close_serial(abstract);
+    if(!configure_serial(B115200)){ // baud rate = 115200
+        close_serial();
         return -1;
     }
-    bool exit_loop =  false;
-    while(!exit_loop){
-        char buffer[BUFFER_SIZE] = "";
-        std::string message = "";
-        std::cout << "Enter: ";
-        std::cin >> message;
-        if(message ==  "q")
-            exit_loop = true;
-        
-        message = message + '\n';
-        const char* message_ready = message.c_str();
-        if(!exit_loop){
-            //send message
-            if (write_serial(abstract, message_ready, strlen(message_ready)) < 0) {
-                std::cerr << "write error: "
-                        << strerror(errno) << std::endl;
-            }
-
-            int bytes_read = 1;
-            while(bytes_read>0){
-                bytes_read = read(abstract,buffer,BUFFER_SIZE);
-            }
-            /*
-            //read response
-            while(c!= '\n' && buffer.size() < BUFFER_SIZE){
-                read(abstract, &c,1);
-                buffer += c;
-                std::cout << "\nlooping\n";
-            }
-            */
-            if(strlen(buffer) != 0){
-                std::cout << "read{\n " << buffer <<"}\n\n";
-            }else std::cout << "\nnothing to read\n" << std::endl;
-        }
-
+    
+    //configure reader
+    if(configure_card_reader() < 0){
+        close_serial();
+        return -1;
     }
-
-    close_serial(abstract);
+    std::cout <<"\nconfigured card reader" << std::endl;
+    close_serial(); 
     return 0;
 }
