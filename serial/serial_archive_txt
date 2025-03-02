@@ -1,0 +1,30 @@
+
+    bool exit_loop =  false;
+    while(!exit_loop){
+        char buffer[BUFFER_SIZE] = "";
+        std::string message = "";
+        std::cout << "Enter: ";
+        std::cin >> message;
+        if(message ==  "q")
+            exit_loop = true;
+        
+        message = message + '\n';
+        const char* message_ready = message.c_str();
+        if(!exit_loop){
+            //send message
+            if (write_serial( message_ready, strlen(message_ready)) < 0) {
+                std::cerr << "write error: "
+                        << strerror(errno) << std::endl;
+            }
+
+            int bytes_read = 1;
+            while(bytes_read>0){
+                bytes_read = read(abstract,buffer,BUFFER_SIZE);
+            }
+            
+            if(strlen(buffer) != 0){
+                std::cout << "read{\n " << buffer <<"}\n\n";
+            }else std::cout << "\nnothing to read\n" << std::endl;
+        }
+
+    }

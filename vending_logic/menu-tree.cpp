@@ -16,17 +16,17 @@ Menu_tree::Menu_tree(){
 
     //Creating the Candy nodes
     Node* candy = new Node("candy");
-        candy->add_child(new Node("KitKat", "A1", 1.00, 12)); 
+        candy->add_child(new Node("Kit-Kat", "A1", 1.00, 12)); 
         candy->add_child(new Node("Reese's", "A2", 1.00, 12));
-        candy->add_child(new Node("Baby Ruth", "A3", 1.00, 12));
-        candy->add_child(new Node("Three Musketeer's", "A4", 1.00, 12));
+        candy->add_child(new Node("Ruth", "A3", 1.00, 12));
+        candy->add_child(new Node("musketeers", "A4", 1.00, 12));
 
     //Creating the Chip nodes
     Node* chips = new Node("chips");
-        chips->add_child(new Node("Cool Ranch Dorito's", "B1", 1.00, 40));
-        chips->add_child(new Node("Cheeto's", "B2", 1.00, 40));
-        chips->add_child(new Node("Pretzel's", "B3", 1.00, 40));
-        chips->add_child(new Node("Barbecue Lays", "B4", 1.00, 40));
+        chips->add_child(new Node("Doritos", "B1", 1.00, 40));
+        chips->add_child(new Node("Cheetos", "B2", 1.00, 40));
+        chips->add_child(new Node("pretzels", "B3", 1.00, 40));
+        chips->add_child(new Node("barbecue", "B4", 1.00, 40));
 
     //Attaches categories to the root node
     root->add_child(candy);

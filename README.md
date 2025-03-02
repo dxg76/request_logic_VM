@@ -91,6 +91,12 @@ Removed unecessary functionality
 Began Dispense and Pay functions
 Updated helper functions for the node class
 
+2/24/25
+*Dante Gordon*:  
+Integrated transcription instead of command line prompts.  
+Removed namespaces and adjusted product names to better align  
+with whispers output.
+
 ## CAPTURE
 
 #### Dante Gordon
@@ -140,7 +146,7 @@ Researched Arguments and Methods to use in whisper.cpp
 
 2/17/25
 *Dante Gordon*:  
-Fully integrated with whisper section closed  
+Fully integrated with whisper. section closed  
 
 ## SERIAL
 
@@ -183,6 +189,11 @@ Began Setup/Config Process Commands
 *Devan Rivera*:
 Setup/Config Process Commands
 Vend Process Commands
+
+2/24/25
+*Dante Gordon*: 
+Crypto Key error fixed
+Full vend communication testing can begin 
 
 ## Whisper
 ### Overview
@@ -233,3 +244,9 @@ that node from the list
 2/17/26
 *Dante Gordon*:  
 Fully unified capture and transcription
+
+2/24/25
+*Dante Gordon*:  
+Unified with main vending logic  
+Program history will remain open to address changes in latency.  
+Strategy to try to reduce this is padding the audio files allowing the recordings to be done faster  
