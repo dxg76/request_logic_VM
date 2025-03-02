@@ -5,9 +5,8 @@
 #include <errno.h>
 #include <cstring>
 
-#define BUFFER_SIZE 256
+#define BUFFER_SIZE 512
 int abstract;
-std::string response;
 int open_serial(const char* port_name){
     //open serial port for  synchronous IO, read/write, checks it is not a controlling terminal
     int abstract = open(port_name, O_RDWR | O_NOCTTY | O_SYNC); 
@@ -72,22 +71,22 @@ int write_to_MDB(std::string msg){
     return 0;
 }
 
-int read_from_mdb(){
+std::string read_from_mdb(){
     char buffer[BUFFER_SIZE] = "";
     int bytes_read = 1;
+    std::string response = "";
     while(bytes_read>0){
         bytes_read = read(abstract,buffer,BUFFER_SIZE);
+        response += buffer;
     }
     if(strlen(buffer) == 0){
-        std::cout << "nothing read" << std::endl;
-        return -1;
+        return "nothing read";
     }
 
 
 
-    std::cout << "this is the buffer: " << buffer << "the number of bytes transmitted is: " <<strlen(buffer) <<std::endl;
-    response = buffer;
-    return strlen(buffer); //success
+    //std::cout << "this is the buffer: " << buffer << "the number of bytes transmitted is: " <<strlen(buffer) <<std::endl;
+    return response; //success
 }
 
 int configure_card_reader(){
@@ -95,37 +94,56 @@ int configure_card_reader(){
     std::string c_peripheral = "C,1";
     std::string enable_reader = "D,READER,1";
 
+    //flush transmit and receive buffers
     tcflush(abstract,TCIOFLUSH);
+
+    
     //enable cashless master
+    std::cout << c_master << std::endl;
     if(write_to_MDB(c_master) != 0){
         return -1;
     }
     //MDB response to initialization
-    if(read_from_mdb() > 0){
-        std::cout << "mdb response: " << response;
-    }else std::cout << "no response from " << c_master <<std::endl;
+    std::cout << "mdb response: \n" << read_from_mdb() <<std::endl;
     
     //enable cashless peripheral
+    std::cout << c_peripheral << std::endl;
     if(write_to_MDB(c_peripheral) != 0){
         return -1;
     }
-    //MDB response to initialization
-    if(read_from_mdb() > 0){
-        std::cout << "mdb response: " <<  response;
-    }else std::cout << "no response to " << c_peripheral <<std::endl;
+    //MDB response to enabling cashless peripheral
+    std::cout << "mdb response: \n" << read_from_mdb() <<std::endl;
 
+
+    //enable reader
+    std::cout << enable_reader << std::endl;
     if(write_to_MDB(enable_reader) != 0){
         return -1;
     }
-    //MDB response to initialization
-    if(read_from_mdb() > 0){
-        std::cout << "mdb response: " <<  response;
-    }else std::cout << "no response from " << enable_reader <<std::endl;
+    //MDB response to enabling reader
+    std::cout << "mdb response: \n" << read_from_mdb() <<std::endl;
+
+    //card reader success confirmation
+    std::cout <<"[configured card reader]" << std::endl;
 
     return 0;
 }
 
+bool accept_payment(double item_cost){
+    std::string request_payment = "D,REQ," + std::to_string(item_cost);
+    std::string vend_confirmed;
+    std::string vend_rejected;
 
+    while (read_from_mdb() != "placeholder"){}
+    write_to_MDB(request_payment);
+    if(read_from_mdb() != "placeholder"){
+        
+    }
+    
+
+
+    return true;
+}
 
 int main(){
     const char* port_name = "/dev/ttyACM0";
@@ -148,7 +166,6 @@ int main(){
         close_serial();
         return -1;
     }
-    std::cout <<"\nconfigured card reader" << std::endl;
     close_serial(); 
     return 0;
 }
