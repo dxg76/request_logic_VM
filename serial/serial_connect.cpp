@@ -129,7 +129,7 @@ int configure_card_reader(){
     return 0;
 }
 
-bool accept_payment(double item_cost){
+bool accept_payment(float item_cost){
     std::string request_payment = "D,REQ," + std::to_string(item_cost);
     std::string vend_confirmed;
     std::string vend_rejected;
@@ -137,11 +137,9 @@ bool accept_payment(double item_cost){
     while (read_from_mdb() != "placeholder"){}
     write_to_MDB(request_payment);
     if(read_from_mdb() != "placeholder"){
-        
-    }
-    
-
-
+        write_to_MDB(vend_rejected);
+        return false;
+    }else write_to_MDB(vend_confirmed);
     return true;
 }
 
