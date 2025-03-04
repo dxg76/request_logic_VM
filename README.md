@@ -100,6 +100,16 @@ Integrated transcription instead of command line prompts.
 Removed namespaces and adjusted product names to better align  
 with whispers output.
 
+3/2/25
+*Devan Rivera*:
+Began implementation of decoder device to play .wav files
+Researched into whispers decoder capabilties
+
+3/4/24
+*Devan Rivera*:
+Implemented more of the decoder and added a function to play the .wav files
+Added "wav files" folder into "vending_logic" to reach the audio files
+
 ## CAPTURE
 
 #### Dante Gordon
@@ -145,7 +155,6 @@ older files starting from the first file.
 2/6/25
 *Devan Rivera*
 Researched Arguments and Methods to use in whisper.cpp
-(Plan to add notes file)
 
 2/17/25
 *Dante Gordon*:  
@@ -158,9 +167,6 @@ Fully integrated with whisper. section closed
 This program will be intended to initiate a serial connection via usb with the MDB interface. 
 It will interface with the vending algorithm and send the correct commands via the serial connection
 This must be done for a linux system, complications may occur using a linux subsystem
-
-
-
 
 ### Program History:
 1/17/25
