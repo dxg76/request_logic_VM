@@ -18,8 +18,11 @@ The intention of this program is to run as a beta of the vending logic used for 
 Currently the program supports parsing and checking strings for a few key words. These key words will be used to navigate a tree data structure representing menus in which to communicate with the machine. These will include a  main menu which will act as the root node of the tree with pointers to each of the submenus. These submenus will include the menus for each type of snack as well as a help menu.
 
 ### Dev Info:
-Compile the tokenizer using:
-make -f token.mk
+Compile the vendor using:
+make -f vendor.mk
+
+Since the vendor now includes whisper to access the whisper library you must run this command before running the program:  
+export LD_LIBRARY_PATH=./whisper.cpp-master/build/src:$LD_LIBRARY_PATH
 
 run tokenizer:
 ./main 
