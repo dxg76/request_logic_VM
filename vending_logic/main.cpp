@@ -10,6 +10,24 @@
 
 #include "whisper.h" 
 #include "miniaudio.h"
+
+/*
+*
+*Dante Gordon
+*Updated 10/13/24
+*
+*Devan Rivera
+*Updated 2/3/25
+*Updated 2/6/25
+*Updated 2/7/25
+*Updated 2/17/25
+*Updated 2/18/25
+*Updated 3/2/25
+*Updated 3/3/25
+*
+*This is the driver file for the MRSTV logic
+*/
+
 /*
 transcriber vars
 */
@@ -286,23 +304,80 @@ void configure_all(){
 
 }
 
+/*Simple Audio Playback*/
 
+//Callback that feeds audio to the playback device from the decoder
+void data_decoder_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_unit32 frameCount){
+ 
+    ma_decoder* pDecoder = (ma_decoder*)pDevice->pUserData;
+    if(pDecoder == NULL){
+        return;
+    }
 
-/*
-*
-*Dante Gordon
-*Updated 10/13/24
-*
-*Devan Rivera
-*Updated 2/3/25
-*Updated 2/6/25
-*Updated 2/7/25
-*Updated 2/17/25
-*Updated 2/18/25
-*
-*This is the driver file for the MRSTV logic
-*/
+    ma_decoder_read_pcm_frames(pDecoder, pOutput, frameCount, NULL);
 
+    (void)pInput;    
+
+}
+
+//Plays the appropraite wav file from the filepath
+void play_wav_file(const std::string &filepath){
+
+    //Decoder Config
+    ma_result result;
+    ma_decoder decoder;
+    ma_device_config device_config;
+    ma_device decoder_device;
+
+    result = ma_decoder_init_file(filepath.c_str(), NULL, &decoder);
+
+    if(result != MA_SUCCESS){
+
+        std::cerr << "Failed to load file:" << filepath << std::endl;
+
+        return -2;
+
+    }
+
+    device_config = ma_device_config_init(ma_device_type_playback);
+    device_config.playback.format   = ma_format_s16; //16 bit signed integer format
+    device_config.playback.channels = 1;            //Mono channel due to playback device
+    device_config.sampleRate        = 28800;        //Sampling rate set to 1.2*24kHz to adjust for speed of audio
+    device_config.dataCallback      = data_decoder_callback;
+    device_config.pUserData         = &decoder;
+
+    if(ma_device_init(NULL, &device_config, &decoder_device) != MA_SUCCESS){
+
+        std::cerr << "Failed to initialize playback device." << std::endl;
+
+        ma_decoder_uninit(&decoder);
+
+        return -3;
+
+    }
+
+    if(ma_device_start(&decoder_device) != MA_SUCCESS){
+
+        std::cerr << "Failed to start playback device." << std::endl;
+
+        ma_device_uninit(&decoder_device);
+        ma_decoder_uninit(&decoder);
+
+        return -4;
+
+    }
+
+    std::cout << "Playing:" << filepath << std::endl;
+
+    //Uninitialize the playback device and decoder
+    ma_device_uninit(&decoder_device);
+    ma_device_uninit(&decoder);
+
+    return 0;
+
+}
+
+//main method
 int main(int argc, const char** argv){
    
    //setup
