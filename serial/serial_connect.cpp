@@ -152,6 +152,8 @@ bool accept_payment(float item_cost){
 }
 
 int main(){
+
+    //linux usb port
     const char* port_name = "/dev/ttyACM0";
     //open serial connection
     abstract = open_serial(port_name);

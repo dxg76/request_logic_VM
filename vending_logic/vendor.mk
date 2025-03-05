@@ -8,6 +8,9 @@ main: main.o vendor.o node.o menu-tree.o
 	cd whisper.cpp-master && make base.en
 	$(X) -g -o $@ $^ $(L)
 
+vendor: main.o vendor.o node.o menu-tree.o 
+	$(X) -g -o $@ $^ $(L)
+
 main.o: main.cpp vendor.hpp 
 	$(X) $(F) -c $<
 
@@ -21,5 +24,5 @@ vendor.o: vendor.cpp vendor.hpp
 
 .PHONY: clean
 clean:
-	rm  *.o main *.wav whisper.cpp-master/models/ggml-base.en.bin
+	rm  *.o main vendor *.wav whisper.cpp-master/models/ggml-base.en.bin
 	rm -rf whisper.cpp-master/build

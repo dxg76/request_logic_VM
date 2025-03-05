@@ -13,11 +13,11 @@
 class Vendor{
     public:
     
-    Vendor();
     Vendor(bool mode);
 
     //serial variables
     int abstract;
+    std::string port_name = "/dev/ttyACM0";
     //serial methods
     int open_serial(const char* port_name);
     void close_serial();
@@ -25,7 +25,7 @@ class Vendor{
 
     //MDB methods
     int write_to_MDB(std::string msg);
-    std::string read_from_mdb();
+    std::string read_from_MDB();
     int configure_all();
     int configure_card_reader();
     int configure_coin_mech();
@@ -36,12 +36,11 @@ class Vendor{
     bool accept_coin_payment();
     bool accept_cash_payment();
 
-
-
     //vend methods
     void set_debug(bool mode); 
     void vend(std::string loc, float price);
     bool check_payment();
+    
     //token methods
     void parse(std::string request, Node* current_node);
     std::string read_tokens(Node* current_node);
