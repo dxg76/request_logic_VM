@@ -305,7 +305,7 @@ void configure_all(){
 }
 
 /*Simple Audio Playback*/
-/*
+
 //Callback that feeds audio to the playback device from the decoder
 void data_decoder_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount){
  
@@ -378,7 +378,7 @@ int play_wav_file(const std::string &filepath){
     return 0;
 
 }
-*/
+
 //main method
 int main(int argc, const char** argv){
    
