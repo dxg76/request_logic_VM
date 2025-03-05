@@ -18,7 +18,7 @@ Menu_tree::Menu_tree(){
     Node* candy = new Node("candy");
         candy->add_child(new Node("Kit-Kat", "A1", 1.00, 12)); 
         candy->add_child(new Node("Reese's", "A2", 1.00, 12));
-        candy->add_child(new Node("Ruth", "A3", 1.00, 12));
+        candy->add_child(new Node("Butter", "A3", 1.00, 12));
         candy->add_child(new Node("musketeers", "A4", 1.00, 12));
 
     //Creating the Chip nodes
@@ -32,7 +32,7 @@ Menu_tree::Menu_tree(){
     Node* chips = new Node("all");
         all->add_child(new Node("Kit-Kat", "A1", 1.00, 12)); 
         all->add_child(new Node("Reese's", "A2", 1.00, 12));
-        all->add_child(new Node("Ruth", "A3", 1.00, 12));
+        all->add_child(new Node("Butter", "A3", 1.00, 12));
         all->add_child(new Node("musketeers", "A4", 1.00, 12));
         all->add_child(new Node("Doritos", "B1", 1.00, 40));
         all->add_child(new Node("Cheetos", "B2", 1.00, 40));

@@ -305,7 +305,7 @@ void configure_all(){
 }
 
 /*Simple Audio Playback*/
-/*
+
 //Callback that feeds audio to the playback device from the decoder
 void data_decoder_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount){
  
@@ -378,7 +378,7 @@ int play_wav_file(const std::string &filepath){
     return 0;
 
 }
-*/
+
 //main method
 int main(int argc, const char** argv){
    
@@ -399,12 +399,21 @@ int main(int argc, const char** argv){
 
     //setup end
 
-    
+    //Plays MR STv's wlecome statement before program starts
+    std::string welcome_audio = ".wav files/Hello_Statement.wav";
+    int welcome_result = play_wav_file(welcome_audio);
+
+    if(welcome_result){
+        std::cout << "Audio successfully played." << std::endl;
+    }
+    else{
+        std::cout << "Audio Error." << std::endl;
+    }
 
     //main loop
 
     while(true){
-        
+
         //error handling for parse and read
         do{
             vendor.parse(get_command(), current_node);
