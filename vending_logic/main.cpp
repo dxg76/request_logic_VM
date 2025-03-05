@@ -307,7 +307,7 @@ void configure_all(){
 /*Simple Audio Playback*/
 /*
 //Callback that feeds audio to the playback device from the decoder
-void data_decoder_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_unit32 frameCount){
+void data_decoder_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount){
  
     ma_decoder* pDecoder = (ma_decoder*)pDevice->pUserData;
     if(pDecoder == NULL){
@@ -321,7 +321,7 @@ void data_decoder_callback(ma_device* pDevice, void* pOutput, const void* pInput
 }
 
 //Plays the appropraite wav file from the filepath
-void play_wav_file(const std::string &filepath){
+int play_wav_file(const std::string &filepath){
 
     //Decoder Config
     ma_result result;
@@ -329,6 +329,7 @@ void play_wav_file(const std::string &filepath){
     ma_device_config device_config;
     ma_device decoder_device;
 
+    //Initialize the decoder using the file path
     result = ma_decoder_init_file(filepath.c_str(), NULL, &decoder);
 
     if(result != MA_SUCCESS){
@@ -339,6 +340,7 @@ void play_wav_file(const std::string &filepath){
 
     }
 
+    //Configure the playback device based on decoder
     device_config = ma_device_config_init(ma_device_type_playback);
     device_config.playback.format   = ma_format_s16; //16 bit signed integer format
     device_config.playback.channels = 1;            //Mono channel due to playback device
@@ -371,7 +373,7 @@ void play_wav_file(const std::string &filepath){
 
     //Uninitialize the playback device and decoder
     ma_device_uninit(&decoder_device);
-    ma_device_uninit(&decoder);
+    ma_decoder_uninit(&decoder);
 
     return 0;
 
