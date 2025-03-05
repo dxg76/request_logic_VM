@@ -28,9 +28,21 @@ Menu_tree::Menu_tree(){
         chips->add_child(new Node("pretzels", "B3", 1.00, 40));
         chips->add_child(new Node("barbecue", "B4", 1.00, 40));
 
+    //Creating the All nodes
+    Node* chips = new Node("all");
+        all->add_child(new Node("Kit-Kat", "A1", 1.00, 12)); 
+        all->add_child(new Node("Reese's", "A2", 1.00, 12));
+        all->add_child(new Node("Ruth", "A3", 1.00, 12));
+        all->add_child(new Node("musketeers", "A4", 1.00, 12));
+        all->add_child(new Node("Doritos", "B1", 1.00, 40));
+        all->add_child(new Node("Cheetos", "B2", 1.00, 40));
+        all->add_child(new Node("pretzels", "B3", 1.00, 40));
+        all->add_child(new Node("barbecue", "B4", 1.00, 40));
+
     //Attaches categories to the root node
     root->add_child(candy);
     root->add_child(chips);
+    root->add_child(all);
 
 }
 

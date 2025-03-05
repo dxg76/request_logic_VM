@@ -114,6 +114,7 @@ Added "wav files" folder into "vending_logic" to reach the audio files
 *Devan Rivera*:
 Managed to compile decoder device (Unable to test locally currently)
 Began implementing audio playback logic down tree structure
+Added All class to Tree Data Structure 
 
 ## CAPTURE
 
