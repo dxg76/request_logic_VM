@@ -18,6 +18,7 @@ class Vendor{
     //serial variables
     int abstract;
     std::string port_name = "/dev/ttyACM0";
+    float total_currency;
     //serial methods
     int open_serial(const char* port_name);
     void close_serial();
@@ -33,19 +34,22 @@ class Vendor{
 
     //accept payments
     bool accept_card_payment(float item_cost);
-    bool accept_coin_payment();
-    bool accept_cash_payment();
+    float accept_coin_payment(); //returns 0 if no currency input to machine
+    float accept_bill_payment(); //returns 0 if no currency input to machine
 
     //vend methods
     void set_debug(bool mode); 
     void vend(std::string loc, float price);
-    bool check_payment();
+    bool check_payment(float item_cost);
     
     //token methods
     void parse(std::string request, Node* current_node);
     std::string read_tokens(Node* current_node);
     void empty_tokens();
     void print_tokens();
+    std::string get_hex(std::string response);
+    float read_coin_code(std::string hex_code);
+    float read_bill_code(std::string hex_code);
 
     //token vars 
     std::vector<std::string> tokens;
