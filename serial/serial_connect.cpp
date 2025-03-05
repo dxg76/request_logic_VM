@@ -129,6 +129,14 @@ int configure_card_reader(){
     return 0;
 }
 
+int configure_coin_mech(){
+    std::string coin_setup;
+    if(write_to_MDB(coint_setup) < 0){
+        return -1;
+    }
+    std::cout << read_from_mdb() <<std::endl;
+}
+
 bool accept_payment(float item_cost){
     std::string request_payment = "D,REQ," + std::to_string(item_cost);
     std::string vend_confirmed;
@@ -144,6 +152,8 @@ bool accept_payment(float item_cost){
 }
 
 int main(){
+
+    //linux usb port
     const char* port_name = "/dev/ttyACM0";
     //open serial connection
     abstract = open_serial(port_name);

@@ -1,17 +1,45 @@
 #ifndef VENDOR_HPP
 #define VENDOR_HPP
 #define MINIAUDIO_IMPLEMENTATION
+#define BUFFER_SIZE 512
+
 #include <cstring>
+#include <termios.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <errno.h>
 #include "menu-tree.hpp"
 
 class Vendor{
     public:
     
-    Vendor();
     Vendor(bool mode);
+
+    //serial variables
+    int abstract;
+    std::string port_name = "/dev/ttyACM0";
+    //serial methods
+    int open_serial(const char* port_name);
+    void close_serial();
+    bool configure_serial(int speed);
+
+    //MDB methods
+    int write_to_MDB(std::string msg);
+    std::string read_from_MDB();
+    int configure_all();
+    int configure_card_reader();
+    int configure_coin_mech();
+    int configure_bill_validator();
+
+    //accept payments
+    bool accept_card_payment(float item_cost);
+    bool accept_coin_payment();
+    bool accept_cash_payment();
+
     //vend methods
     void set_debug(bool mode); 
     void vend(std::string loc, float price);
+    bool check_payment();
     
     //token methods
     void parse(std::string request, Node* current_node);

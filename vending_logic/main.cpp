@@ -305,7 +305,7 @@ void configure_all(){
 }
 
 /*Simple Audio Playback*/
-
+/*
 //Callback that feeds audio to the playback device from the decoder
 void data_decoder_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount){
  
@@ -378,7 +378,7 @@ int play_wav_file(const std::string &filepath){
     return 0;
 
 }
-
+*/
 //main method
 int main(int argc, const char** argv){
    
@@ -418,17 +418,19 @@ int main(int argc, const char** argv){
 
         }
 
-
+        //navigate node based on command
         current_node = current_node->find_child(vendor_result);
 
-        if(current_node != vendor.vendor_menu.root && current_node->get_price() < .1){ //in menu viewing items
+        //in menu listing items
+        if(current_node != vendor.vendor_menu.root && current_node->get_price() < .1){ 
 
             std::cout << "---" << vendor_result << " menu---\n" << std::endl; 
 
             vendor.vendor_menu.selection_menu(current_node, 0);
 
-
-        }else if(current_node != vendor.vendor_menu.root){ //making selection
+        }
+        //making item selection from sub menu
+        else if(current_node != vendor.vendor_menu.root){
             vendor.empty_tokens();
             do{
                 vendor.parse(get_command(), current_node);
@@ -444,7 +446,6 @@ int main(int argc, const char** argv){
                 std::cin >> payment;
                 
                 if(payment < price){
-
                     std::cout << "Insufficient funds" << std::endl;
 
                 }
@@ -454,9 +455,7 @@ int main(int argc, const char** argv){
                     std::cout << "Payment accepted. Dispensing: " << current_node->get_id() << std::endl;
 
                     if(change > 0.0){
-
                         std::cout << "Please collect your change: $" << change << std::endl;
-
                     }
 
                     current_node->set_quantity(current_node->get_quantity() - 1); //Reduces quantity by 1
