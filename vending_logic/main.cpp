@@ -14,9 +14,9 @@
 /*
 *
 *Dante Gordon
+*Devan Rivera
 *Updated 10/13/24
 *
-*Devan Rivera
 *Updated 2/3/25
 *Updated 2/6/25
 *Updated 2/7/25
@@ -24,6 +24,7 @@
 *Updated 2/18/25
 *Updated 3/2/25
 *Updated 3/3/25
+*Updated 3/5/25
 *
 *This is the driver file for the MRSTV logic
 */
@@ -400,7 +401,7 @@ int main(int argc, const char** argv){
     //setup end
 
     //Plays MR STv's wlecome statement before program starts
-    std::string welcome_audio = ".wav files/Hello_Statement.wav";
+    std::string welcome_audio = "wav files/Hello_Statement.wav";
     int welcome_result = play_wav_file(welcome_audio);
 
     if(welcome_result){
