@@ -2,6 +2,7 @@
 
 //costructor
 Vendor::Vendor(bool mode){
+    total_currency = 0;
     configure_all();
     set_debug(mode);
 }
@@ -22,7 +23,43 @@ void Vendor::vend(std::string loc, float price){
     }
 }
 
+bool Vendor::check_payment(float item_cost){
+    //paid by card
+    bool card_payment = false;
+
+    //poll payment peripherals
+    while(total_currency > item_cost && !card_payment){
+        total_currency += accept_coin_payment();
+        total_currency += accept_bill_payment();
+        card_payment = accept_card_payment(item_cost);
+    }
+    return true;
+}
+
 //token methods
+std::string Vendor::get_hex(std::string response){
+    std::string hex_code;
+    int start_index = response.find(',');
+    hex_code = response.substr(start_index);
+    return hex_code;
+}
+
+float Vendor::read_coin_code(std::string hex_code){
+    //no updates for the coin mech to share
+    if(hex_code == "ack"){
+        return 0;
+    }
+    //convert the string to a hexadecimal integer
+    int hex = std::stoi(hex_code, nullptr, 16);
+
+    //get bytes
+
+    return 0;
+}
+
+float Vendor::read_bill_code(std::string hex_code){
+    return 0;
+}
 void Vendor::parse(std::string request, Node* current_node){
 
     char* token;
@@ -323,12 +360,44 @@ bool Vendor::accept_card_payment(float item_cost) {
     return true;
 }
 
-bool Vendor::accept_coin_payment() {
-    // Implementation goes here
-    return false;
+float Vendor::accept_coin_payment() {
+    std::string poll_coin = "R,0B";
+    float inserted_currency = 0;
+    //request coin mech for update
+    write_to_MDB(poll_coin);
+    std::string response = read_from_MDB();
+    if(debug_mode){
+        std::cout << response << std::endl;
+    }
+    
+    //get hex code from machine
+    response = get_hex(response);
+    //read code
+    inserted_currency = read_coin_code(response);
+    //implement some string parsing and cost calculation
+    if(inserted_currency > .01){
+        return inserted_currency;
+    }else return 0;
 }
 
-bool Vendor::accept_cash_payment() {
-    // Implementation goes here
-    return false;
+float Vendor::accept_bill_payment() {
+    std::string poll_bill = "R,33";
+    float inserted_currency = 0;
+
+    //request bill validator for update
+    write_to_MDB(poll_bill);
+    std::string response = read_from_MDB();
+    if(debug_mode){
+        std::cout << response << std::endl;
+    }
+    
+    //get hex code from machine
+    response = get_hex(response);
+    //read code
+    inserted_currency = read_bill_code(response);
+    //implement some string parsing and cost calculation
+    if(inserted_currency > .01){
+        return inserted_currency;
+    }else return 0;
+
 }
