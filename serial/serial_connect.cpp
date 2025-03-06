@@ -9,6 +9,7 @@
 #define BUFFER_SIZE 512
 int abstract;
 bool debug_mode = true; 
+float total_currency;
 std::string port_name = "/dev/ttyACM0";
 int open_serial(const char* port_name){
     //open serial port for  synchronous IO, read/write, checks it is not a controlling terminal
@@ -67,13 +68,24 @@ bool configure_serial(int speed){
 std::string get_hex(std::string response){
     std::string hex_code;
     int start_index = response.find(',');
-    hex_code = response.substr(start_index);
+    int end_index = response.find('\n');
+    hex_code = response.substr(start_index+1, end_index-start_index-1);
+    std::cout << "Invisible characters found at indices: ";
+    for (size_t i = 0; i < hex_code.size(); ++i) {
+        if (!std::isprint(hex_code[i])) { // Checks for non-printable characters
+            std::cout << i << " (ASCII " << static_cast<int>(hex_code[i]) << "), ";
+        }
+    }
+    std::cout << std::endl;
     return hex_code;
 }
 
 float read_coin_code(std::string hex_code){
     //no updates for the coin mech to share
-    if(hex_code == "ack"){
+    int compare_code = hex_code.compare("ACK");
+    std::cout <<"compare code: " << compare_code <<std::endl;
+    if(compare_code == 0){
+        std::cout <<"no coins..." << std::endl;
         return 0;
     }
     //convert the string to a hexadecimal integer
@@ -84,6 +96,18 @@ float read_coin_code(std::string hex_code){
     return 0;
 }
 float read_bill_code(std::string hex_code){
+    //no updates for the coin mech to share
+    int compare_code = hex_code.compare("ACK");
+    std::cout <<"compare code: " << compare_code <<std::endl;
+    if(compare_code == 0){
+        std::cout <<"no bills... " <<std::endl;
+        return 0;
+    }
+    //convert the string to a hexadecimal integer
+    int hex = std::stoi(hex_code, nullptr, 16);
+
+    //get bytes
+
     return 0;
 }
 
@@ -183,8 +207,12 @@ bool accept_card_payment(float item_cost) {
     std::string vend_confirmed;
     std::string vend_rejected;
 
-    while (read_from_MDB() != "placeholder"){}
-        write_to_MDB(request_payment);
+    if(read_from_MDB() != "placeholder"){
+        std::cout << "no card..." <<std::endl;
+        return false;
+    }
+
+    write_to_MDB(request_payment);
     if(read_from_MDB() != "placeholder"){
         write_to_MDB(vend_rejected);
         return false;
@@ -197,6 +225,7 @@ float accept_coin_payment() {
     float inserted_currency = 0;
     //request coin mech for update
     write_to_MDB(poll_coin);
+    std::cout << "checking coins... " << std::endl;
     std::string response = read_from_MDB();
     if(debug_mode){
         std::cout << response << std::endl;
@@ -205,6 +234,8 @@ float accept_coin_payment() {
     //get hex code from machine
     response = get_hex(response);
     //read code
+    std::cout <<"hex code: " << response << std::endl;
+    std::cout << "\nend hex code" << std::endl;
     inserted_currency = read_coin_code(response);
     //implement some string parsing and cost calculation
     if(inserted_currency > .01){
@@ -218,14 +249,18 @@ float accept_bill_payment() {
 
     //request bill validator for update
     write_to_MDB(poll_bill);
+    std::cout << "checking bills..." << std::endl;
     std::string response = read_from_MDB();
     if(debug_mode){
         std::cout << response << std::endl;
     }
     
-    //get hex code from machine
+    //get hex code from machine  
     response = get_hex(response);
     //read code
+    std::cout <<"hex code: " << response << std::endl;
+    std::cout << "\nend hex code" << std::endl;
+
     inserted_currency = read_bill_code(response);
     //implement some string parsing and cost calculation
     if(inserted_currency > .01){
@@ -266,7 +301,19 @@ int configure_all() {
     return 0;
 }
 
-
+bool check_payment(float item_cost){
+    //paid by card
+    bool card_payment = false;
+    tcflush(abstract,TCIOFLUSH);
+    //poll payment peripherals
+    while(total_currency < item_cost && !card_payment){
+        total_currency += accept_coin_payment();
+        total_currency += accept_bill_payment();
+        card_payment = accept_card_payment(item_cost);
+    }
+    std::cout << "payment satisfied " << std::endl;
+    return true;
+}
 int main(){
     /*
     //linux usb port
@@ -291,7 +338,9 @@ int main(){
         return -1;
     }
     */
+
     configure_all();
+    check_payment(1);
     close_serial(); 
     return 0;
 }
