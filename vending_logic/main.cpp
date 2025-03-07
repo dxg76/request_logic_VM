@@ -378,8 +378,22 @@ int play_wav_file(const std::string &filepath){
     return 0;
 
 }
+<<<<<<< HEAD
+*/
 
+/*
+*
+*
+*
+=======
+
+>>>>>>> 088409cedee9008cc8a9f8575bcfb22f6e25dbbc
 //main method
+*
+*
+*
+*/
+
 int main(int argc, const char** argv){
    
    //setup
@@ -388,6 +402,7 @@ int main(int argc, const char** argv){
         debug_mode = true;
     }
 
+    //initailize vendor
     Vendor vendor(debug_mode);
     
     //Start at the root ("Main Menu")
@@ -402,7 +417,6 @@ int main(int argc, const char** argv){
     
 
     //main loop
-
     while(true){
         
         //error handling for parse and read
@@ -415,7 +429,6 @@ int main(int argc, const char** argv){
         if(vendor_result == "critical"){
             std::cout << "Exiting program." << std::endl;
             return 0;
-
         }
 
         //navigate node based on command
@@ -429,6 +442,7 @@ int main(int argc, const char** argv){
             vendor.vendor_menu.selection_menu(current_node, 0);
 
         }
+        
         //making item selection from sub menu
         else if(current_node != vendor.vendor_menu.root){
             vendor.empty_tokens();
