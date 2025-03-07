@@ -405,7 +405,7 @@ int main(int argc, const char** argv){
     int welcome_result = play_wav_file(welcome_audio);
 
     if(welcome_result){
-        std::cout << "Audio successfully played." << std::endl;
+        std::cout << "Audio successfully played." << std::endl; //Debug statement for audio
     }
     else{
         std::cout << "Audio Error." << std::endl;
@@ -449,6 +449,9 @@ int main(int argc, const char** argv){
             if(vendor_result == "y"){
                 //Implement payment logic here
                 float price = current_node->get_price();
+
+                std::string selected_audio = "wav files/Chosen_Statement.wav";
+                int selected_result = play_wav_file(selected_audio);
                 std::cout << "You have selected " << current_node->get_id() << std::endl;
                 std::cout << "Please insert " << price << std::endl;
 
@@ -465,6 +468,8 @@ int main(int argc, const char** argv){
                     std::cout << "Payment accepted. Dispensing: " << current_node->get_id() << std::endl;
 
                     if(change > 0.0){
+                        std::string change_audio = "wav files/Change_Statement.wav";
+                        int change_result = play_wav_file(change_audio);
                         std::cout << "Please collect your change: $" << change << std::endl;
                     }
 
@@ -483,6 +488,9 @@ int main(int argc, const char** argv){
 
     }
 
-    std::cout << "\nMr. Steve bids you farewell!" << std::endl;
+    //Plays the complete statement after the program ends
+    std::cout << "Thank you for using the vending machine." << std::endl;
+    std::string vend_complete = "wav files/Complete_Statement.wav";
+    int complete_result = play_wav_file(vend_complete);
     return 0;
 }

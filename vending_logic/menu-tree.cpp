@@ -34,7 +34,7 @@ Menu_tree::Menu_tree(){
     Node* all = new Node("all");
         all->add_child(new Node("Kit-Kat", "A1", 1.00, 12, "wav files/KitKat_Statement.wav")); 
         all->add_child(new Node("Reese's", "A2", 1.00, 12, "wav files/Reeses_Statement.wav"));
-        all->add_child(new Node("Butterfinger", "A3", 1.00, 12, "wav files/Baby_Ruth_Statement.wav"));
+        all->add_child(new Node("Butterfinger", "A3", 1.00, 12, "wav files/Butter_Finger_Statement.wav"));
         all->add_child(new Node("Musketeers", "A4", 1.00, 12, "wav files/Musketeers_Statement.wav"));
         all->add_child(new Node("Doritos", "B1", 1.00, 40, "wav files/Doritos_Statement.wav"));
         all->add_child(new Node("Cheetos", "B2", 1.00, 40, "wav files/Cheetos_Statement.wav"));
