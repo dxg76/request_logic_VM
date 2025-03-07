@@ -80,8 +80,8 @@ std::string get_hex(std::string response){
     return hex_code;
 }
 
-float read_coin_code(std::string hex_code){
-    //no updates for the coin mech to share
+float read_hex_code(std::string hex_code){
+    //no updates to share
     int compare_code = hex_code.compare("ACK");
     std::cout <<"compare code: " << compare_code <<std::endl;
     if(compare_code == 0){
@@ -90,25 +90,39 @@ float read_coin_code(std::string hex_code){
     }
     //convert the string to a hexadecimal integer
     int hex = std::stoi(hex_code, nullptr, 16);
+    //coin detected
+    if(hex > 0xF){
+        //get coin type from code
+        int coin_type = (hex>>8) & 0xF;
 
-    //get bytes
-
-    return 0;
-}
-float read_bill_code(std::string hex_code){
-    //no updates for the coin mech to share
-    int compare_code = hex_code.compare("ACK");
-    std::cout <<"compare code: " << compare_code <<std::endl;
-    if(compare_code == 0){
-        std::cout <<"no bills... " <<std::endl;
+        std::cout << "coin id: " << coin_type << std::endl;
+        if(coin_type == 2){
+            std::cout << "quarter inserted" << std::endl;
+            return .25; //quarter
+        }else if(coin_type == 1){
+            std::cout << "dime inserted" << std::endl;
+            return .10; //dime
+        }else if(coin_type == 0){
+            std::cout << "dime inserted" << std::endl;
+            return .05; //nickel
+        }else return 0; //unknown coin type
+        //get bytes
         return 0;
     }
-    //convert the string to a hexadecimal integer
-    int hex = std::stoi(hex_code, nullptr, 16);
+    //bill detected
+    else {
+        //get bill type
+        int bill_type = hex  & 0xF;
+        if(bill_type == 1){
+            std::cout << "5 dollar bill inserted" << std::endl;
+            return 5;
+        }
+        if(bill_type == 0){
+            std::cout << "1 dollar bill inserted" << std::endl;
+            return 1;            
+        }else return 0; //unknown bill type
+    }
 
-    //get bytes
-
-    return 0;
 }
 
 int write_to_MDB(std::string msg){
@@ -236,7 +250,7 @@ float accept_coin_payment() {
     //read code
     std::cout <<"hex code: " << response << std::endl;
     std::cout << "\nend hex code" << std::endl;
-    inserted_currency = read_coin_code(response);
+    inserted_currency = read_hex_code(response);
     //implement some string parsing and cost calculation
     if(inserted_currency > .01){
         return inserted_currency;
@@ -261,7 +275,7 @@ float accept_bill_payment() {
     std::cout <<"hex code: " << response << std::endl;
     std::cout << "\nend hex code" << std::endl;
 
-    inserted_currency = read_bill_code(response);
+    inserted_currency = read_hex_code(response);
     //implement some string parsing and cost calculation
     if(inserted_currency > .01){
         return inserted_currency;
@@ -307,9 +321,9 @@ bool check_payment(float item_cost){
     tcflush(abstract,TCIOFLUSH);
     //poll payment peripherals
     while(total_currency < item_cost && !card_payment){
-        total_currency += accept_coin_payment();
+        //total_currency += accept_coin_payment();
         total_currency += accept_bill_payment();
-        card_payment = accept_card_payment(item_cost);
+        //card_payment = accept_card_payment(item_cost);
     }
     std::cout << "payment satisfied " << std::endl;
     return true;
@@ -338,8 +352,9 @@ int main(){
         return -1;
     }
     */
-
+    tcflush(abstract,TCIOFLUSH);
     configure_all();
+    tcflush(abstract,TCIOFLUSH);
     check_payment(1);
     close_serial(); 
     return 0;
