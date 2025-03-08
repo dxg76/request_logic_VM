@@ -74,9 +74,27 @@ bool configure_serial(int speed){
 //token methods
 std::string get_hex(std::string response){
     std::string hex_code;
-    int start_index = response.find(',');
-    int end_index = response.find('\n');
+    std::cout << "this is response: " << response <<std::endl;
+    size_t start_index = response.find(',');
+    int end_index = response.find('\r');
+    //int error_check = response.find('\r');
+    /*
+    *
+    *
+    * 
+    * Dev Note: sometime systems sends \r\n sometimes
+    * just \n this is an error catch vvv DG
+    * 
+    * 
+    * 
+    * 
+    */
+  
+    //std::cout << "end index: " << end_index <<std::endl;
+    //std::cout << "error check: " << error_check <<std::endl;
+
     hex_code = response.substr(start_index+1, end_index-start_index-1);
+    
     std::cout << "Invisible characters found at indices: ";
     for (size_t i = 0; i < hex_code.size(); ++i) {
         if (!std::isprint(hex_code[i])) { // Checks for non-printable characters
@@ -84,6 +102,7 @@ std::string get_hex(std::string response){
         }
     }
     std::cout << std::endl;
+    
     return hex_code;
 }
 
@@ -99,7 +118,7 @@ float accept_coins(int hex){
         std::cout << "dime inserted" << std::endl;
         return .10; //dime
     }else if(coin_type == 0){
-        std::cout << "dime inserted" << std::endl;
+        std::cout << "nickel inserted" << std::endl;
         return .05; //nickel
     }else return 0; //unknown coin type
     //get bytes
@@ -109,31 +128,37 @@ float accept_coins(int hex){
 float accept_bills(int hex){
     //get bill type
     int bill_type = (hex>>8)  & 0xF;
-    if(bill_type == 1){
-        std::cout << "1 dollar bill inserted" << std::endl;
+    if(bill_type == 2){
+        std::cout << "5 dollar bill inserted!" << std::endl;
         //accept bill from the escrow
         write_to_MDB("R,35,1");
+        std::cout << "accepting from escrow..." <<std::endl;
         print_mdb_response();
         //poll to ensure the bill is in the clip
         write_to_MDB("R,33");
+        std::cout << "bill accepted: " <<std::endl;
         print_mdb_response();
         return 5;
     }
     if(bill_type == 0){
-        std::cout << "1 dollar bill inserted" << std::endl;
+        std::cout << "1 dollar bill inserted!" << std::endl;
         //accept bill from the escrow
         write_to_MDB("R,35,1");
+        std::cout << "accepting from escrow..." <<std::endl;
         print_mdb_response();
         //poll to ensure the bill is in the clip
         write_to_MDB("R,33");
+        std::cout << "bill accepted! " <<std::endl;
         print_mdb_response();
         return 1;            
     }else{
         //reject bill return to user
         write_to_MDB("R,35,0");
+        std::cout << "rejecting bill from escrow..." << std::endl;
         print_mdb_response();
         //poll to ensure the bill was returned
         write_to_MDB("R,33");
+        std::cout << "bill rejected!" << std::endl;
         print_mdb_response();
 
         return 0; //unknown bill type  
@@ -142,9 +167,14 @@ float accept_bills(int hex){
 float read_hex_code(std::string hex_code){
     //no updates to share
     int compare_code = hex_code.compare("ACK");
-    std::cout <<"compare code: " << compare_code <<std::endl;
+    //std::cout <<"compare code: " << compare_code <<std::endl;
     if(compare_code == 0){
-        std::cout <<"no coins..." << std::endl;
+        std::cout <<"no currency added" << std::endl;
+        return 0;
+    }
+    compare_code = hex_code.compare("NACK");
+    //std::cout <<"compare code: " << compare_code <<std::endl;
+    if(compare_code == 0){
         return 0;
     }
     
@@ -158,9 +188,8 @@ float read_hex_code(std::string hex_code){
     //convert the string to a hexadecimal integer
     int hex = std::stoi(hex_code, nullptr, 16);
     //coin detected
-    if(hex > 0xF){ //need to fix this statement because bill returns 2 byte code also
+    if((hex >> 15) != 1) //need to fix this statement because bill returns 2 byte code also
         return accept_coins(hex);
-    }
     //bill detected
     else return accept_bills(hex);
 
@@ -297,7 +326,6 @@ float check_coins() {
     std::cout << "\nend hex code" << std::endl;
     inserted_currency = read_hex_code(response);
 
-    //implement some string parsing and cost calculation
     if(inserted_currency > .01){
         return inserted_currency;
     }else return 0;
@@ -365,7 +393,7 @@ bool check_payment(float item_cost){
     tcflush(abstract,TCIOFLUSH);
     //poll payment peripherals
     while(total_currency < item_cost && !card_payment){
-        //total_currency += check_coins();
+        total_currency += check_coins();
         total_currency += check_bills();
         //card_payment = check_card_payment(item_cost);
     }
