@@ -431,6 +431,20 @@ int main(int argc, const char** argv){
         //navigate node based on command
         current_node = current_node->find_child(vendor_result);
 
+        //audio playback for current node
+        if(!node_audio.empty()){
+
+            int audio_result = play_wav_file(node_audio);
+
+            if(audio_result){
+                std::cout << "Audio successfully played." << std::endl; //Debug statement for audio
+            }
+            else{
+                std::cout << "Audio Error." << std::endl;
+            }
+
+        }
+
         //in menu listing items
         if(current_node != vendor.vendor_menu.root && current_node->get_price() < .1){ 
 
