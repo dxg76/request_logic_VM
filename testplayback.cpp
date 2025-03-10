@@ -22,8 +22,12 @@ void data_decoder_callback(ma_device* pDevice, void* pOutput, const void* pInput
 
 }
 
-//Plays the appropraite wav file from the filepath
-int play_wav_file(const std::string &filepath, float duration){
+//Plays the appropriate wav file from the filepath
+int play_wav_file(const std::string &filepath){
+    //get duration
+    SF_INFO sfinfo;
+    sf_open(filepath.c_str(), SFM_READ, &sfinfo);
+    float duration = (sfinfo.frames/28800);
     int duration_milli = duration*1000;
     //Decoder Config
     ma_result result;
@@ -80,6 +84,7 @@ int play_wav_file(const std::string &filepath, float duration){
     return 0;
 }
 
+/*
 void printSFInfo(const SF_INFO& sfinfo) {
     std::cout << "Audio File Info:\n";
     std::cout << "--------------------------\n";
@@ -96,12 +101,8 @@ void printSFInfo(const SF_INFO& sfinfo) {
     std::cout << "Format Type  : " << major_format << " (Container)\n";
     std::cout << "Encoding     : " << encoding << " (Bit Depth/PCM Type)\n";
 }
-
+*/
 int main(int argc, char** argv){
-    SF_INFO sfinfo;
-    sf_open(argv[1], SFM_READ, &sfinfo);
-    float duration = (sfinfo.frames/28800);
-    std::cout << "duration: " << duration <<std::endl;
-    play_wav_file(argv[1], duration);
+    play_wav_file(argv[1]);
     return 0;
 }

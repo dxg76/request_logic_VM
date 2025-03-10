@@ -172,7 +172,7 @@ float read_hex_code(std::string hex_code){
         std::cout <<"no currency added" << std::endl;
         return 0;
     }
-    compare_code = hex_code.compare("NACK");
+    git compare_code = hex_code.compare("NACK");
     //std::cout <<"compare code: " << compare_code <<std::endl;
     if(compare_code == 0){
         return 0;

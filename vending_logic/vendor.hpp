@@ -45,7 +45,7 @@ class Vendor{
     bool try_payment(float item_cost);
     
     //token methods
-    void generate_prompt(Node* current_node);
+    std::string generate_prompt(Node* current_node);
     std::string check_keywords();
     std::string check_inventory(std::vector<Node*> items);
     std::string confirm_selection();
@@ -65,15 +65,21 @@ class Vendor{
     float selection_price;
     std::string selection_loc;
 
+    //public vars
+    const std::string WELCOME_AUDIO = "wav files/Hello_Statement.wav"; 
+    bool list_menu;
+    bool get_list_menu();
 
     private:
     bool debug_mode = false;
     //end transcriber data
 
     //string constants
+
     const std::string GREETING_STRING = "Hello my name is MRSTV, I am a vending machine specializing in accessibility.\n"   //mrstv intro greeting 
                                    "To begin, you may call my name and speak a request word, such as chips or candy.\n" 
                                    "For more information use request word help.\n";
+    
     //menu prompts
     const std::string RETURN_TO_MAIN = "Respond with one of the selections, or say home to return to main menu.\n";
     //keywords
@@ -81,6 +87,7 @@ class Vendor{
     const std::string CANDY_MENU_STRING = "candy"; //opens candy menu
     const std::string KILL_STRING =  "critical"; //dev code for ending the loop temporarily DG
     const std::string HOME_STRING = "home"; //returns to root menu
+
 
 };
 #endif //VENDOR_HPP

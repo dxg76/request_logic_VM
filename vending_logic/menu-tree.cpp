@@ -14,17 +14,17 @@
 Menu_tree::Menu_tree(){
 
     //Creating the root node
-    root = new Node("Main Menu");
+    root = new Node("Main Menu","",0,0,"wav files/Begin_Statement.wav");
 
     //Creating the Candy nodes
-    Node* candy = new Node("candy");
+    Node* candy = new Node("candy","",0,0,"wav files/Request_Response_Statement.wav");
         candy->add_child(new Node("Kit-Kat", "A1", 1.00, 12, "wav files/KitKat_Statement.wav")); 
         candy->add_child(new Node("Reese's", "A2", 1.00, 12, "wav files/Reeses_Statement.wav"));
         candy->add_child(new Node("Butterfinger", "A3", 1.00, 12, "wav files/Baby_Ruth_Statement.wav"));
         candy->add_child(new Node("Musketeers", "A4", 1.00, 12, "wav files/Musketeers_Statement.wav"));
 
     //Creating the Chip nodes
-    Node* chips = new Node("chips");
+    Node* chips = new Node("chips","",0,0,"wav files/Request_Response_Statement.wav");
         chips->add_child(new Node("Doritos", "B1", 1.00, 40, "wav files/Doritos_Statement.wav"));
         chips->add_child(new Node("Cheetos", "B2", 1.00, 40, "wav files/Cheetos_Statement.wav"));
         chips->add_child(new Node("Pretzels", "B3", 1.00, 40, "wav files/Pretzels_Statement.wav"));

@@ -5,6 +5,7 @@ Vendor::Vendor(bool mode){
     total_currency = 0;
     vend_ready = false;
     payment_ready = false;
+    list_menu = false;
     configure_all();
     set_debug(mode);
 }
@@ -19,16 +20,18 @@ void Vendor::set_debug(bool mode){
 
 void Vendor::try_vend(std::string loc, float price){
     //fill in with vending sequence
-    if(debug_mode){
-        std::cout << "Vending..." << std::endl;
-        std::cout << "vend complete! returning to main menu \n\n" << std::endl;
+    if(vend_ready){
+        if(debug_mode){
+            std::cout << "Vending..." << std::endl;
+            std::cout << "vend complete! returning to main menu \n\n" << std::endl;
+        }
     }
 }
 
 bool Vendor::try_payment(float item_cost){
     //paid by card
     bool card_payment = false;
-
+    if(vend_ready){
     //poll payment peripherals
     while(total_currency > item_cost && !card_payment){
         total_currency += accept_coin_payment();
@@ -36,6 +39,8 @@ bool Vendor::try_payment(float item_cost){
         card_payment = accept_card_payment(item_cost);
     }
     return true;
+    }
+    return false;
 }
 
 //token methods
@@ -63,24 +68,26 @@ float Vendor::read_bill_code(std::string hex_code){
     return 0;
 }
 
-void Vendor::generate_prompt(Node* current_node){
-    if(debug_mode){
-        if(current_node->get_id() == vendor_menu.root->get_id()){
-            std::cout << GREETING_STRING << std::endl; //root node
+std::string Vendor::generate_prompt(Node* current_node){
 
-        }//in menu
-        else if(current_node->get_price() < 0.1 ){ 
-            std::cout << RETURN_TO_MAIN << std::endl; //menu node
-            std::cout << "---" << current_node->get_id() << " menu---\n" << std::endl; 
-            //print selections
-            vendor_menu.selection_menu(current_node, 0);
+    if(current_node->get_id() == vendor_menu.root->get_id()){
+        return current_node->get_audio_path();
+    }//in menu
+    else if(current_node->get_price() < 0.1 ){ 
+        list_menu = true;
+        return current_node->get_audio_path();
+        std::cout << RETURN_TO_MAIN << std::endl; //menu node
+        std::cout << "---" << current_node->get_id() << " menu---\n" << std::endl; 
+        //print selections
+        vendor_menu.selection_menu(current_node, 0);
 
-        }//item selected
-        else std::cout << "you have selected " << current_node->get_id() 
-                        << " are you sure you would like to purchase this item [Y/N] ?: "
-                        << std::endl;
+    }//item selected
+    else std::cout << "you have selected " << current_node->get_id() 
+                    << " are you sure you would like to purchase this item [Y/N] ?: "
+                    << std::endl;
+                    return "TBD";
     
-    }
+
 }
 void Vendor::parse(std::string request, Node* current_node){
 
@@ -419,4 +426,8 @@ float Vendor::accept_bill_payment() {
         return inserted_currency;
     }else return 0;
 
+}
+
+bool Vendor::get_list_menu(){
+    return list_menu;
 }
