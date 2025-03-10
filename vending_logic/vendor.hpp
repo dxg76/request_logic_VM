@@ -19,6 +19,9 @@ class Vendor{
     int abstract;
     std::string port_name = "/dev/ttyACM0";
     float total_currency;
+    bool payment_ready;
+    bool vend_ready;
+
     //serial methods
     int open_serial(const char* port_name);
     void close_serial();
@@ -39,10 +42,14 @@ class Vendor{
 
     //vend methods
     void set_debug(bool mode); 
-    void vend(std::string loc, float price);
-    bool check_payment(float item_cost);
+    void try_vend(std::string loc, float price);
+    bool try_payment(float item_cost);
     
     //token methods
+    void generate_prompt(Node* current_node);
+    std::string check_keywords();
+    std::string check_inventory(std::vector<Node*> items);
+    std::string confirm_selection();
     void parse(std::string request, Node* current_node);
     std::string read_tokens(Node* current_node);
     void empty_tokens();
@@ -71,7 +78,6 @@ class Vendor{
     //menu prompts
     const std::string RETURN_TO_MAIN = "Respond with one of the selections, or say home to return to main menu.\n";
     //keywords
-    const std::string HELP_STRING = "help"; //mrstv will respond explaining how to interact with him
     const std::string CHIPS_MENU_STRING = "chips"; //opens chip menu
     const std::string CANDY_MENU_STRING = "candy"; //opens candy menu
     const std::string KILL_STRING =  "critical"; //dev code for ending the loop temporarily DG

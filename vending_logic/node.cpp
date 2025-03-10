@@ -10,7 +10,7 @@
 *Updated 2/5/25
 *Updated 2/6/25
 *Updated 2/17/25
-*/
+*/  
 
 Node::Node(const std::string& id,const std::string loc, float price, int quantity) 
     : id(id), loc(loc), price(price), quantity(quantity) {}
@@ -104,4 +104,10 @@ Node::~Node(){
         delete child;
     }
 
+}
+
+bool Node::is_leaf(){
+    if(this->children.size() == 0){
+        return true;
+    }else return false;
 }

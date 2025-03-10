@@ -383,7 +383,7 @@ int play_wav_file(const std::string &filepath){
 *
 *
 *
-//main method
+*main method
 *
 *
 *
@@ -391,29 +391,26 @@ int play_wav_file(const std::string &filepath){
 
 int main(int argc, const char** argv){
    
-   //setup
+    //setup begin 
+    //debug
     bool debug_mode = false;
     if(argc>1 && strcmp(argv[1], "-d") == 0){
         debug_mode = true;
     }
-
     //initailize vendor
     Vendor vendor(debug_mode);
-    
     //Start at the root ("Main Menu")
     Node* current_node = vendor.vendor_menu.root;
     std::string vendor_result;
-
     //configure whisper
     configure_all();
-
     //setup end
-
-    
 
     //main loop
     while(true){
         
+        vendor.generate_prompt(current_node);
+
         //error handling for parse and read
         do{
             vendor.parse(get_command(), current_node);
@@ -425,63 +422,23 @@ int main(int argc, const char** argv){
             std::cout << "Exiting program." << std::endl;
             return 0;
         }
+        //return to root node
+        if(vendor_result == "home"){
+            current_node = vendor.vendor_menu.root;
+        }
 
         //navigate node based on command
-        current_node = current_node->find_child(vendor_result);
-
-        //in menu listing items
-        if(current_node != vendor.vendor_menu.root && current_node->get_price() < .1){ 
-
-            std::cout << "---" << vendor_result << " menu---\n" << std::endl; 
-
-            vendor.vendor_menu.selection_menu(current_node, 0);
-
+        else {
+            //check if leaf before changing node
+            if(!current_node->is_leaf())
+            current_node = current_node->find_child(vendor_result);
         }
-
-        //making item selection from sub menu
-        else if(current_node != vendor.vendor_menu.root){
-            vendor.empty_tokens();
-            do{
-                vendor.parse(get_command(), current_node);
-                vendor_result = vendor.read_tokens(current_node);
-            }while(vendor_result == "err");
-            if(vendor_result == "y"){
-                //Implement payment logic here
-                float price = current_node->get_price();
-                std::cout << "You have selected " << current_node->get_id() << std::endl;
-                std::cout << "Please insert " << price << std::endl;
-
-                float payment;
-                std::cin >> payment;
-                
-                if(payment < price){
-                    std::cout << "Insufficient funds" << std::endl;
-
-                }
-                else{
-
-                    float change = payment - price;
-                    std::cout << "Payment accepted. Dispensing: " << current_node->get_id() << std::endl;
-
-                    if(change > 0.0){
-                        std::cout << "Please collect your change: $" << change << std::endl;
-                    }
-
-                    current_node->set_quantity(current_node->get_quantity() - 1); //Reduces quantity by 1
-                }
-                
-                vendor.vend(current_node->get_loc(), current_node->get_price()); //vend item define later
-                current_node = vendor.vendor_menu.root;
-            }else{
-                current_node = vendor.vendor_menu.root;
-            }
-
-        }
-
-        vendor.empty_tokens();
-
+        //if alg has reached payment stage this method will execute
+        vendor.try_payment(current_node->get_price());
+        //if alg has reached vend stage this method will execute
+        vendor.try_vend(current_node->get_loc(), current_node->get_price());
     }
 
-    std::cout << "\nMr. Steve bids you farewell!" << std::endl;
+    std::cout << "Exiting Program" << std::endl;
     return 0;
 }

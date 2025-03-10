@@ -6,6 +6,7 @@ L = -L./whisper.cpp-master/build/src -lwhisper -pthread -lm -lsndfile -ldl #link
 
 main: main.o vendor.o node.o menu-tree.o 
 	cd whisper.cpp-master && make base.en
+
 	$(X) -g -o $@ $^ $(L)
 
 vendor: main.o vendor.o node.o menu-tree.o 

@@ -43,7 +43,9 @@ class Node{
 
         //Destructor
         ~Node();
-
+        
+        //identifer
+        bool is_leaf();
     private:
 
         std::string id;
