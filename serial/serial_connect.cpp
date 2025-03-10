@@ -4,9 +4,20 @@
 #include <unistd.h>
 #include <errno.h>
 #include <cstring>
+#include <string>
 
 #define BUFFER_SIZE 512
 int abstract;
+bool debug_mode = true; 
+float total_currency;
+std::string port_name = "/dev/ttyACM0";
+bool card_payment = false;
+
+//declarations
+int write_to_MDB(std::string msg);
+std::string read_from_MDB();
+void print_mdb_response();
+
 int open_serial(const char* port_name){
     //open serial port for  synchronous IO, read/write, checks it is not a controlling terminal
     int abstract = open(port_name, O_RDWR | O_NOCTTY | O_SYNC); 
@@ -60,6 +71,130 @@ bool configure_serial(int speed){
     return true;
 }
 
+//token methods
+std::string get_hex(std::string response){
+    std::string hex_code;
+    std::cout << "this is response: " << response <<std::endl;
+    size_t start_index = response.find(',');
+    int end_index = response.find('\r');
+    //int error_check = response.find('\r');
+    /*
+    *
+    *
+    * 
+    * Dev Note: sometime systems sends \r\n sometimes
+    * just \n this is an error catch vvv DG
+    * 
+    * 
+    * 
+    * 
+    */
+  
+    //std::cout << "end index: " << end_index <<std::endl;
+    //std::cout << "error check: " << error_check <<std::endl;
+
+    hex_code = response.substr(start_index+1, end_index-start_index-1);
+    
+    std::cout << "Invisible characters found at indices: ";
+    for (size_t i = 0; i < hex_code.size(); ++i) {
+        if (!std::isprint(hex_code[i])) { // Checks for non-printable characters
+            std::cout << i << " (ASCII " << static_cast<int>(hex_code[i]) << "), ";
+        }
+    }
+    std::cout << std::endl;
+    
+    return hex_code;
+}
+
+float accept_coins(int hex){
+    //get coin type from code
+    int coin_type = (hex>>8) & 0xF;
+
+    std::cout << "coin id: " << coin_type << std::endl;
+    if(coin_type == 2){
+        std::cout << "quarter inserted" << std::endl;
+        return .25; //quarter
+    }else if(coin_type == 1){
+        std::cout << "dime inserted" << std::endl;
+        return .10; //dime
+    }else if(coin_type == 0){
+        std::cout << "nickel inserted" << std::endl;
+        return .05; //nickel
+    }else return 0; //unknown coin type
+    //get bytes
+    return 0;    
+}
+
+float accept_bills(int hex){
+    //get bill type
+    int bill_type = (hex>>8)  & 0xF;
+    if(bill_type == 2){
+        std::cout << "5 dollar bill inserted!" << std::endl;
+        //accept bill from the escrow
+        write_to_MDB("R,35,1");
+        std::cout << "accepting from escrow..." <<std::endl;
+        print_mdb_response();
+        //poll to ensure the bill is in the clip
+        write_to_MDB("R,33");
+        std::cout << "bill accepted: " <<std::endl;
+        print_mdb_response();
+        return 5;
+    }
+    if(bill_type == 0){
+        std::cout << "1 dollar bill inserted!" << std::endl;
+        //accept bill from the escrow
+        write_to_MDB("R,35,1");
+        std::cout << "accepting from escrow..." <<std::endl;
+        print_mdb_response();
+        //poll to ensure the bill is in the clip
+        write_to_MDB("R,33");
+        std::cout << "bill accepted! " <<std::endl;
+        print_mdb_response();
+        return 1;            
+    }else{
+        //reject bill return to user
+        write_to_MDB("R,35,0");
+        std::cout << "rejecting bill from escrow..." << std::endl;
+        print_mdb_response();
+        //poll to ensure the bill was returned
+        write_to_MDB("R,33");
+        std::cout << "bill rejected!" << std::endl;
+        print_mdb_response();
+
+        return 0; //unknown bill type  
+    }
+}
+float read_hex_code(std::string hex_code){
+    //no updates to share
+    int compare_code = hex_code.compare("ACK");
+    //std::cout <<"compare code: " << compare_code <<std::endl;
+    if(compare_code == 0){
+        std::cout <<"no currency added" << std::endl;
+        return 0;
+    }
+    compare_code = hex_code.compare("NACK");
+    //std::cout <<"compare code: " << compare_code <<std::endl;
+    if(compare_code == 0){
+        return 0;
+    }
+    
+    //response is from card reader
+    if(hex_code[0] == 'd'){
+        //card logic
+        card_payment = true;
+        return 0;
+    }
+
+    //convert the string to a hexadecimal integer
+    int hex = std::stoi(hex_code, nullptr, 16);
+    //coin detected
+    if((hex >> 15) != 1) //need to fix this statement because bill returns 2 byte code also
+        return accept_coins(hex);
+    //bill detected
+    else return accept_bills(hex);
+
+}
+
 int write_to_MDB(std::string msg){
     msg = msg + '\n';
     const char* msg_ready = msg.c_str();
@@ -71,7 +206,7 @@ int write_to_MDB(std::string msg){
     return 0;
 }
 
-std::string read_from_mdb(){
+std::string read_from_MDB(){
     char buffer[BUFFER_SIZE] = "";
     int bytes_read = 1;
     std::string response = "";
@@ -89,6 +224,10 @@ std::string read_from_mdb(){
     return response; //success
 }
 
+void print_mdb_response(){
+    std::cout << read_from_MDB() <<std::endl;
+}
+
 int configure_card_reader(){
     std::string c_master =  "D,2";
     std::string c_peripheral = "C,1";
@@ -104,7 +243,7 @@ int configure_card_reader(){
         return -1;
     }
     //MDB response to initialization
-    std::cout << "mdb response: \n" << read_from_mdb() <<std::endl;
+    print_mdb_response();
     
     //enable cashless peripheral
     std::cout << c_peripheral << std::endl;
@@ -112,7 +251,7 @@ int configure_card_reader(){
         return -1;
     }
     //MDB response to enabling cashless peripheral
-    std::cout << "mdb response: \n" << read_from_mdb() <<std::endl;
+    print_mdb_response();
 
 
     //enable reader
@@ -121,7 +260,7 @@ int configure_card_reader(){
         return -1;
     }
     //MDB response to enabling reader
-    std::cout << "mdb response: \n" << read_from_mdb() <<std::endl;
+    print_mdb_response();
 
     //card reader success confirmation
     std::cout <<"[configured card reader]" << std::endl;
@@ -130,29 +269,139 @@ int configure_card_reader(){
 }
 
 int configure_coin_mech(){
-    std::string coin_setup;
-    if(write_to_MDB(coint_setup) < 0){
+    tcflush(abstract,TCIOFLUSH);
+    std::string coin_setup = "R,0C,FFFFFFFF";
+    if(write_to_MDB(coin_setup) < 0){
         return -1;
     }
-    std::cout << read_from_mdb() <<std::endl;
+    void print_mdb_response();
+        std::cout << "[coin mech configured]" << std::endl;
+    return 0;
 }
 
-bool accept_payment(float item_cost){
+int configure_bill_validator() {
+    tcflush(abstract,TCIOFLUSH);
+    std::string bill_setup = "R,34,FFFFFFFF";
+    if(write_to_MDB(bill_setup) < 0){
+        return -1;
+    }
+    print_mdb_response();
+    std::cout << "[bill validator configured]" << std::endl;
+    return 0;
+}
+
+bool check_card_payment(float item_cost) {
     std::string request_payment = "D,REQ," + std::to_string(item_cost);
     std::string vend_confirmed;
     std::string vend_rejected;
 
-    while (read_from_mdb() != "placeholder"){}
+    if(read_from_MDB() != "placeholder"){
+        std::cout << "no card..." <<std::endl;
+        return false;
+    }
+
     write_to_MDB(request_payment);
-    if(read_from_mdb() != "placeholder"){
+    if(read_from_MDB() != "placeholder"){
         write_to_MDB(vend_rejected);
         return false;
     }else write_to_MDB(vend_confirmed);
     return true;
 }
 
-int main(){
+float check_coins() {
+    std::string poll_coin = "R,0B";
+    float inserted_currency = 0;
+    //request coin mech for update
+    write_to_MDB(poll_coin);
+    std::cout << "checking coins... " << std::endl;
+    std::string response = read_from_MDB();
+    if(debug_mode){
+        std::cout << response << std::endl;
+    }
+    
+    //get hex code from machine
+    response = get_hex(response);
+    //read code
+    std::cout <<"hex code: " << response << std::endl;
+    std::cout << "\nend hex code" << std::endl;
+    inserted_currency = read_hex_code(response);
 
+    if(inserted_currency > .01){
+        return inserted_currency;
+    }else return 0;
+}
+
+float check_bills() {
+    std::string poll_bill = "R,33";
+    float inserted_currency = 0;
+
+    //request bill validator for update
+    write_to_MDB(poll_bill);
+    std::cout << "checking bills..." << std::endl;
+    std::string response = read_from_MDB();
+    if(debug_mode){
+        std::cout << response << std::endl;
+    }
+    
+    //get hex code from machine  
+    response = get_hex(response);
+    //read code
+    std::cout <<"hex code: " << response << std::endl;
+    std::cout << "\nend hex code" << std::endl;
+
+    inserted_currency = read_hex_code(response);
+    //implement some string parsing and cost calculation
+    if(inserted_currency > .01){
+        return inserted_currency;
+    }else return 0;
+
+}
+
+int configure_all() {
+    //open serial connection
+    abstract = open_serial(port_name.c_str());
+
+    //serial port failure
+    if(abstract < 0){
+        return -1;
+    }
+
+    //configure_serial port 
+    if(!configure_serial(B115200)){ // baud rate = 115200
+        close_serial();
+        return -1;
+    }
+
+    //configure reader
+    if(configure_card_reader() < 0){
+        close_serial();
+        return -1;
+    }
+
+    //start Generic Master
+    std::string start_gen_master = "M,1";
+    write_to_MDB(start_gen_master);
+    std::cout << read_from_MDB() << std::endl;
+    
+    configure_coin_mech();
+    configure_bill_validator();
+    // Implementation goes here
+    return 0;
+}
+
+bool check_payment(float item_cost){
+    tcflush(abstract,TCIOFLUSH);
+    //poll payment peripherals
+    while(total_currency < item_cost && !card_payment){
+        total_currency += check_coins();
+        total_currency += check_bills();
+        //card_payment = check_card_payment(item_cost);
+    }
+    std::cout << "payment satisfied " << std::endl;
+    return true;
+}
+int main(){
+    /*
     //linux usb port
     const char* port_name = "/dev/ttyACM0";
     //open serial connection
@@ -174,6 +423,11 @@ int main(){
         close_serial();
         return -1;
     }
+    */
+    tcflush(abstract,TCIOFLUSH);
+    configure_all();
+    tcflush(abstract,TCIOFLUSH);
+    check_payment(1);
     close_serial(); 
     return 0;
 }
