@@ -110,6 +110,19 @@ Researched into whispers decoder capabilties
 Implemented more of the decoder and added a function to play the .wav files
 Added "wav files" folder into "vending_logic" to reach the audio files
 
+3/5/24
+*Devan Rivera*:
+Managed to compile decoder device (Unable to test locally currently)
+Began implementing audio playback logic down tree structure
+Added All class to Tree Data Structure 
+
+3/9/24
+*Devan Rivera*:
+Added aditional audio logic for statements to be played outside of the tree
+Debugged audio logic
+Needs testing with a speaker to ensure audio output
+
+
 ## CAPTURE
 
 #### Dante Gordon

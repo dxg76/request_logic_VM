@@ -16,17 +16,19 @@
 *Updated 1/29/25
 *Updated 2/1/25
 *Updated 2/3/25
+*Updated 3/5/25
 */
 
 class Node{
     public:
 
         //constructor
-        Node(const std::string& id,  const std::string loc = "", float price = 0.0, int quantity = 0);
+        Node(const std::string& id,  const std::string loc = "", float price = 0.0, int quantity = 0, const std::string& audio_path = "");
         
         //Accessors
         std::string get_id() const;
         std::string get_loc() const;
+        std::string get_audio_path() const;
         float get_price() const;
         int get_quantity() const;
         const std::vector<Node*>& get_children() const{return children;}
@@ -53,6 +55,7 @@ class Node{
         float price;
         int quantity; 
         std::vector<Node*> children;
+        std::string audio_path;
 
 };
 

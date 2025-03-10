@@ -10,10 +10,15 @@
 *Updated 2/5/25
 *Updated 2/6/25
 *Updated 2/17/25
+<<<<<<< HEAD
 */  
+=======
+*Updated 3/5/25
+*/
+>>>>>>> daaea5ac1003fdbc1c9392f486fefdb6c30ea116
 
-Node::Node(const std::string& id,const std::string loc, float price, int quantity) 
-    : id(id), loc(loc), price(price), quantity(quantity) {}
+Node::Node(const std::string& id,const std::string loc, float price, int quantity, const std::string& audio_path) 
+    : id(id), loc(loc), price(price), quantity(quantity), audio_path(audio_path) {}
 
 //Getters
 std::string Node::get_id() const{
@@ -25,6 +30,12 @@ std::string Node::get_id() const{
 std::string Node::get_loc() const{
 
     return loc;
+
+}
+
+std::string Node::get_audio_path() const{
+
+    return audio_path;
 
 }
 
@@ -56,6 +67,12 @@ void Node::set_price(float price){
 void Node::set_quantity(int quantity){
 
     this->quantity = quantity;
+
+}
+
+void Node::set_audio_path(const std::string& audio_path){
+
+    this->audio_path = audio_path;
 
 }
 
