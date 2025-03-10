@@ -68,8 +68,7 @@ class Vendor{
     //public vars
     const std::string WELCOME_AUDIO = "wav files/Hello_Statement.wav"; 
     bool list_menu;
-    bool get_list_menu();
-
+    bool confirmation_prompt;
     private:
     bool debug_mode = false;
     //end transcriber data

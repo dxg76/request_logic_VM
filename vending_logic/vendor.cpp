@@ -6,6 +6,7 @@ Vendor::Vendor(bool mode){
     vend_ready = false;
     payment_ready = false;
     list_menu = false;
+    confirmation_prompt = false;
     configure_all();
     set_debug(mode);
 }
@@ -57,7 +58,7 @@ float Vendor::read_coin_code(std::string hex_code){
         return 0;
     }
     //convert the string to a hexadecimal integer
-    int hex = std::stoi(hex_code, nullptr, 16);
+    //int hex = std::stoi(hex_code, nullptr, 16);
 
     //get bytes
 
@@ -72,7 +73,8 @@ std::string Vendor::generate_prompt(Node* current_node){
 
     if(current_node->get_id() == vendor_menu.root->get_id()){
         return current_node->get_audio_path();
-    }//in menu
+    }
+    //in menu
     else if(current_node->get_price() < 0.1 ){ 
         list_menu = true;
         return current_node->get_audio_path();
@@ -81,11 +83,12 @@ std::string Vendor::generate_prompt(Node* current_node){
         //print selections
         vendor_menu.selection_menu(current_node, 0);
 
-    }//item selected
-    else std::cout << "you have selected " << current_node->get_id() 
-                    << " are you sure you would like to purchase this item [Y/N] ?: "
-                    << std::endl;
-                    return "TBD";
+    }
+    //item selected
+    else{
+        confirmation_prompt = true;
+        return current_node->get_audio_path();
+    }
     
 
 }
@@ -428,6 +431,3 @@ float Vendor::accept_bill_payment() {
 
 }
 
-bool Vendor::get_list_menu(){
-    return list_menu;
-}

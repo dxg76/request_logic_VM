@@ -391,6 +391,12 @@ void list_products(Node* current_node){
         play_wav_file(products[i]->get_audio_path());
     }
 }
+
+void play_confirm(Node* current_node){
+    play_wav_file("wav files/Chosen_Statement.wav");
+    play_wav_file(current_node->get_audio_path());
+    play_wav_file("wav files/Confirm_Deny_Statement.wav");
+}
 /*
 *
 *
@@ -426,12 +432,17 @@ int main(int argc, const char** argv){
         std::string file_path = vendor.generate_prompt(current_node);
         play_wav_file(file_path);
         //if submenu
-        if(vendor.get_list_menu()){
+        if(vendor.list_menu){
             list_products(current_node);
+            vendor.list_menu = false;
+        }
+        //if selection made
+        if(vendor.confirmation_prompt){
+            play_confirm(current_node);
+            vendor.confirmation_prompt = false;
         }
         //error handling for parse and read
         do{
-            std::cout << "entered" <<std::endl;
             vendor.parse(get_command(), current_node);
             vendor_result = vendor.read_tokens(current_node);
         }while(vendor_result == "err");
