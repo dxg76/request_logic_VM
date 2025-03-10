@@ -37,6 +37,7 @@ class Node{
         void set_loc(const std::string& loc);
         void set_quantity(int quantity);
         void set_price(float price);
+        void set_audio_path(const std::string& audio_path);
 
         //Functions to manipulate children
         void add_child(Node* child);
