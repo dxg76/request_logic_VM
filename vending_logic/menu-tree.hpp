@@ -30,13 +30,10 @@ class Menu_tree{
 
         //Default constructor
         Menu_tree();
-
         //Displays the menu at a specific node
         void selection_menu(Node* node, int level = 0) const;
-
         //Destructor
         ~Menu_tree();
-        
         //Root Node
         Node* root;
 

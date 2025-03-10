@@ -7,9 +7,10 @@
 #include <chrono>
 #include <stdlib.h>
 #include <sndfile.h>
-
+#define MINIAUDIO_IMPLEMENTATION
 #include "whisper.h" 
 #include "miniaudio.h"
+
 
 /*
 *
@@ -321,9 +322,14 @@ void data_decoder_callback(ma_device* pDevice, void* pOutput, const void* pInput
 
 }
 
-//Plays the appropraite wav file from the filepath
+//Plays the appropriate wav file from the filepath
 int play_wav_file(const std::string &filepath){
-
+    //get duration
+    SF_INFO sfinfo;
+    sf_open(filepath.c_str(), SFM_READ, &sfinfo);
+    float frames = sfinfo.frames;
+    float duration = (frames/28800);
+    int duration_milli = duration*1000;
     //Decoder Config
     ma_result result;
     ma_decoder decoder;
@@ -371,54 +377,61 @@ int play_wav_file(const std::string &filepath){
     }
 
     std::cout << "Playing:" << filepath << std::endl;
-
+    std::this_thread::sleep_for(std::chrono::milliseconds(duration_milli));
     //Uninitialize the playback device and decoder
     ma_device_uninit(&decoder_device);
     ma_decoder_uninit(&decoder);
 
     return 0;
-
 }
-
-//main method
-
+//audio playback end
+void list_products(Node* current_node){
+    std::vector<Node*> products = current_node->get_children();
+    for(size_t i = 0; i < products.size(); ++i){
+        play_wav_file(products[i]->get_audio_path());
+    }
+}
+/*
+*
+*
+*
+*main method
+*
+*
+*
+*/
 
 int main(int argc, const char** argv){
    
-   //setup
+    //setup begin 
+    //debug
     bool debug_mode = false;
     if(argc>1 && strcmp(argv[1], "-d") == 0){
         debug_mode = true;
     }
-
     //initailize vendor
     Vendor vendor(debug_mode);
-    
     //Start at the root ("Main Menu")
     Node* current_node = vendor.vendor_menu.root;
     std::string vendor_result;
-
     //configure whisper
     configure_all();
-
     //setup end
-
+        
     //Plays MR STv's wlecome statement before program starts
-    std::string welcome_audio = "wav files/Hello_Statement.wav";
-    int welcome_result = play_wav_file(welcome_audio);
-
-    if(welcome_result){
-        std::cout << "Audio successfully played." << std::endl; //Debug statement for audio
-    }
-    else{
-        std::cout << "Audio Error." << std::endl;
-    }
+    play_wav_file(vendor.WELCOME_AUDIO);
 
     //main loop
     while(true){
-
+        std::string file_path = vendor.generate_prompt(current_node);
+        play_wav_file(file_path);
+        //if submenu
+        if(vendor.get_list_menu()){
+            list_products(current_node);
+        }
         //error handling for parse and read
         do{
+            std::cout << "entered" <<std::endl;
             vendor.parse(get_command(), current_node);
             vendor_result = vendor.read_tokens(current_node);
         }while(vendor_result == "err");
@@ -428,8 +441,28 @@ int main(int argc, const char** argv){
             std::cout << "Exiting program." << std::endl;
             return 0;
         }
+        //return to root node
+        if(vendor_result == "home"){
+            current_node = vendor.vendor_menu.root;
+        }
 
         //navigate node based on command
+        else {
+            //check if leaf before changing node
+            if(!current_node->is_leaf())
+            current_node = current_node->find_child(vendor_result);
+        }
+        //if alg has reached payment stage this method will execute
+        vendor.try_payment(current_node->get_price());
+        //if alg has reached vend stage this method will execute
+        vendor.try_vend(current_node->get_loc(), current_node->get_price());
+    }
+
+    std::cout << "Exiting Program" << std::endl;
+    //end
+    /*
+    
+    //to be integrated
         current_node = current_node->find_child(vendor_result);
 
         std::string node_audio = current_node->get_audio_path();
@@ -515,9 +548,8 @@ int main(int argc, const char** argv){
 
         }
 
-        vendor.empty_tokens();
-
     }
+    */
 
     //Plays the complete statement after the program ends
     std::cout << "Thank you for using the vending machine." << std::endl;

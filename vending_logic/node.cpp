@@ -118,3 +118,9 @@ Node::~Node(){
     }
 
 }
+
+bool Node::is_leaf(){
+    if(this->children.size() == 0){
+        return true;
+    }else return false;
+}

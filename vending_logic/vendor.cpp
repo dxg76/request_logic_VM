@@ -1,8 +1,11 @@
 #include "vendor.hpp"
 
-//costructor
+//constructor
 Vendor::Vendor(bool mode){
     total_currency = 0;
+    vend_ready = false;
+    payment_ready = false;
+    list_menu = false;
     configure_all();
     set_debug(mode);
 }
@@ -15,18 +18,20 @@ void Vendor::set_debug(bool mode){
     }
 }
 
-void Vendor::vend(std::string loc, float price){
+void Vendor::try_vend(std::string loc, float price){
     //fill in with vending sequence
-    if(debug_mode){
-        std::cout << "Vending..." << std::endl;
-        std::cout << "vend complete! returning to main menu \n\n" << std::endl;
+    if(vend_ready){
+        if(debug_mode){
+            std::cout << "Vending..." << std::endl;
+            std::cout << "vend complete! returning to main menu \n\n" << std::endl;
+        }
     }
 }
 
-bool Vendor::check_payment(float item_cost){
+bool Vendor::try_payment(float item_cost){
     //paid by card
     bool card_payment = false;
-
+    if(vend_ready){
     //poll payment peripherals
     while(total_currency > item_cost && !card_payment){
         total_currency += accept_coin_payment();
@@ -34,6 +39,8 @@ bool Vendor::check_payment(float item_cost){
         card_payment = accept_card_payment(item_cost);
     }
     return true;
+    }
+    return false;
 }
 
 //token methods
@@ -60,27 +67,32 @@ float Vendor::read_coin_code(std::string hex_code){
 float Vendor::read_bill_code(std::string hex_code){
     return 0;
 }
+
+std::string Vendor::generate_prompt(Node* current_node){
+
+    if(current_node->get_id() == vendor_menu.root->get_id()){
+        return current_node->get_audio_path();
+    }//in menu
+    else if(current_node->get_price() < 0.1 ){ 
+        list_menu = true;
+        return current_node->get_audio_path();
+        std::cout << RETURN_TO_MAIN << std::endl; //menu node
+        std::cout << "---" << current_node->get_id() << " menu---\n" << std::endl; 
+        //print selections
+        vendor_menu.selection_menu(current_node, 0);
+
+    }//item selected
+    else std::cout << "you have selected " << current_node->get_id() 
+                    << " are you sure you would like to purchase this item [Y/N] ?: "
+                    << std::endl;
+                    return "TBD";
+    
+
+}
 void Vendor::parse(std::string request, Node* current_node){
 
     char* token;
     std::string pass_token;
-    
-    //Prompt Generation
-
-
-    if(debug_mode){
-        if(current_node->get_id() == vendor_menu.root->get_id()){
-            std::cout << GREETING_STRING << std::endl; //root node
-
-        }else if(current_node->get_price() < 0.1 ){ //checking if menu or selection
-            std::cout << RETURN_TO_MAIN << std::endl; //menu node
-
-        }else std::cout << "you have selected " << current_node->get_id() 
-                        << " are you sure you would like to purchase this item [Y/N] ?: "
-                        << std::endl;
-        std:: cout << "Enter input to be tokenized: ";
-    }
-    
 
     token = strtok((char*)request.c_str(), " ");
 
@@ -102,64 +114,78 @@ void Vendor::print_tokens(){
     std::cout << "\n\n\n" << std::endl;
 }
 
-std::string Vendor::read_tokens(Node* current_node){
-    if(current_node == vendor_menu.root){ //in main menu
-        for(long unsigned int i = 0; i <tokens.size(); ++i){
-
-            if(tokens[i] == CHIPS_MENU_STRING){
-                if(debug_mode)
-                    std::cout << "keyword detected: " << CHIPS_MENU_STRING << "\n" << std::endl;
-                return CHIPS_MENU_STRING;
-            }
-            else if(tokens[i] == CANDY_MENU_STRING){
-                if(debug_mode)
-                    std::cout << "keyword detected: " << CANDY_MENU_STRING << "\n" << std::endl;
-                return CANDY_MENU_STRING;
-            }else if(tokens[i] == HELP_STRING){
-                if(debug_mode)
-                    std::cout << "keyword detected: " << HELP_STRING << "\n" << std::endl;
-                return HELP_STRING;
-            }else if(tokens[i] == HOME_STRING){
-                if(debug_mode)
-                    std::cout << "keyword detected: " << HOME_STRING << "\n" << std::endl;
-                return HOME_STRING;
-            }else if(tokens[i] == KILL_STRING){
-                if(debug_mode)
-                    std::cout << "keyword detected: " << KILL_STRING << "\n" << std::endl;
-                return KILL_STRING;
-            }
-        }
-    }else if(current_node->get_price() < .1){ //in menu searching for item
-        for(long unsigned int i = 0; i <tokens.size(); ++i){
-            std::vector<Node*> items = current_node->get_children();
-            for(long unsigned int j = 0; j <items.size(); ++j){
-                if(tokens[i] == items[j]->get_id()){
-                    return tokens[i];
-                }
-            }
-            
-        }
-        if(debug_mode){
-            std::cout << "cannot find the item you are looking for :(\n" << std::endl;
-        }
-        //item not found
-        return "err"; 
-
-    }//selecting item
-    else{ 
-        if(tokens[0] != "y" && tokens[0] != "n"
-        && tokens[0] != "Y" && tokens[0] != "y"){
+std::string Vendor::check_keywords(){
+    for(long unsigned int i = 0; i <tokens.size(); ++i){
+        if(tokens[i] == CHIPS_MENU_STRING){
             if(debug_mode)
-                std::cout << "Invalid input: " << tokens[0]  << "please enter [Y/N]: " << std::endl;
-            
-            return "err";
-        }else return tokens[0];
-        
+                std::cout << "keyword detected: " << CHIPS_MENU_STRING << "\n" << std::endl;
+            return CHIPS_MENU_STRING;
+        }
+        else if(tokens[i] == CANDY_MENU_STRING){
+            if(debug_mode)
+                std::cout << "keyword detected: " << CANDY_MENU_STRING << "\n" << std::endl;
+            return CANDY_MENU_STRING;
+        }else if(tokens[i] == HOME_STRING){
+            if(debug_mode)
+                std::cout << "keyword detected: " << HOME_STRING << "\n" << std::endl;
+            return HOME_STRING;
+        }else if(tokens[i] == KILL_STRING){
+            if(debug_mode)
+                std::cout << "keyword detected: " << KILL_STRING << "\n" << std::endl;
+            return KILL_STRING;
+        }
     }
-    empty_tokens();
-    std::cout << "I'm sorry, I didn't quite understand that, please repeat your request." //command unrecognized
-              << std::endl;
     return "err";
+}
+
+std::string Vendor::check_inventory(std::vector<Node*> items){
+    for(long unsigned int i = 0; i <tokens.size(); ++i){
+        for(long unsigned int j = 0; j <items.size(); ++j){
+            if(tokens[i] == items[j]->get_id()){
+                return tokens[i];
+            }
+        }
+    }
+    if(debug_mode){
+        std::cout << "cannot find the item you are looking for :(\n" << std::endl;
+    }
+    //item not found
+    std::cout << "I'm sorry, I didn't quite understand that, please repeat your request." //command unrecognized
+    << std::endl;
+    return "err"; 
+}
+
+std::string Vendor::confirm_selection(){
+    for(long unsigned int i = 0; i <tokens.size(); ++i){
+        if(tokens[i] == "yes"){
+            payment_ready = true;
+            return "complete";
+        }else if(tokens[i] == "no"){
+            return "complete";
+        }
+    }
+    return "err";
+}
+std::string Vendor::read_tokens(Node* current_node){
+    std::string result;
+    //in main menu
+    if(current_node == vendor_menu.root){ 
+        result = check_keywords();
+        empty_tokens();
+        return result;
+    }
+    //in menu searching for item
+    else if(current_node->get_price() < .1){
+        result = check_inventory(current_node->get_children());
+        empty_tokens();
+        return result;
+    }
+    //selecting item
+    else{ 
+        result = confirm_selection();
+        empty_tokens();
+        return result;
+    }
 }
 
 void Vendor::empty_tokens(){
@@ -400,4 +426,8 @@ float Vendor::accept_bill_payment() {
         return inserted_currency;
     }else return 0;
 
+}
+
+bool Vendor::get_list_menu(){
+    return list_menu;
 }
