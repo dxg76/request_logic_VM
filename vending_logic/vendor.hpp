@@ -1,6 +1,5 @@
 #ifndef VENDOR_HPP
 #define VENDOR_HPP
-#define MINIAUDIO_IMPLEMENTATION
 #define BUFFER_SIZE 512
 
 #include <cstring>

@@ -10,12 +10,8 @@
 *Updated 2/5/25
 *Updated 2/6/25
 *Updated 2/17/25
-<<<<<<< HEAD
-*/  
-=======
 *Updated 3/5/25
 */
->>>>>>> daaea5ac1003fdbc1c9392f486fefdb6c30ea116
 
 Node::Node(const std::string& id,const std::string loc, float price, int quantity, const std::string& audio_path) 
     : id(id), loc(loc), price(price), quantity(quantity), audio_path(audio_path) {}

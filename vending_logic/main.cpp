@@ -10,6 +10,7 @@
 
 #include "whisper.h" 
 #include "miniaudio.h"
+#define MINIAUDIO_IMPLEMENTATION
 
 /*
 *
@@ -379,16 +380,12 @@ int play_wav_file(const std::string &filepath){
     return 0;
 
 }
-
-<<<<<<< HEAD
+//audio playback end
 /*
 *
 *
 *
 *main method
-=======
-//main method
->>>>>>> daaea5ac1003fdbc1c9392f486fefdb6c30ea116
 *
 *
 *
@@ -411,12 +408,10 @@ int main(int argc, const char** argv){
     configure_all();
     //setup end
 
-<<<<<<< HEAD
     //main loop
     while(true){
         
         vendor.generate_prompt(current_node);
-=======
     //Plays MR STv's wlecome statement before program starts
     std::string welcome_audio = "wav files/Hello_Statement.wav";
     int welcome_result = play_wav_file(welcome_audio);
@@ -430,7 +425,6 @@ int main(int argc, const char** argv){
 
     //main loop
     while(true){
->>>>>>> daaea5ac1003fdbc1c9392f486fefdb6c30ea116
 
         //error handling for parse and read
         do{
@@ -449,7 +443,6 @@ int main(int argc, const char** argv){
         }
 
         //navigate node based on command
-<<<<<<< HEAD
         else {
             //check if leaf before changing node
             if(!current_node->is_leaf())
@@ -462,7 +455,6 @@ int main(int argc, const char** argv){
     }
 
     std::cout << "Exiting Program" << std::endl;
-=======
         current_node = current_node->find_child(vendor_result);
 
         //audio playback for current node
@@ -541,6 +533,5 @@ int main(int argc, const char** argv){
     std::cout << "Thank you for using the vending machine." << std::endl;
     std::string vend_complete = "wav files/Complete_Statement.wav";
     int complete_result = play_wav_file(vend_complete);
->>>>>>> daaea5ac1003fdbc1c9392f486fefdb6c30ea116
     return 0;
 }
