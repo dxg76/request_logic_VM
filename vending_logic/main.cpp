@@ -476,6 +476,7 @@ int main(int argc, const char** argv){
     //to be integrated
         current_node = current_node->find_child(vendor_result);
 
+        std::string node_audio = current_node->get_audio_path();
         //audio playback for current node
         if(!node_audio.empty()){
 
@@ -512,6 +513,13 @@ int main(int argc, const char** argv){
 
                 std::string selected_audio = "wav files/Chosen_Statement.wav";
                 int selected_result = play_wav_file(selected_audio);
+                if(selected_result == 0){
+                    std::cout << "Chosen item audio played successfully." << std::endl;
+                } 
+                else{
+                    std::cout << "Error playing audio." << std::endl;
+                }    
+
                 std::cout << "You have selected " << current_node->get_id() << std::endl;
                 std::cout << "Please insert " << price << std::endl;
 
@@ -530,6 +538,13 @@ int main(int argc, const char** argv){
                     if(change > 0.0){
                         std::string change_audio = "wav files/Change_Statement.wav";
                         int change_result = play_wav_file(change_audio);
+                        if(change_result == 0){
+                            std::cout << "Change audio played successfully." << std::endl;
+                        } 
+                        else{
+                            std::cout << "Error playing audio." << std::endl;
+                        }
+
                         std::cout << "Please collect your change: $" << change << std::endl;
                     }
 
@@ -551,5 +566,12 @@ int main(int argc, const char** argv){
     std::cout << "Thank you for using the vending machine." << std::endl;
     std::string vend_complete = "wav files/Complete_Statement.wav";
     int complete_result = play_wav_file(vend_complete);
+    if(complete_result == 0){
+        std::cout << "Complete_Statement audio played successfully." << std::endl;
+    } 
+    else{
+        std::cout << "Error playing audio." << std::endl;
+    }
+
     return 0;
 }
