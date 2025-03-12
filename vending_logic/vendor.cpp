@@ -171,6 +171,7 @@ std::string Vendor::confirm_selection(){
     }
     return "err";
 }
+
 std::string Vendor::read_tokens(Node* current_node){
     std::string result;
     //in main menu

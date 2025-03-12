@@ -168,6 +168,7 @@ void ma_stream(list_node* head){
         } 
 
         //device started
+        std::cout << "listening..." << std::endl;
         result = ma_device_start(&device);
 
         //device failure
@@ -179,9 +180,7 @@ void ma_stream(list_node* head){
 
         
         //5 second clips
-        const auto start = std::chrono::high_resolution_clock::now();
-        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-        const auto end = std::chrono::high_resolution_clock::now();
+        std::this_thread::sleep_for(std::chrono::milliseconds(5000));
         ma_device_uninit(&device);
         ma_encoder_uninit(&encoder);
 
@@ -218,14 +217,15 @@ std::string get_command(){
     std::thread audio_thread(ma_stream,head);
     
     //quit bool
-    bool exit_transcription = false;
+    //bool exit_transcription = false;
     //transcribed text
     std::string text;
 
     
     //transcribe loop
+    /*
     while(!exit_transcription){
-
+    */
         while(head->filename == "placeholder"){
             //std::cout << "file not ready" << std::endl;
             //std::this_thread::sleep_for(std::chrono::milliseconds(50));
@@ -236,8 +236,8 @@ std::string get_command(){
 
         //transcribe the audio from samples
         //std::cout << "starting transcription..."  << std::endl;
+        std::cout << "transcribing..." << std::endl;
         const auto start = std::chrono::high_resolution_clock::now();
-        
         if(whisper_full(ctx, full_params, samples.data(), samples.size()) != 0){
             std::cerr << "Error: whisper_full failed.\n";
             whisper_free(ctx);
@@ -246,7 +246,7 @@ std::string get_command(){
         }
         const auto end = std::chrono::high_resolution_clock::now();
         const std::chrono::duration<double,std::milli> elapsed = end - start;
-        std::cout << "time elapsed: " << elapsed.count()/1000.0 << std::endl;
+        std::cout << "transcription time (secs):  " << elapsed.count()/1000.0 << std::endl;
 
         //store transcribed text as string
         text = whisper_full_get_segment_text(ctx, 0);
@@ -259,11 +259,12 @@ std::string get_command(){
         delete temp; //delete head
         remove(expired_file.c_str());
 
+        /*
         //check for command
         if(text.find("Mr. Steve") != std::string::npos){
             exit_transcription = true;
         } //end transcribe loop
-    }
+    }*/
     exit_recording.store(true);
     audio_thread.join();
     std::cout << "thread joined" <<std::endl;
@@ -460,7 +461,13 @@ int main(int argc, const char** argv){
         //error handling for parse and read
         do{
             vendor.parse(get_command(), current_node);
+            const auto start = std::chrono::high_resolution_clock::now();
             vendor_result = vendor.read_tokens(current_node);
+            const auto end = std::chrono::high_resolution_clock::now();
+            const std::chrono::duration<double,std::milli> elapsed = end - start;
+            std::cout << "token read time (secs):  " << elapsed.count()/1000.0 << std::endl;
+    
+
         }while(vendor_result == "err");
 
         //quit sequence

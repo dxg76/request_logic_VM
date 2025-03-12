@@ -17,29 +17,29 @@ Menu_tree::Menu_tree(){
     root = new Node("Main Menu","",0,0,"wav files/Begin_Statement.wav");
 
     //Creating the Candy nodes
-    Node* candy = new Node("candy","",0,0,"wav files/Request_Response_Statement.wav");
-        candy->add_child(new Node("Kit-Kat", "A1", 1.00, 12, "wav files/KitKat_Statement.wav")); 
-        candy->add_child(new Node("Reese's", "A2", 1.00, 12, "wav files/Reeses_Statement.wav"));
-        candy->add_child(new Node("Butterfinger", "A3", 1.00, 12, "wav files/Baby_Ruth_Statement.wav"));
-        candy->add_child(new Node("Musketeers", "A4", 1.00, 12, "wav files/Musketeers_Statement.wav"));
+    Node* candy = new Node("candy","",0,0,"wav files/what_candy.wav");
+        candy->add_child(new Node("kitkat", "A1", 1.00, 12, "wav files/KitKat_Statement.wav")); 
+        candy->add_child(new Node("reese's", "A2", 1.00, 12, "wav files/Reeses_Statement.wav"));
+        candy->add_child(new Node("butterfinger", "A3", 1.00, 12, "wav files/Butter_Finger_Statement.wav"));
+        candy->add_child(new Node("musketeers", "A4", 1.00, 12, "wav files/Musketeers_Statement.wav"));
 
     //Creating the Chip nodes
-    Node* chips = new Node("chips","",0,0,"wav files/Request_Response_Statement.wav");
-        chips->add_child(new Node("Doritos", "B1", 1.00, 40, "wav files/Doritos_Statement.wav"));
-        chips->add_child(new Node("Cheetos", "B2", 1.00, 40, "wav files/Cheetos_Statement.wav"));
-        chips->add_child(new Node("Pretzels", "B3", 1.00, 40, "wav files/Pretzels_Statement.wav"));
-        chips->add_child(new Node("Barbecue", "B4", 1.00, 40, "wav files/Barbecue_Statement.wav"));
+    Node* chips = new Node("chips","",0,0,"wav files/what_chips.wav");
+        chips->add_child(new Node("doritos", "B1", 1.00, 40, "wav files/Doritos_Statement.wav"));
+        chips->add_child(new Node("cheetos", "B2", 1.00, 40, "wav files/Cheetos_Statement.wav"));
+        chips->add_child(new Node("pretzels", "B3", 1.00, 40, "wav files/Pretzels_Statement.wav"));
+        chips->add_child(new Node("barbecue", "B4", 1.00, 40, "wav files/Barbecue_Statement.wav"));
 
     //Creating the All nodes
     Node* all = new Node("all");
-        all->add_child(new Node("Kit-Kat", "A1", 1.00, 12, "wav files/KitKat_Statement.wav")); 
-        all->add_child(new Node("Reese's", "A2", 1.00, 12, "wav files/Reeses_Statement.wav"));
-        all->add_child(new Node("Butterfinger", "A3", 1.00, 12, "wav files/Butter_Finger_Statement.wav"));
-        all->add_child(new Node("Musketeers", "A4", 1.00, 12, "wav files/Musketeers_Statement.wav"));
-        all->add_child(new Node("Doritos", "B1", 1.00, 40, "wav files/Doritos_Statement.wav"));
-        all->add_child(new Node("Cheetos", "B2", 1.00, 40, "wav files/Cheetos_Statement.wav"));
-        all->add_child(new Node("Pretzels", "B3", 1.00, 40, "wav files/Pretzels_Statement.wav"));
-        all->add_child(new Node("Barbecue", "B4", 1.00, 40, "wav files/Barbecue_Statement.wav"));
+        all->add_child(new Node("kitkat", "A1", 1.00, 12, "wav files/KitKat_Statement.wav")); 
+        all->add_child(new Node("reese's", "A2", 1.00, 12, "wav files/Reeses_Statement.wav"));
+        all->add_child(new Node("butterfinger", "A3", 1.00, 12, "wav files/Butter_Finger_Statement.wav"));
+        all->add_child(new Node("musketeers", "A4", 1.00, 12, "wav files/Musketeers_Statement.wav"));
+        all->add_child(new Node("doritos", "B1", 1.00, 40, "wav files/Doritos_Statement.wav"));
+        all->add_child(new Node("cheetos", "B2", 1.00, 40, "wav files/Cheetos_Statement.wav"));
+        all->add_child(new Node("pretzels", "B3", 1.00, 40, "wav files/Pretzels_Statement.wav"));
+        all->add_child(new Node("barbecue", "B4", 1.00, 40, "wav files/Barbecue_Statement.wav"));
 
     //Attaches categories to the root node
     root->add_child(candy);
