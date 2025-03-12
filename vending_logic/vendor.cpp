@@ -32,14 +32,19 @@ void Vendor::try_vend(std::string loc, float price){
 bool Vendor::try_payment(float item_cost){
     //paid by card
     bool card_payment = false;
-    if(vend_ready){
-    //poll payment peripherals
-    while(total_currency > item_cost && !card_payment){
-        total_currency += accept_coin_payment();
-        total_currency += accept_bill_payment();
-        card_payment = accept_card_payment(item_cost);
-    }
-    return true;
+    if(payment_ready){
+        std::cout << "paying..." << std::endl;
+        std::cout << "payment complete!" << std::endl;
+        vend_ready = true;
+        /*
+        //poll payment peripherals
+        while(total_currency > item_cost && !card_payment){
+            total_currency += accept_coin_payment();
+            total_currency += accept_bill_payment();
+            card_payment = accept_card_payment(item_cost);
+        }
+        return true;
+        */
     }
     return false;
 }
@@ -77,11 +82,12 @@ std::string Vendor::generate_prompt(Node* current_node){
     //in menu
     else if(current_node->get_price() < 0.1 ){ 
         list_menu = true;
-        return current_node->get_audio_path();
+        
         std::cout << RETURN_TO_MAIN << std::endl; //menu node
         std::cout << "---" << current_node->get_id() << " menu---\n" << std::endl; 
         //print selections
         vendor_menu.selection_menu(current_node, 0);
+        return current_node->get_audio_path();
 
     }
     //item selected

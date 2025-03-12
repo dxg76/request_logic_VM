@@ -430,17 +430,20 @@ int main(int argc, const char** argv){
     //main loop
     while(true){
         std::string file_path = vendor.generate_prompt(current_node);
-        play_wav_file(file_path);
         //if submenu
         if(vendor.list_menu){
+            play_wav_file(file_path);
             list_products(current_node);
             vendor.list_menu = false;
         }
         //if selection made
-        if(vendor.confirmation_prompt){
+        else if(vendor.confirmation_prompt){
             play_confirm(current_node);
             vendor.confirmation_prompt = false;
         }
+        //other/main
+        else    play_wav_file(file_path);
+
         //error handling for parse and read
         do{
             vendor.parse(get_command(), current_node);
@@ -450,7 +453,7 @@ int main(int argc, const char** argv){
         //quit sequence
         if(vendor_result == "critical"){
             std::cout << "Exiting program." << std::endl;
-            return 0;
+            break;
         }
         //return to root node
         if(vendor_result == "home"){
@@ -467,6 +470,10 @@ int main(int argc, const char** argv){
         vendor.try_payment(current_node->get_price());
         //if alg has reached vend stage this method will execute
         vendor.try_vend(current_node->get_loc(), current_node->get_price());
+        if(vendor.vend_complete){
+            play_wav_file("wav files/anything_else.wav");
+            //get_command
+        }
     }
 
     std::cout << "Exiting Program" << std::endl;

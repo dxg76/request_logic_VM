@@ -18,9 +18,12 @@ class Vendor{
     int abstract;
     std::string port_name = "/dev/ttyACM0";
     float total_currency;
+    //vendor vars
     bool payment_ready;
     bool vend_ready;
-
+    bool vend_complete;
+    bool list_menu;
+    bool confirmation_prompt;
     //serial methods
     int open_serial(const char* port_name);
     void close_serial();
@@ -67,8 +70,7 @@ class Vendor{
 
     //public vars
     const std::string WELCOME_AUDIO = "wav files/Hello_Statement.wav"; 
-    bool list_menu;
-    bool confirmation_prompt;
+
     private:
     bool debug_mode = false;
     //end transcriber data
