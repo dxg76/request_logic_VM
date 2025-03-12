@@ -54,6 +54,7 @@ class Vendor{
     std::string confirm_selection();
     void parse(std::string request, Node* current_node);
     std::string read_tokens(Node* current_node);
+    std::string normalize(char* token);
     void empty_tokens();
     void print_tokens();
     std::string get_hex(std::string response);

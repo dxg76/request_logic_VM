@@ -109,15 +109,21 @@ std::vector<float> pcm_buster(std::string filename){
         return {};
     }
     //printSFInfo(sfinfo); print wav file input
+
     // Read samples into a float vector
-    std::vector<float> samples(sfinfo.frames * sfinfo.channels);
+    std::vector<float> samples(sfinfo.frames);
     sf_readf_float(file, samples.data(), sfinfo.frames);
 
     // Close file
     sf_close(file);
 
-    return samples;
+    //padding
+    int padding = static_cast<int>(.5*sfinfo.samplerate);
+    int num_samples = sfinfo.frames;
+    std::vector<float> padded_buffer(num_samples + padding*2,0);
+    std::copy(samples.begin(), samples.end(), padded_buffer.begin()+padding);
 
+    return padded_buffer;
 }
 
 void ma_stream(list_node* head){
@@ -174,7 +180,7 @@ void ma_stream(list_node* head){
         
         //5 second clips
         const auto start = std::chrono::high_resolution_clock::now();
-        std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
         const auto end = std::chrono::high_resolution_clock::now();
         ma_device_uninit(&device);
         ma_encoder_uninit(&encoder);
@@ -221,15 +227,15 @@ std::string get_command(){
     while(!exit_transcription){
 
         while(head->filename == "placeholder"){
-            std::cout << "file not ready" << std::endl;
-            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            //std::cout << "file not ready" << std::endl;
+            //std::this_thread::sleep_for(std::chrono::milliseconds(50));
         }
 
         //get samples
         std::vector<float> samples = pcm_buster(head->filename);
 
         //transcribe the audio from samples
-        std::cout << "starting transcription..."  << std::endl;
+        //std::cout << "starting transcription..."  << std::endl;
         const auto start = std::chrono::high_resolution_clock::now();
         
         if(whisper_full(ctx, full_params, samples.data(), samples.size()) != 0){
@@ -436,38 +442,21 @@ int main(int argc, const char** argv){
     play_wav_file(vendor.WELCOME_AUDIO);
 
     //main loop
-<<<<<<< HEAD
     while(true){
         std::string file_path = vendor.generate_prompt(current_node);
         //if submenu
         if(vendor.list_menu){
-            play_wav_file(file_path);
-=======
-    while(true){        
-        //if submenu
-        std::cout << "this is vendor list_menu: " << vendor.list_menu  << std::endl;
-        std::cout << "current node: " << current_node->get_id() <<std::endl;
-        //update bools and get  audio file_path
-        std::string file_path = vendor.generate_prompt(current_node);
-
-        if(vendor.list_menu == 1){
-            std::cout << "entered if" <<std::endl;
->>>>>>> bed9679a7c40c5ba6bc651d1f8e332ddcb93c257
-            list_products(current_node);
+           list_products(current_node);
             vendor.list_menu = false;
-        }else
+        }
         //if selection made
         else if(vendor.confirmation_prompt){
             play_confirm(current_node);
             vendor.confirmation_prompt = false;
-<<<<<<< HEAD
         }
         //other/main
         else    play_wav_file(file_path);
 
-=======
-        }else play_wav_file(file_path);
->>>>>>> bed9679a7c40c5ba6bc651d1f8e332ddcb93c257
         //error handling for parse and read
         do{
             vendor.parse(get_command(), current_node);
@@ -490,24 +479,21 @@ int main(int argc, const char** argv){
             if(!current_node->is_leaf())
                 current_node = current_node->find_child(vendor_result);
         }
-        /*
+        
         //if alg has reached payment stage this method will execute
-        vendor.try_payment(current_node->get_price());
+        // /vendor.try_payment(current_node->get_price());
         //if alg has reached vend stage this method will execute
-<<<<<<< HEAD
-        vendor.try_vend(current_node->get_loc(), current_node->get_price());
+        //vendor.try_vend(current_node->get_loc(), current_node->get_price());
         if(vendor.vend_complete){
             play_wav_file("wav files/anything_else.wav");
             //get_command
         }
-=======
-        vendor.try_vend(current_node->get_loc(), current_node->get_price());*/
->>>>>>> bed9679a7c40c5ba6bc651d1f8e332ddcb93c257
     }
+    /*
 
     std::cout << "Exiting Program" << std::endl;
     //end
-    /*
+    
     
     //to be integrated
         current_node = current_node->find_child(vendor_result);

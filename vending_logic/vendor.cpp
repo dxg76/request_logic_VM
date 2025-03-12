@@ -82,20 +82,12 @@ std::string Vendor::generate_prompt(Node* current_node){
     //in menu
     else if(current_node->get_price() < 0.1 ){ 
         list_menu = true;
-<<<<<<< HEAD
         
-=======
-        std::cout << "this is vendor list_menu: " << list_menu  << std::endl;
->>>>>>> bed9679a7c40c5ba6bc651d1f8e332ddcb93c257
         std::cout << RETURN_TO_MAIN << std::endl; //menu node
         std::cout << "---" << current_node->get_id() << " menu---\n" << std::endl; 
         //print selections
         vendor_menu.selection_menu(current_node, 0);
         return current_node->get_audio_path();
-<<<<<<< HEAD
-
-=======
->>>>>>> bed9679a7c40c5ba6bc651d1f8e332ddcb93c257
     }
     //item selected
     else{
@@ -108,15 +100,12 @@ std::string Vendor::generate_prompt(Node* current_node){
 void Vendor::parse(std::string request, Node* current_node){
 
     char* token;
-    std::string pass_token;
 
     token = strtok((char*)request.c_str(), " ");
 
     while(token != NULL){
-        pass_token = token;
-        //remove punctuation from tokens
-        pass_token.erase(std::remove_if(pass_token.begin(), pass_token.end(), ::ispunct), pass_token.end());
-        tokens.push_back(pass_token);
+        std::string normalized_token = normalize(token);
+        tokens.push_back(normalized_token);
         token = strtok(NULL,  " ");
     }
     print_tokens();
@@ -202,6 +191,18 @@ std::string Vendor::read_tokens(Node* current_node){
         empty_tokens();
         return result;
     }
+}
+
+std::string Vendor::normalize(char* token){
+    std::string pass_token = token;
+    //remove punctuation from tokens
+    pass_token.erase(std::remove_if(pass_token.begin(), pass_token.end(), ::ispunct), pass_token.end());
+    //make all lowercase
+    std::transform(pass_token.begin(), pass_token.end(), pass_token.begin(), [](unsigned char c) {
+        return std::tolower(c);
+    });
+    
+    return pass_token;
 }
 
 void Vendor::empty_tokens(){
