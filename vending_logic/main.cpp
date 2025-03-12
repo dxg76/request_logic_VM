@@ -46,7 +46,8 @@ whisper_model_loader loader;
 whisper_full_params full_params;
 struct whisper_context_params params;
 struct whisper_context* ctx;
-
+list_node* head = new list_node("placeholder",nullptr);
+list_node* tail = head;
 //atomic bool to quit recording
 std::atomic<bool> exit_recording(false);
 int list_size = 0;
@@ -129,7 +130,7 @@ std::vector<float> pcm_buster(std::string filename){
 void ma_stream(list_node* head){
     //list vars
     int index = 1;
-    list_node*tail = head;
+    
     //Encoder Config
     ma_result result;
     ma_encoder_config encoder_config;
@@ -141,7 +142,8 @@ void ma_stream(list_node* head){
     while(!exit_recording){
         
         std::string audio_file = std::to_string(index) + ".wav";
-        
+
+        int recording_length = 2000; //length of clips in milliseconds
         //ENCODER CONFIGURATION
         // initializing mono, wave file, 32bit floating point format encoder with sample rate of 44.1 kHz
         encoder_config = ma_encoder_config_init(ma_encoding_format_wav, ma_format_f32, 1, 16000); 
@@ -180,14 +182,14 @@ void ma_stream(list_node* head){
 
         
         //5 second clips
-        std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+        std::this_thread::sleep_for(std::chrono::milliseconds(recording_length));
         ma_device_uninit(&device);
         ma_encoder_uninit(&encoder);
 
        
 
         index++;
-        if(index > 30){
+        if(index > 10){
             index = 1;
         }
         tail->filename = audio_file;
@@ -210,27 +212,26 @@ void destroy_list(list_node* head){
         remove(expired_file.c_str());
     }
 }
+
 std::string get_command(){
-    list_node* head = new list_node("placeholder",nullptr);
     //audio thread start
-    exit_recording.store(false);
-    std::thread audio_thread(ma_stream,head);
+   
+
     
     //quit bool
     //bool exit_transcription = false;
     //transcribed text
     std::string text;
 
-    
     //transcribe loop
     /*
     while(!exit_transcription){
     */
         while(head->filename == "placeholder"){
-            //std::cout << "file not ready" << std::endl;
-            //std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            std::cout << "file not ready" << std::endl;
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
         }
-
+        std::cout << "exit loop: " << std::endl;
         //get samples
         std::vector<float> samples = pcm_buster(head->filename);
 
@@ -265,12 +266,12 @@ std::string get_command(){
             exit_transcription = true;
         } //end transcribe loop
     }*/
-    exit_recording.store(true);
-    audio_thread.join();
-    std::cout << "thread joined" <<std::endl;
+    //exit_recording.store(true);
+    //audio_thread.join();
+    //std::cout << "thread joined" <<std::endl;
     
     //destroy list leftovers
-    destroy_list(head);
+    //destroy_list(head);
     return text;
 }
 
@@ -423,7 +424,7 @@ void play_confirm(Node* current_node){
 */
 
 int main(int argc, const char** argv){
-   
+    
     //setup begin 
     //debug
     bool debug_mode = false;
@@ -457,7 +458,8 @@ int main(int argc, const char** argv){
         }
         //other/main
         else    play_wav_file(file_path);
-
+        exit_recording.store(false);
+        std::thread audio_thread(ma_stream,head);
         //error handling for parse and read
         do{
             vendor.parse(get_command(), current_node);
@@ -466,9 +468,11 @@ int main(int argc, const char** argv){
             const auto end = std::chrono::high_resolution_clock::now();
             const std::chrono::duration<double,std::milli> elapsed = end - start;
             std::cout << "token read time (secs):  " << elapsed.count()/1000.0 << std::endl;
-    
-
+            std::cout << "vendor result: " << vendor_result << std::endl;     
         }while(vendor_result == "err");
+        //audio thread join
+        exit_recording.store(true);
+        audio_thread.join();
 
         //quit sequence
         if(vendor_result == "critical"){

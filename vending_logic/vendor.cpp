@@ -114,7 +114,7 @@ void Vendor::parse(std::string request, Node* current_node){
 
 void Vendor::print_tokens(){
     for(auto i : tokens){
-        std::cout << i << std::endl;
+        //std::cout << i << std::endl;
     }
     std::cout << "\n\n\n" << std::endl;
 }
@@ -209,7 +209,7 @@ std::string Vendor::normalize(char* token){
 void Vendor::empty_tokens(){
     tokens.clear();
     if(debug_mode){
-        std::cout << "Tokens Dumped" << std::endl;
+        //std::cout << "Tokens Dumped" << std::endl;
     }
 }
 
