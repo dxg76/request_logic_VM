@@ -77,12 +77,12 @@ std::string Vendor::generate_prompt(Node* current_node){
     //in menu
     else if(current_node->get_price() < 0.1 ){ 
         list_menu = true;
-        return current_node->get_audio_path();
+        std::cout << "this is vendor list_menu: " << list_menu  << std::endl;
         std::cout << RETURN_TO_MAIN << std::endl; //menu node
         std::cout << "---" << current_node->get_id() << " menu---\n" << std::endl; 
         //print selections
         vendor_menu.selection_menu(current_node, 0);
-
+        return current_node->get_audio_path();
     }
     //item selected
     else{

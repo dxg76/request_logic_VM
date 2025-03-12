@@ -176,7 +176,6 @@ void ma_stream(list_node* head){
         const auto start = std::chrono::high_resolution_clock::now();
         std::this_thread::sleep_for(std::chrono::milliseconds(5000));
         const auto end = std::chrono::high_resolution_clock::now();
-        const std::chrono::duration<double, std::milli> elapsed = end - start;
         ma_device_uninit(&device);
         ma_encoder_uninit(&encoder);
 
@@ -217,23 +216,31 @@ std::string get_command(){
     //transcribed text
     std::string text;
 
-    std::cout << "starting transcription..."  << std::endl;
+    
     //transcribe loop
     while(!exit_transcription){
 
         while(head->filename == "placeholder"){
+            std::cout << "file not ready" << std::endl;
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
         }
 
         //get samples
         std::vector<float> samples = pcm_buster(head->filename);
 
         //transcribe the audio from samples
+        std::cout << "starting transcription..."  << std::endl;
+        const auto start = std::chrono::high_resolution_clock::now();
+        
         if(whisper_full(ctx, full_params, samples.data(), samples.size()) != 0){
             std::cerr << "Error: whisper_full failed.\n";
             whisper_free(ctx);
             std::cerr << "transcription error" << std::endl;
             return NULL;
         }
+        const auto end = std::chrono::high_resolution_clock::now();
+        const std::chrono::duration<double,std::milli> elapsed = end - start;
+        std::cout << "time elapsed: " << elapsed.count()/1000.0 << std::endl;
 
         //store transcribed text as string
         text = whisper_full_get_segment_text(ctx, 0);
@@ -386,6 +393,7 @@ int play_wav_file(const std::string &filepath){
 }
 //audio playback end
 void list_products(Node* current_node){
+    play_wav_file(current_node->get_audio_path());
     std::vector<Node*> products = current_node->get_children();
     for(size_t i = 0; i < products.size(); ++i){
         play_wav_file(products[i]->get_audio_path());
@@ -428,19 +436,23 @@ int main(int argc, const char** argv){
     play_wav_file(vendor.WELCOME_AUDIO);
 
     //main loop
-    while(true){
-        std::string file_path = vendor.generate_prompt(current_node);
-        play_wav_file(file_path);
+    while(true){        
         //if submenu
-        if(vendor.list_menu){
+        std::cout << "this is vendor list_menu: " << vendor.list_menu  << std::endl;
+        std::cout << "current node: " << current_node->get_id() <<std::endl;
+        //update bools and get  audio file_path
+        std::string file_path = vendor.generate_prompt(current_node);
+
+        if(vendor.list_menu == 1){
+            std::cout << "entered if" <<std::endl;
             list_products(current_node);
             vendor.list_menu = false;
-        }
+        }else
         //if selection made
         if(vendor.confirmation_prompt){
             play_confirm(current_node);
             vendor.confirmation_prompt = false;
-        }
+        }else play_wav_file(file_path);
         //error handling for parse and read
         do{
             vendor.parse(get_command(), current_node);
@@ -461,12 +473,13 @@ int main(int argc, const char** argv){
         else {
             //check if leaf before changing node
             if(!current_node->is_leaf())
-            current_node = current_node->find_child(vendor_result);
+                current_node = current_node->find_child(vendor_result);
         }
+        /*
         //if alg has reached payment stage this method will execute
         vendor.try_payment(current_node->get_price());
         //if alg has reached vend stage this method will execute
-        vendor.try_vend(current_node->get_loc(), current_node->get_price());
+        vendor.try_vend(current_node->get_loc(), current_node->get_price());*/
     }
 
     std::cout << "Exiting Program" << std::endl;
