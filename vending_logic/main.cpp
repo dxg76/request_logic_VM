@@ -48,6 +48,7 @@ struct whisper_context_params params;
 struct whisper_context* ctx;
 list_node* head = new list_node("placeholder",nullptr);
 list_node* tail = head;
+int file_index = 1;
 //atomic bool to quit recording
 std::atomic<bool> exit_recording(false);
 int list_size = 0;
@@ -71,21 +72,6 @@ int new_file(char* filename, ma_encoder_config encoder_config,  ma_encoder encod
     }
     if(/*debug_mode*/true){
         std::cout << filename << " created successfully" << std::endl;
-    }
-    return 0;
-}
-
-//starting ma device
-int device_start(ma_device& device, ma_device_config device_config, ma_result& result){
-
-    //device started
-    result = ma_device_start(&device);
-
-    //device failure
-    if (result != MA_SUCCESS) {
-        ma_device_uninit(&device);
-        std::cout << "Failed to start device." << std::endl;
-        return -3;
     }
     return 0;
 }
@@ -128,9 +114,8 @@ std::vector<float> pcm_buster(std::string filename){
 }
 
 void ma_stream(list_node* head){
-    //list vars
-    int index = 1;
-    
+    std::cout << "ma_stream()  begin" << std::endl;
+
     //Encoder Config
     ma_result result;
     ma_encoder_config encoder_config;
@@ -141,7 +126,7 @@ void ma_stream(list_node* head){
     //Audio Capture Loop
     while(!exit_recording){
         
-        std::string audio_file = std::to_string(index) + ".wav";
+        std::string audio_file = std::to_string(file_index) + ".wav";
 
         int recording_length = 2000; //length of clips in milliseconds
         //ENCODER CONFIGURATION
@@ -170,8 +155,14 @@ void ma_stream(list_node* head){
         } 
 
         //device started
-        std::cout << "listening..." << std::endl;
         result = ma_device_start(&device);
+        if (result != MA_SUCCESS) {
+            std::cout << "Failed to start capture device."<< std::endl;
+            return;
+        } 
+
+        std::cout << "recording..."<< audio_file <<std::endl;
+
 
         //device failure
         if (result != MA_SUCCESS) {
@@ -188,9 +179,9 @@ void ma_stream(list_node* head){
 
        
 
-        index++;
-        if(index > 10){
-            index = 1;
+        file_index++;
+        if(file_index > 10){
+            file_index = 1;
         }
         tail->filename = audio_file;
         tail->next_node = new list_node("placeholder",nullptr);
@@ -198,6 +189,8 @@ void ma_stream(list_node* head){
 
         
     }
+    std::cout << "stopped listening..." << std::endl;
+
     return;
 
 
@@ -237,7 +230,7 @@ std::string get_command(){
 
         //transcribe the audio from samples
         //std::cout << "starting transcription..."  << std::endl;
-        std::cout << "transcribing..." << std::endl;
+        std::cout << "transcribing..." << head->filename << std::endl;
         const auto start = std::chrono::high_resolution_clock::now();
         if(whisper_full(ctx, full_params, samples.data(), samples.size()) != 0){
             std::cerr << "Error: whisper_full failed.\n";
@@ -397,6 +390,7 @@ int play_wav_file(const std::string &filepath){
     ma_device_uninit(&decoder_device);
     ma_decoder_uninit(&decoder);
 
+    std::cout << "MRSTV done speaking!" << std::endl;
     return 0;
 }
 //audio playback end
@@ -458,9 +452,13 @@ int main(int argc, const char** argv){
         }
         //other/main
         else    play_wav_file(file_path);
+
+        //start recording
         exit_recording.store(false);
         std::thread audio_thread(ma_stream,head);
-        //error handling for parse and read
+
+
+        //Get Input, Tokenize, read
         do{
             vendor.parse(get_command(), current_node);
             const auto start = std::chrono::high_resolution_clock::now();
@@ -470,9 +468,12 @@ int main(int argc, const char** argv){
             std::cout << "token read time (secs):  " << elapsed.count()/1000.0 << std::endl;
             std::cout << "vendor result: " << vendor_result << std::endl;     
         }while(vendor_result == "err");
-        //audio thread join
+
+        //stop recording
         exit_recording.store(true);
         audio_thread.join();
+        std::cout << "audio thread joined!" << std::endl;
+
 
         //quit sequence
         if(vendor_result == "critical"){
@@ -481,6 +482,7 @@ int main(int argc, const char** argv){
         }
         //return to root node
         if(vendor_result == "home"){
+            //play_wav_file("wav files/return_home.wav");
             current_node = vendor.vendor_menu.root;
         }
 
@@ -500,104 +502,10 @@ int main(int argc, const char** argv){
             //get_command
         }
     }
-    /*
-
-    std::cout << "Exiting Program" << std::endl;
-    //end
-    
-    
-    //to be integrated
-        current_node = current_node->find_child(vendor_result);
-
-        std::string node_audio = current_node->get_audio_path();
-        //audio playback for current node
-        if(!node_audio.empty()){
-
-            int audio_result = play_wav_file(node_audio);
-
-            if(audio_result){
-                std::cout << "Audio successfully played." << std::endl; //Debug statement for audio
-            }
-            else{
-                std::cout << "Audio Error." << std::endl;
-            }
-
-        }
-
-        //in menu listing items
-        if(current_node != vendor.vendor_menu.root && current_node->get_price() < .1){ 
-
-            std::cout << "---" << vendor_result << " menu---\n" << std::endl; 
-
-            vendor.vendor_menu.selection_menu(current_node, 0);
-
-        }
-
-        //making item selection from sub menu
-        else if(current_node != vendor.vendor_menu.root){
-            vendor.empty_tokens();
-            do{
-                vendor.parse(get_command(), current_node);
-                vendor_result = vendor.read_tokens(current_node);
-            }while(vendor_result == "err");
-            if(vendor_result == "y"){
-                //Implement payment logic here
-                float price = current_node->get_price();
-
-                std::string selected_audio = "wav files/Chosen_Statement.wav";
-                int selected_result = play_wav_file(selected_audio);
-                if(selected_result == 0){
-                    std::cout << "Chosen item audio played successfully." << std::endl;
-                } 
-                else{
-                    std::cout << "Error playing audio." << std::endl;
-                }    
-
-                std::cout << "You have selected " << current_node->get_id() << std::endl;
-                std::cout << "Please insert " << price << std::endl;
-
-                float payment;
-                std::cin >> payment;
-                
-                if(payment < price){
-                    std::cout << "Insufficient funds" << std::endl;
-
-                }
-                else{
-
-                    float change = payment - price;
-                    std::cout << "Payment accepted. Dispensing: " << current_node->get_id() << std::endl;
-
-                    if(change > 0.0){
-                        std::string change_audio = "wav files/Change_Statement.wav";
-                        int change_result = play_wav_file(change_audio);
-                        if(change_result == 0){
-                            std::cout << "Change audio played successfully." << std::endl;
-                        } 
-                        else{
-                            std::cout << "Error playing audio." << std::endl;
-                        }
-
-                        std::cout << "Please collect your change: $" << change << std::endl;
-                    }
-
-                    current_node->set_quantity(current_node->get_quantity() - 1); //Reduces quantity by 1
-                }
-                
-                vendor.vend(current_node->get_loc(), current_node->get_price()); //vend item define later
-                current_node = vendor.vendor_menu.root;
-            }else{
-                current_node = vendor.vendor_menu.root;
-            }
-
-        }
-
-    }
-    */
 
     //Plays the complete statement after the program ends
     std::cout << "Thank you for using the vending machine." << std::endl;
-    std::string vend_complete = "wav files/Complete_Statement.wav";
+    std::string vend_complete = "wav files/exit_statement.wav";
     int complete_result = play_wav_file(vend_complete);
     if(complete_result == 0){
         std::cout << "Complete_Statement audio played successfully." << std::endl;

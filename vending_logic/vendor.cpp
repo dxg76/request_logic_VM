@@ -31,7 +31,7 @@ void Vendor::try_vend(std::string loc, float price){
 
 bool Vendor::try_payment(float item_cost){
     //paid by card
-    bool card_payment = false;
+    //bool card_payment = false;
     if(payment_ready){
         std::cout << "paying..." << std::endl;
         std::cout << "payment complete!" << std::endl;
@@ -130,10 +130,6 @@ std::string Vendor::check_keywords(){
             if(debug_mode)
                 std::cout << "keyword detected: " << CANDY_MENU_STRING << "\n" << std::endl;
             return CANDY_MENU_STRING;
-        }else if(tokens[i] == HOME_STRING){
-            if(debug_mode)
-                std::cout << "keyword detected: " << HOME_STRING << "\n" << std::endl;
-            return HOME_STRING;
         }else if(tokens[i] == KILL_STRING){
             if(debug_mode)
                 std::cout << "keyword detected: " << KILL_STRING << "\n" << std::endl;
@@ -150,7 +146,14 @@ std::string Vendor::check_inventory(std::vector<Node*> items){
                 return tokens[i];
             }
         }
+        if(tokens[i] == HOME_STRING){
+        if(debug_mode)
+            std::cout << "keyword detected: " << HOME_STRING << "\n" << std::endl;
+        return HOME_STRING;
+        }
     }
+    
+
     if(debug_mode){
         std::cout << "cannot find the item you are looking for :(\n" << std::endl;
     }
