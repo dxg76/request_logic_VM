@@ -3,8 +3,7 @@
 //constructor
 Vendor::Vendor(bool mode){
     total_currency = 0;
-    vend_ready = false;
-    payment_ready = false;
+    state = 1;
     list_menu = false;
     confirmation_prompt = false;
     configure_all();
@@ -21,7 +20,7 @@ void Vendor::set_debug(bool mode){
 
 void Vendor::try_vend(std::string loc, float price){
     //fill in with vending sequence
-    if(vend_ready){
+    if(state ==3){
         if(debug_mode){
             std::cout << "Vending..." << std::endl;
             std::cout << "vend complete! returning to main menu \n\n" << std::endl;
@@ -32,10 +31,12 @@ void Vendor::try_vend(std::string loc, float price){
 bool Vendor::try_payment(float item_cost){
     //paid by card
     //bool card_payment = false;
-    if(payment_ready){
+    if(state == 2){
         std::cout << "paying..." << std::endl;
         std::cout << "payment complete!" << std::endl;
-        vend_ready = true;
+        list_menu = true;
+        state = 3;
+        return true;
         /*
         //poll payment peripherals
         while(total_currency > item_cost && !card_payment){
@@ -164,12 +165,27 @@ std::string Vendor::check_inventory(std::vector<Node*> items){
 }
 
 std::string Vendor::confirm_selection(){
-    for(long unsigned int i = 0; i <tokens.size(); ++i){
-        if(tokens[i] == "yes"){
-            payment_ready = true;
-            return "complete";
-        }else if(tokens[i] == "no"){
-            return "complete";
+    std::cout << "confirming selection, state: " << state << std::endl;
+    if(state == 1){
+        for(long unsigned int i = 0; i <tokens.size(); ++i){
+            if(tokens[i] == "yes"){
+                state = 2;
+                list_menu = true;
+                return "confirmed";
+            }else if(tokens[i] == "no"){
+                return "denied";
+            }
+        }
+    }else if(state == 3){
+        
+        for(long unsigned int i = 0; i <tokens.size(); ++i){
+            if(tokens[i] == "yes"){
+                state = 1;
+                return "home";
+            }else if(tokens[i] == "no"){
+                state = 0;
+                return "idle";
+            }
         }
     }
     return "err";

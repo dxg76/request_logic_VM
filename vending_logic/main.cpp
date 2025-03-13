@@ -440,24 +440,55 @@ int main(int argc, const char** argv){
     //main loop
     while(true){
         std::string file_path = vendor.generate_prompt(current_node);
-        //if submenu
-        if(vendor.list_menu){
-           list_products(current_node);
-            vendor.list_menu = false;
+
+        /*VENDOR STATE 0 IDLE*/
+        if(vendor.state == 0){
+            
         }
-        //if selection made
-        else if(vendor.confirmation_prompt){
-            play_confirm(current_node);
-            vendor.confirmation_prompt = false;
+        /*VENDOR STATE 1 SELECTION*/
+        else if(vendor.state ==1){
+            //if submenu
+            if(vendor.list_menu){
+            list_products(current_node);
+                vendor.list_menu = false;
+            }
+            //if selection made
+            else if(vendor.confirmation_prompt){
+                play_confirm(current_node);
+                vendor.confirmation_prompt = false;
+            }
+            //other/main
+            else    play_wav_file(file_path);
+
+
         }
-        //other/main
-        else    play_wav_file(file_path);
+        /*VENDOR STATE 2 Payment*/
+        else if(vendor.state == 2){
+            play_wav_file("wav files/direct_pay.wav");
+            vendor.try_payment(current_node->get_price());
+
+            /*VENDOR STATE 3*/
+            //payment has been accepted
+            if(vendor.state == 3){
+                //reuse bool
+                if(vendor.list_menu){
+                    play_wav_file("wav files/payment_accepted.wav");
+                    play_wav_file("wav files/now_vending.wav");
+                    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+                    vendor.list_menu = false;
+                }
+                //Simulate vend with sleep (temporary) DG
+                vendor.try_vend(current_node->get_loc(), current_node->get_price());
+                play_wav_file("wav files/anything_else.wav");
+            }
+
+        }
+        
+
 
         //start recording
         exit_recording.store(false);
         std::thread audio_thread(ma_stream,head);
-
-
         //Get Input, Tokenize, read
         do{
             vendor.parse(get_command(), current_node);
@@ -482,7 +513,12 @@ int main(int argc, const char** argv){
         }
         //return to root node
         if(vendor_result == "home"){
-            //play_wav_file("wav files/return_home.wav");
+            play_wav_file("wav files/return_home.wav");
+            current_node = vendor.vendor_menu.root;
+        }
+        //go to idle mode
+        if(vendor_result == "idle"){
+            play_wav_file("wav files/idle_mode.wav");
             current_node = vendor.vendor_menu.root;
         }
 
@@ -492,15 +528,7 @@ int main(int argc, const char** argv){
             if(!current_node->is_leaf())
                 current_node = current_node->find_child(vendor_result);
         }
-        
-        //if alg has reached payment stage this method will execute
-        // /vendor.try_payment(current_node->get_price());
-        //if alg has reached vend stage this method will execute
-        //vendor.try_vend(current_node->get_loc(), current_node->get_price());
-        if(vendor.vend_complete){
-            play_wav_file("wav files/anything_else.wav");
-            //get_command
-        }
+        std::cout << "Vendor State = " << vendor.state << std::endl;
     }
 
     //Plays the complete statement after the program ends

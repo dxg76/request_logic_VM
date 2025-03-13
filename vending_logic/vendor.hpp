@@ -19,8 +19,7 @@ class Vendor{
     std::string port_name = "/dev/ttyACM0";
     float total_currency;
     //vendor vars
-    bool payment_ready;
-    bool vend_ready;
+    short state; //[0 == idle],[1 == select mode], [2 == payment mode], [3 == vend mode]
     bool vend_complete;
     bool list_menu;
     bool confirmation_prompt;
