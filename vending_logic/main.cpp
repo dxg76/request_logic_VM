@@ -439,17 +439,19 @@ int main(int argc, const char** argv){
 
     //main loop
     while(true){
-        std::string file_path = vendor.generate_prompt(current_node);
+        
 
         /*VENDOR STATE 0 IDLE*/
         if(vendor.state == 0){
-            
+
         }
         /*VENDOR STATE 1 SELECTION*/
         else if(vendor.state ==1){
+            std::string file_path = vendor.generate_prompt(current_node);
+
             //if submenu
             if(vendor.list_menu){
-            list_products(current_node);
+                list_products(current_node);
                 vendor.list_menu = false;
             }
             //if selection made
@@ -489,6 +491,7 @@ int main(int argc, const char** argv){
         //start recording
         exit_recording.store(false);
         std::thread audio_thread(ma_stream,head);
+
         //Get Input, Tokenize, read
         do{
             vendor.parse(get_command(), current_node);
@@ -510,37 +513,40 @@ int main(int argc, const char** argv){
         if(vendor_result == "critical"){
             std::cout << "Exiting program." << std::endl;
             break;
-        }
+        }        
         //return to root node
-        if(vendor_result == "home"){
+        else if(vendor_result == "home"){
             play_wav_file("wav files/return_home.wav");
             current_node = vendor.vendor_menu.root;
         }
         //go to idle mode
-        if(vendor_result == "idle"){
+        else if(vendor_result == "idle"){
             play_wav_file("wav files/idle_mode.wav");
             current_node = vendor.vendor_menu.root;
         }
-
+        //exit idle mode
+        else if(vendor_result == "awaken"){
+            vendor.state = 1;
+            play_wav_file("wav files/return_from_idle.wav");
+        }
         //navigate node based on command
         else {
             //check if leaf before changing node
             if(!current_node->is_leaf())
                 current_node = current_node->find_child(vendor_result);
         }
-        std::cout << "Vendor State = " << vendor.state << std::endl;
+
+        //debug out
+        std::cout << "Vendor State = "        << vendor.state << std::endl;
+        std::cout << "Current Node = "        << current_node->get_id() <<std::endl;
+        std::cout << "list_menu = "           << vendor.list_menu << std::endl;
+        std::cout << "Confirmation Prompt = " << vendor.confirmation_prompt << std::endl;
     }
 
     //Plays the complete statement after the program ends
     std::cout << "Thank you for using the vending machine." << std::endl;
-    std::string vend_complete = "wav files/exit_statement.wav";
-    int complete_result = play_wav_file(vend_complete);
-    if(complete_result == 0){
-        std::cout << "Complete_Statement audio played successfully." << std::endl;
-    } 
-    else{
-        std::cout << "Error playing audio." << std::endl;
-    }
+    play_wav_file("wav files/exit_statement.wav");
+
 
     return 0;
 }

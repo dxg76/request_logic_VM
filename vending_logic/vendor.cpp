@@ -77,6 +77,7 @@ float Vendor::read_bill_code(std::string hex_code){
 
 std::string Vendor::generate_prompt(Node* current_node){
 
+
     if(current_node->get_id() == vendor_menu.root->get_id()){
         return current_node->get_audio_path();
     }
@@ -95,7 +96,7 @@ std::string Vendor::generate_prompt(Node* current_node){
         confirmation_prompt = true;
         return current_node->get_audio_path();
     }
-    
+
 
 }
 void Vendor::parse(std::string request, Node* current_node){
@@ -177,7 +178,7 @@ std::string Vendor::confirm_selection(){
             }
         }
     }else if(state == 3){
-        
+        confirmation_prompt = false;
         for(long unsigned int i = 0; i <tokens.size(); ++i){
             if(tokens[i] == "yes"){
                 state = 1;
@@ -191,26 +192,40 @@ std::string Vendor::confirm_selection(){
     return "err";
 }
 
+std::string Vendor::wake_up(){
+    for(long unsigned int i = 0; i <tokens.size(); ++i){
+        if(tokens[i] == "steve"){
+            return "awaken";
+        }
+    }
+    return "err";
+}
+
 std::string Vendor::read_tokens(Node* current_node){
     std::string result;
+
+    //Idling
+    if(state == 0){
+        result = wake_up();
+        empty_tokens();
+        return result;
+    }
     //in main menu
     if(current_node == vendor_menu.root){ 
         result = check_keywords();
         empty_tokens();
-        return result;
     }
     //in menu searching for item
     else if(current_node->get_price() < .1){
         result = check_inventory(current_node->get_children());
         empty_tokens();
-        return result;
     }
     //selecting item
     else{ 
         result = confirm_selection();
         empty_tokens();
-        return result;
     }
+    return result;
 }
 
 std::string Vendor::normalize(char* token){

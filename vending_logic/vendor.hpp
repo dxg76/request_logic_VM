@@ -51,6 +51,7 @@ class Vendor{
     std::string check_keywords();
     std::string check_inventory(std::vector<Node*> items);
     std::string confirm_selection();
+    std::string wake_up();
     void parse(std::string request, Node* current_node);
     std::string read_tokens(Node* current_node);
     std::string normalize(char* token);
