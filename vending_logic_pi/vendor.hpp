@@ -7,46 +7,54 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
+#include <wiringPi.h>
 #include "menu-tree.hpp"
+#define BUFFER_SIZE 512
 
 class Vendor{
     public:
     
     Vendor(bool mode);
 
-    //serial variables
+    /*serial variables*/
     int abstract;
     std::string port_name = "/dev/ttyACM0";
     float total_currency;
-    //vendor vars
+    bool card_payment;
+
+    /*vendor vars*/
     short state; //[0 == idle],[1 == select mode], [2 == payment mode], [3 == vend mode]
     bool vend_complete;
     bool list_menu;
     bool confirmation_prompt;
-    //serial methods
+    
+
+    /*serial methods*/
     int open_serial(const char* port_name);
     void close_serial();
     bool configure_serial(int speed);
 
-    //MDB methods
+    /*MDB methods*/
     int write_to_MDB(std::string msg);
     std::string read_from_MDB();
     int configure_all();
     int configure_card_reader();
     int configure_coin_mech();
     int configure_bill_validator();
+    void print_mdb_response();
+    
+    /*accept payments*/
+    bool check_payment(float item_cost);
+    bool check_card_payment(float item_cost);
+    float accept_coins(int hex); //returns 0 if no currency input to machine
+    float accept_bills(int hex); //returns 0 if no currency input to machine
 
-    //accept payments
-    bool accept_card_payment(float item_cost);
-    float accept_coin_payment(); //returns 0 if no currency input to machine
-    float accept_bill_payment(); //returns 0 if no currency input to machine
-
-    //vend methods
+    /*vend methods*/
     void set_debug(bool mode); 
     void try_vend(std::string loc, float price);
     bool try_payment(float item_cost);
     
-    //token methods
+    /*token methods*/
     std::string generate_prompt(Node* current_node);
     std::string check_keywords();
     std::string check_inventory(std::vector<Node*> items);
@@ -58,23 +66,60 @@ class Vendor{
     void empty_tokens();
     void print_tokens();
     std::string get_hex(std::string response);
-    float read_coin_code(std::string hex_code);
-    float read_bill_code(std::string hex_code);
-
-    //token vars 
+    float read_hex_code(std::string hex_code);
+    /*token vars*/
     std::vector<std::string> tokens;
 
-    //menu vars
+    /*menu vars*/
     Menu_tree vendor_menu;
     float selection_price;
     std::string selection_loc;
+
+    /*interrupt vars*/
+    volatile int row = 0;
+    volatile int col = 0;
+    int a_pin = 2;
+    int b_pin = 3;
+    int c_pin = 4;
+    int d_pin = 17;
+    int e_pin = 27;
+    int f_pin = 22;
+    int one_pin = 14;
+    int two_pin = 15;
+    int three_pin = 18;
+    int four_pin = 23;
+    int five_pin = 24;
+    int six_pin = 25;
+    int seven_pin = 8;
+    int eight_pin = 7;
+
+    //ISR rows
+    void click_a();
+    void click_b();
+    void click_c();
+    void click_d();
+    void click_e();
+    void click_f();
+
+    //ISR columns
+    void click_one();
+    void click_two();
+    void click_three();
+    void click_four();
+    void click_five();
+    void click_six();
+    void click_seven();
+    void click_eight();
+
+    //interrupt methods
+    void set_up_interrupts();
+    void set_all_gpio();
 
     //public vars
     const std::string WELCOME_AUDIO = "wav files/Hello_Statement.wav"; 
 
     private:
     bool debug_mode = false;
-    //end transcriber data
 
     //string constants
 
