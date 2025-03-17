@@ -38,43 +38,45 @@ void set_up_interrupts();
 void set_all_gpio();
 
 int main(void){
-    wiringPiSetupGpio();
-    set_all_gpio();
-    set_up_interrupts();
-    while(true){}
+set_all_gpio();
+set_up_interrupts();
+while(){}
+    
+
+
 }
 
 //method definitions
 void set_up_interrupts(){
     //rows
-    if(wiringPiISR(a_pin, INT_EDGE_FALLING, &click_a) != 0)
+    if(wiringPiISR(a_pin, INT_FALLING_EDGE, &click_a) != 0)
         std::cout << "Pin: " << a_pin << " interrupt failed." << std::endl;
-    if(wiringPiISR(b_pin, INT_EDGE_FALLING, &click_b) != 0)
+    if(wiringPiISR(b_pin, INT_FALLING_EDGE, &click_b) != 0)
         std::cout << "Pin: " << b_pin << " interrupt failed." << std::endl;
-    if (wiringPiISR(c_pin, INT_EDGE_FALLING, &click_c) != 0)
+    if (wiringPiISR(c_pin, INT_FALLING_EDGE, &click_c) != 0)
         std::cout << "Pin: " << c_pin << " interrupt failed." << std::endl;
-    if (wiringPiISR(d_pin, INT_EDGE_FALLING, &click_d) != 0)
+    if (wiringPiISR(d_pin, INT_FALLING_EDGE, &click_d) != 0)
         std::cout << "Pin: " << d_pin << " interrupt failed." << std::endl;
-    if (wiringPiISR(e_pin, INT_EDGE_FALLING, &click_e) != 0)
+    if (wiringPiISR(e_pin, INT_FALLING_EDGE, &click_e) != 0)
         std::cout << "Pin: " << e_pin << " interrupt failed." << std::endl;
-    if (wiringPiISR(f_pin, INT_EDGE_FALLING, &click_f) != 0)
+    if (wiringPiISR(f_pin, INT_FALLING_EDGE, &click_f) != 0)
         std::cout << "Pin: " << f_pin << " interrupt failed." << std::endl;
     //columns
-    if (wiringPiISR(one_pin, INT_EDGE_FALLING, &click_one) != 0)
+    if (wiringPiISR(one_pin, INT_FALLING_EDGE, &click_one) != 0)
         std::cout << "Pin: " << one_pin << " interrupt failed." << std::endl;
-    if (wiringPiISR(two_pin, INT_EDGE_FALLING, &click_two) != 0)
+    if (wiringPiISR(two_pin, INT_FALLING_EDGE, &click_two) != 0)
         std::cout << "Pin: " << two_pin << " interrupt failed." << std::endl;
-    if (wiringPiISR(three_pin, INT_EDGE_FALLING, &click_three) != 0)
+    if (wiringPiISR(three_pin, INT_FALLING_EDGE, &click_three) != 0)
         std::cout << "Pin: " << three_pin << " interrupt failed." << std::endl;
-    if (wiringPiISR(four_pin, INT_EDGE_FALLING, &click_four) != 0)
+    if (wiringPiISR(four_pin, INT_FALLING_EDGE, &click_four) != 0)
         std::cout << "Pin: " << four_pin << " interrupt failed." << std::endl;
-    if (wiringPiISR(five_pin, INT_EDGE_FALLING, &click_five) != 0)
+    if (wiringPiISR(five_pin, INT_FALLING_EDGE, &click_five) != 0)
         std::cout << "Pin: " << five_pin << " interrupt failed." << std::endl;
-    if (wiringPiISR(six_pin, INT_EDGE_FALLING, &click_six) != 0)
+    if (wiringPiISR(six_pin, INT_FALLING_EDGE, &click_six) != 0)
         std::cout << "Pin: " << six_pin << " interrupt failed." << std::endl;
-    if (wiringPiISR(seven_pin, INT_EDGE_FALLING, &click_seven) != 0)
+    if (wiringPiISR(seven_pin, INT_FALLING_EDGE, &click_seven) != 0)
         std::cout << "Pin: " << seven_pin << " interrupt failed." << std::endl;
-    if (wiringPiISR(eight_pin, INT_EDGE_FALLING, &click_eight) != 0)
+    if (wiringPiISR(eight_pin, INT_FALLING_EDGE, &click_eight) != 0)
         std::cout << "Pin: " << eight_pin << " interrupt failed." << std::endl;
     
 }
@@ -116,71 +118,71 @@ void set_all_gpio(){
 //ISR
 void click_a(){
     row = 'A';
-    std::cout << "Interrupt on row A (GPIO " << a_pin << ")" << std::endl;
+    std::cout << "Interrupt on row A (GPIO " << gpio << ") at time " << tick << " µs" << std::endl;
 }
 
 void click_b(){
     row = 'B';
-    std::cout << "Interrupt on row B (GPIO " << b_pin << ")" << std::endl;
+    std::cout << "Interrupt on row B (GPIO " << gpio << ") at time " << tick << " µs" << std::endl;
 }
 
 void click_c(){
     row = 'C';
-    std::cout << "Interrupt on row C (GPIO " << c_pin << ")" << std::endl;
+    std::cout << "Interrupt on row C (GPIO " << gpio << ") at time " << tick << " µs" << std::endl;
 }
 
 void click_d(){
     row = 'D';
-    std::cout << "Interrupt on row D (GPIO " << d_pin << ")" << std::endl;
+    std::cout << "Interrupt on row D (GPIO " << gpio << ") at time " << tick << " µs" << std::endl;
 }
 
 void click_e(){
     row = 'E';
-    std::cout << "Interrupt on row E (GPIO " << e_pin << ")" << std::endl;
+    std::cout << "Interrupt on row E (GPIO " << gpio << ") at time " << tick << " µs" << std::endl;
 }
 
 void click_f(){
     row = 'F';
-    std::cout << "Interrupt on row F (GPIO " << f_pin << ")" << std::endl;
+    std::cout << "Interrupt on row F (GPIO " << gpio << ") at time " << tick << " µs" << std::endl;
 }
 
 // ISR Columns
 void click_one(){
     col = 1;
-    std::cout << "Interrupt on column 1 (GPIO " << one_pin << ")" << std::endl;
+    std::cout << "Interrupt on column 1 (GPIO " << gpio << ") at time " << tick << " µs" << std::endl;
 }
 
 void click_two(){
     col = 2;
-    std::cout << "Interrupt on column 2 (GPIO " << two_pin << ")" << std::endl;
+    std::cout << "Interrupt on column 2 (GPIO " << gpio << ") at time " << tick << " µs" << std::endl;
 }
 
 void click_three(){
     col = 3;
-    std::cout << "Interrupt on column 3 (GPIO " << three_pin << ")" << std::endl;
+    std::cout << "Interrupt on column 3 (GPIO " << gpio << ") at time " << tick << " µs" << std::endl;
 }
 
 void click_four(){
     col = 4;
-    std::cout << "Interrupt on column 4 (GPIO " << four_pin << ")" << std::endl;
+    std::cout << "Interrupt on column 4 (GPIO " << gpio << ") at time " << tick << " µs" << std::endl;
 }
 
 void click_five(){
     col = 5;
-    std::cout << "Interrupt on column 5 (GPIO " << five_pin << ")" << std::endl;
+    std::cout << "Interrupt on column 5 (GPIO " << gpio << ") at time " << tick << " µs" << std::endl;
 }
 
 void click_six(){
     col = 6;
-    std::cout << "Interrupt on column 6 (GPIO " << six_pin << ")" << std::endl;
+    std::cout << "Interrupt on column 6 (GPIO " << gpio << ") at time " << tick << " µs" << std::endl;
 }
 
 void click_seven(){
     col = 7;
-    std::cout << "Interrupt on column 7 (GPIO " << seven_pin << ")" << std::endl;
+    std::cout << "Interrupt on column 7 (GPIO " << gpio << ") at time " << tick << " µs" << std::endl;
 }
 
 void click_eight(){
     col = 8;
-    std::cout << "Interrupt on column 8 (GPIO " << eight_pin  << ")" << std::endl;
+    std::cout << "Interrupt on column 8 (GPIO " << gpio << ") at time " << tick << " µs" << std::endl;
 }
