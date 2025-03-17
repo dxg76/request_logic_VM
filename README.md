@@ -105,18 +105,18 @@ with whispers output.
 Began implementation of decoder device to play .wav files
 Researched into whispers decoder capabilties
 
-3/4/24
+3/4/25
 *Devan Rivera*:
 Implemented more of the decoder and added a function to play the .wav files
 Added "wav files" folder into "vending_logic" to reach the audio files
 
-3/5/24
+3/5/25
 *Devan Rivera*:
 Managed to compile decoder device (Unable to test locally currently)
 Began implementing audio playback logic down tree structure
 Added All class to Tree Data Structure 
 
-3/9/24
+3/9/25
 *Devan Rivera*:
 Added aditional audio logic for statements to be played outside of the tree
 Debugged audio logic
