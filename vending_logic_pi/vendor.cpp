@@ -8,7 +8,6 @@ Vendor::Vendor(bool mode){
     confirmation_prompt = false;
     configure_all();
     set_debug(mode);
-    voice_control = true;
 }
 
 //vendor methods
@@ -29,51 +28,55 @@ void Vendor::try_vend(std::string loc, float price){
     }
 }
 
-bool Vendor::try_payment(float item_cost){
-    //paid by card
-    //bool card_payment = false;
-    if(state == 2){
-        std::cout << "paying..." << std::endl;
-        std::cout << "payment complete!" << std::endl;
-        list_menu = true;
-        state = 3;
-        return true;
-        /*
-        //poll payment peripherals
-        while(total_currency > item_cost && !card_payment){
-            total_currency += accept_coin_payment();
-            total_currency += accept_bill_payment();
-            card_payment = accept_card_payment(item_cost);
-        }
-        return true;
-        */
-    }
-    return false;
-}
-
 //token methods
 std::string Vendor::get_hex(std::string response){
     std::string hex_code;
-    int start_index = response.find(',');
-    hex_code = response.substr(start_index);
+    std::cout << "this is response: " << response <<std::endl;
+    size_t start_index = response.find(',');
+    int end_index = response.find('\r');
+
+    hex_code = response.substr(start_index+1, end_index-start_index-1);
+    
+    std::cout << "Invisible characters found at indices: ";
+    for (size_t i = 0; i < hex_code.size(); ++i) {
+        if (!std::isprint(hex_code[i])) { // Checks for non-printable characters
+            std::cout << i << " (ASCII " << static_cast<int>(hex_code[i]) << "), ";
+        }
+    }
+    std::cout << std::endl;
+    
     return hex_code;
 }
 
-float Vendor::read_coin_code(std::string hex_code){
-    //no updates for the coin mech to share
-    if(hex_code == "ack"){
+float Vendor::read_hex_code(std::string hex_code){
+    //no updates to share
+    int compare_code = hex_code.compare("ACK");
+    //std::cout <<"compare code: " << compare_code <<std::endl;
+    if(compare_code == 0){
+        std::cout <<"no currency added" << std::endl;
         return 0;
     }
+    git compare_code = hex_code.compare("NACK");
+    //std::cout <<"compare code: " << compare_code <<std::endl;
+    if(compare_code == 0){
+        return 0;
+    }
+    
+    //response is from card reader
+    if(hex_code[0] == 'd'){
+        //card logic
+        card_payment = true;
+        return 0;
+    }
+
     //convert the string to a hexadecimal integer
-    //int hex = std::stoi(hex_code, nullptr, 16);
+    int hex = std::stoi(hex_code, nullptr, 16);
+    //coin detected
+    if((hex >> 15) != 1) //need to fix this statement because bill returns 2 byte code also
+        return accept_coins(hex);
+    //bill detected
+    else return accept_bills(hex);
 
-    //get bytes
-
-    return 0;
-}
-
-float Vendor::read_bill_code(std::string hex_code){
-    return 0;
 }
 
 std::string Vendor::generate_prompt(Node* current_node){
@@ -100,7 +103,6 @@ std::string Vendor::generate_prompt(Node* current_node){
 
 
 }
-
 void Vendor::parse(std::string request, Node* current_node){
 
     char* token;
@@ -424,15 +426,44 @@ int Vendor::configure_bill_validator() {
     std::cout << "[bill validator configured]" << std::endl;
     return 0;
 }
-
+void Vendor::print_mdb_response(){
+    std::cout << read_from_MDB() <<std::endl;
+}
 //MDB pay
-bool Vendor::accept_card_payment(float item_cost) {
+
+bool Vendor::try_payment(float item_cost){
+    //paid by card
+    //bool card_payment = false;
+    if(state == 2){
+        std::cout << "paying..." << std::endl;
+        tcflush(abstract,TCIOFLUSH);
+        //poll payment peripherals
+        while(total_currency < item_cost && !card_payment){
+            total_currency += check_coins();
+            total_currency += check_bills();
+            //card_payment = check_card_payment(item_cost);
+        }
+        std::cout << "payment complete!" << std::endl;
+        list_menu = true;
+        state = 3;
+        return true;
+    }
+    return false;
+}
+bool Vendor::check_card_payment(float item_cost) {
     std::string request_payment = "D,REQ," + std::to_string(item_cost);
     std::string vend_confirmed;
     std::string vend_rejected;
+    std::string response;
 
-    while (read_from_MDB() != "placeholder"){}
-        write_to_MDB(request_payment);
+    write_to_MDB(request_payment);
+    read_from_MDB = response;
+    if(response.find("d,STATUS,RESULT,1")){
+        std::cout << "no card..." <<std::endl;
+        return false;
+    }
+
+    write_to_MDB(request_payment);
     if(read_from_MDB() != "placeholder"){
         write_to_MDB(vend_rejected);
         return false;
@@ -440,45 +471,117 @@ bool Vendor::accept_card_payment(float item_cost) {
     return true;
 }
 
-float Vendor::accept_coin_payment() {
-    std::string poll_coin = "R,0B";
-    float inserted_currency = 0;
-    //request coin mech for update
-    write_to_MDB(poll_coin);
-    std::string response = read_from_MDB();
-    if(debug_mode){
-        std::cout << response << std::endl;
-    }
-    
-    //get hex code from machine
-    response = get_hex(response);
-    //read code
-    inserted_currency = read_coin_code(response);
-    //implement some string parsing and cost calculation
-    if(inserted_currency > .01){
-        return inserted_currency;
-    }else return 0;
+float Vendor::accept_coins(int hex) {
+    //get coin type from code
+    int coin_type = (hex>>8) & 0xF;
+
+    std::cout << "coin id: " << coin_type << std::endl;
+    if(coin_type == 2){
+        std::cout << "quarter inserted" << std::endl;
+        return .25; //quarter
+    }else if(coin_type == 1){
+        std::cout << "dime inserted" << std::endl;
+        return .10; //dime
+    }else if(coin_type == 0){
+        std::cout << "nickel inserted" << std::endl;
+        return .05; //nickel
+    }else return 0; //unknown coin type
+    //get bytes
+    return 0;    
 }
 
-float Vendor::accept_bill_payment() {
-    std::string poll_bill = "R,33";
-    float inserted_currency = 0;
-
-    //request bill validator for update
-    write_to_MDB(poll_bill);
-    std::string response = read_from_MDB();
-    if(debug_mode){
-        std::cout << response << std::endl;
+float Vendor::accept_bills(int hex) {
+    //get bill type
+    int bill_type = (hex>>8)  & 0xF;
+    if(bill_type == 2){
+        std::cout << "5 dollar bill inserted!" << std::endl;
+        //accept bill from the escrow
+        write_to_MDB("R,35,1");
+        std::cout << "accepting from escrow..." <<std::endl;
+        print_mdb_response();
+        //poll to ensure the bill is in the clip
+        write_to_MDB("R,33");
+        std::cout << "bill accepted: " <<std::endl;
+        print_mdb_response();
+        return 5;
     }
-    
-    //get hex code from machine
-    response = get_hex(response);
-    //read code
-    inserted_currency = read_bill_code(response);
-    //implement some string parsing and cost calculation
-    if(inserted_currency > .01){
-        return inserted_currency;
-    }else return 0;
+    if(bill_type == 0){
+        std::cout << "1 dollar bill inserted!" << std::endl;
+        //accept bill from the escrow
+        write_to_MDB("R,35,1");
+        std::cout << "accepting from escrow..." <<std::endl;
+        print_mdb_response();
+        //poll to ensure the bill is in the clip
+        write_to_MDB("R,33");
+        std::cout << "bill accepted! " <<std::endl;
+        print_mdb_response();
+        return 1;            
+    }else{
+        //reject bill return to user
+        write_to_MDB("R,35,0");
+        std::cout << "rejecting bill from escrow..." << std::endl;
+        print_mdb_response();
+        //poll to ensure the bill was returned
+        write_to_MDB("R,33");
+        std::cout << "bill rejected!" << std::endl;
+        print_mdb_response();
 
+        return 0; //unknown bill type  
+    }
 }
 
+//ISR methods
+void Vendor::set_up_interrupts() {
+    // rows
+    if (wiringPiISR(a_pin, INT_EDGE_FALLING, &Vendor::click_a) != 0)
+        std::cout << "Pin: " << a_pin << " interrupt failed." << std::endl;
+    if (wiringPiISR(b_pin, INT_EDGE_FALLING, &Vendor::click_b) != 0)
+        std::cout << "Pin: " << b_pin << " interrupt failed." << std::endl;
+    if (wiringPiISR(c_pin, INT_EDGE_FALLING, &Vendor::click_c) != 0)
+        std::cout << "Pin: " << c_pin << " interrupt failed." << std::endl;
+    if (wiringPiISR(d_pin, INT_EDGE_FALLING, &Vendor::click_d) != 0)
+        std::cout << "Pin: " << d_pin << " interrupt failed." << std::endl;
+    if (wiringPiISR(e_pin, INT_EDGE_FALLING, &Vendor::click_e) != 0)
+        std::cout << "Pin: " << e_pin << " interrupt failed." << std::endl;
+    if (wiringPiISR(f_pin, INT_EDGE_FALLING, &Vendor::click_f) != 0)
+        std::cout << "Pin: " << f_pin << " interrupt failed." << std::endl;
+    
+    // columns
+    if (wiringPiISR(one_pin, INT_EDGE_FALLING, &Vendor::click_one) != 0)
+        std::cout << "Pin: " << one_pin << " interrupt failed." << std::endl;
+    if (wiringPiISR(two_pin, INT_EDGE_FALLING, &Vendor::click_two) != 0)
+        std::cout << "Pin: " << two_pin << " interrupt failed." << std::endl;
+    if (wiringPiISR(three_pin, INT_EDGE_FALLING, &Vendor::click_three) != 0)
+        std::cout << "Pin: " << three_pin << " interrupt failed." << std::endl;
+    if (wiringPiISR(four_pin, INT_EDGE_FALLING, &Vendor::click_four) != 0)
+        std::cout << "Pin: " << four_pin << " interrupt failed." << std::endl;
+    if (wiringPiISR(five_pin, INT_EDGE_FALLING, &Vendor::click_five) != 0)
+        std::cout << "Pin: " << five_pin << " interrupt failed." << std::endl;
+    if (wiringPiISR(six_pin, INT_EDGE_FALLING, &Vendor::click_six) != 0)
+        std::cout << "Pin: " << six_pin << " interrupt failed." << std::endl;
+    if (wiringPiISR(seven_pin, INT_EDGE_FALLING, &Vendor::click_seven) != 0)
+        std::cout << "Pin: " << seven_pin << " interrupt failed." << std::endl;
+    if (wiringPiISR(eight_pin, INT_EDGE_FALLING, &Vendor::click_eight) != 0)
+        std::cout << "Pin: " << eight_pin << " interrupt failed." << std::endl;
+}
+
+void Vendor::set_all_gpio() {
+    // GPIO setup (same logic as before)
+}
+
+// ISR implementations
+void Vendor::click_a() { row = 'A'; std::cout << "Interrupt on row A (GPIO " << a_pin << ")" << std::endl; }
+void Vendor::click_b() { row = 'B'; std::cout << "Interrupt on row B (GPIO " << b_pin << ")" << std::endl; }
+void Vendor::click_c() { row = 'C'; std::cout << "Interrupt on row C (GPIO " << c_pin << ")" << std::endl; }
+void Vendor::click_d() { row = 'D'; std::cout << "Interrupt on row D (GPIO " << d_pin << ")" << std::endl; }
+void Vendor::click_e() { row = 'E'; std::cout << "Interrupt on row E (GPIO " << e_pin << ")" << std::endl; }
+void Vendor::click_f() { row = 'F'; std::cout << "Interrupt on row F (GPIO " << f_pin << ")" << std::endl; }
+
+void Vendor::click_one() { col = 1; std::cout << "Interrupt on column 1 (GPIO " << one_pin << ")" << std::endl; }
+void Vendor::click_two() { col = 2; std::cout << "Interrupt on column 2 (GPIO " << two_pin << ")" << std::endl; }
+void Vendor::click_three() { col = 3; std::cout << "Interrupt on column 3 (GPIO " << three_pin << ")" << std::endl; }
+void Vendor::click_four() { col = 4; std::cout << "Interrupt on column 4 (GPIO " << four_pin << ")" << std::endl; }
+void Vendor::click_five() { col = 5; std::cout << "Interrupt on column 5 (GPIO " << five_pin << ")" << std::endl; }
+void Vendor::click_six() { col = 6; std::cout << "Interrupt on column 6 (GPIO " << six_pin << ")" << std::endl; }
+void Vendor::click_seven() { col = 7; std::cout << "Interrupt on column 7 (GPIO " << seven_pin << ")" << std::endl; }
+void Vendor::click_eight() { col = 8; std::cout << "Interrupt on column 8 (GPIO " << eight_pin << ")" << std::endl; }
