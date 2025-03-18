@@ -27,6 +27,8 @@ class Vendor{
     bool vend_complete;
     bool list_menu;
     bool confirmation_prompt;
+    char motor_control;
+    bool voice_control;
     
 
     /*serial methods*/

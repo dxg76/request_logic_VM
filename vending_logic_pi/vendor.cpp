@@ -8,6 +8,7 @@ Vendor::Vendor(bool mode){
     confirmation_prompt = false;
     configure_all();
     set_debug(mode);
+    voice_control = true;
 }
 
 //vendor methods
@@ -99,6 +100,7 @@ std::string Vendor::generate_prompt(Node* current_node){
 
 
 }
+
 void Vendor::parse(std::string request, Node* current_node){
 
     char* token;

@@ -438,8 +438,13 @@ int main(int argc, const char** argv){
     play_wav_file(vendor.WELCOME_AUDIO);
 
     //main loop
-    while(true){
+    while(){
         
+        //standard function loop
+        while(!vendor.voice_control){
+            current_node = vendor.vendor_menu.root;
+            current_node = current_node->find_child("all")
+        }
 
         /*VENDOR STATE 0 IDLE*/
         if(vendor.state == 0){
