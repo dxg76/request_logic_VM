@@ -69,6 +69,7 @@ class Vendor{
     void print_tokens();
     std::string get_hex(std::string response);
     float read_hex_code(std::string hex_code);
+    char get_vend_code(char row, char col);
     /*token vars*/
     std::vector<std::string> tokens;
 
@@ -94,6 +95,14 @@ class Vendor{
     int six_pin = 25;
     int seven_pin = 8;
     int eight_pin = 7;
+    
+    /*motor control pins*/
+    int m1 = 0;
+    int m2 = 1;
+    int m3 = 5;
+    int m4 = 6;
+    int m5 = 12;
+    int m6 = 13;
 
     //ISR rows
     void click_a();
