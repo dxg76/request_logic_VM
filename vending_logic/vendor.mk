@@ -2,7 +2,7 @@ X = g++
 
 F = -std=c++14 -Wall -I./whisper.cpp-master/include -I./whisper.cpp-master/ggml/include #include whisper and ggml headers
 
-L = -L./whisper.cpp-master/build/src -lwhisper -pthread -lm -lsndfile -ldl #linker flags
+L = -L./whisper.cpp-master/build/src -lwhisper -pthread -lm -lsndfile -ldl -l wiringPi #linker flags
 
 main: main.o vendor.o node.o menu-tree.o 
 	cd whisper.cpp-master && make base.en

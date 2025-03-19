@@ -1,5 +1,5 @@
 #include "vendor.hpp"
-
+#include <wiringPi.h>
 #include <fstream>
 #include <thread>
 #include <mutex>
