@@ -79,54 +79,6 @@ class Vendor{
     float selection_price;
     std::string selection_loc;
 
-    /*interrupt vars*/
-    volatile int row = 0;
-    volatile int col = 0;
-    int a_pin = 2;
-    int b_pin = 3;
-    int c_pin = 4;
-    int d_pin = 17;
-    int e_pin = 27;
-    int f_pin = 22;
-    int one_pin = 14;
-    int two_pin = 15;
-    int three_pin = 18;
-    int four_pin = 23;
-    int five_pin = 24;
-    int six_pin = 25;
-    int seven_pin = 8;
-    int eight_pin = 7;
-    
-    /*motor control pins*/
-    int m1 = 0;
-    int m2 = 1;
-    int m3 = 5;
-    int m4 = 6;
-    int m5 = 12;
-    int m6 = 13;
-
-    //ISR rows
-    void click_a();
-    void click_b();
-    void click_c();
-    void click_d();
-    void click_e();
-    void click_f();
-
-    //ISR columns
-    void click_one();
-    void click_two();
-    void click_three();
-    void click_four();
-    void click_five();
-    void click_six();
-    void click_seven();
-    void click_eight();
-
-    //interrupt methods
-    void set_up_interrupts();
-    void set_all_gpio();
-
     //public vars
     const std::string WELCOME_AUDIO = "wav files/Hello_Statement.wav"; 
 
