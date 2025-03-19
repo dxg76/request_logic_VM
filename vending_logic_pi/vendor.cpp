@@ -23,10 +23,14 @@ void Vendor::try_vend(std::string loc, float price){
     if(state ==3){
         if(debug_mode){
             std::cout << "Vending..." << std::endl;
+            char row = loc[0];
+            char col = loc[1];
+            motor_control = get_vend_code(row,col);
             std::cout << "vend complete! returning to main menu \n\n" << std::endl;
         }
     }
 }
+
 
 //token methods
 std::string Vendor::get_hex(std::string response){
@@ -56,7 +60,7 @@ float Vendor::read_hex_code(std::string hex_code){
         std::cout <<"no currency added" << std::endl;
         return 0;
     }
-    git compare_code = hex_code.compare("NACK");
+    compare_code = hex_code.compare("NACK");
     //std::cout <<"compare code: " << compare_code <<std::endl;
     if(compare_code == 0){
         return 0;
@@ -250,6 +254,64 @@ void Vendor::empty_tokens(){
         //std::cout << "Tokens Dumped" << std::endl;
     }
 }
+
+char Vendor::get_vend_code(char row, char col){
+    char row_code;
+    char col_code;
+    //form row 
+    switch(row){
+        case 'A':
+            row_code = 0;
+            break;
+        case 'B':
+            row_code = 1;
+            break;
+        case 'C':
+            row_code = 2;
+            break;
+        case 'D':
+            row_code = 3;
+            break;
+        case 'E':
+            row_code = 4;
+            break; 
+        default:
+            std::cout << "row not found" <<std::endl;
+            row_code = 0;
+    }
+    //form col
+    switch(col){
+        case '1':
+            col_code = 1;
+            break;
+        case '2':
+            col_code = 2;
+            break;
+        case '3':
+            col_code = 3;
+            break;
+        case '4':
+            col_code = 4;
+            break;
+        case '5':
+            col_code = 5;
+            break;
+        case '6':
+            col_code = 6;
+            break;
+        case '7':
+            col_code = 7;
+            break;
+        default:
+            std::cout << "column not found" <<std::endl;
+            col_code = 0;
+    }
+    char code = ((row_code<<4) | col_code) + 20;
+    std::cout <<"motor control code: " << code << std::endl;
+    return code;
+}
+
+//end token methods
 
 //serial methods
 int Vendor::open_serial(const char* port_name) {
