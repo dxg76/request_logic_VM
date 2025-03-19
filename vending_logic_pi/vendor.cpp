@@ -519,7 +519,7 @@ bool Vendor::check_card_payment(float item_cost) {
     std::string response;
 
     write_to_MDB(request_payment);
-    read_from_MDB = response;
+    read_from_MDB() = response;
     if(response.find("d,STATUS,RESULT,1")){
         std::cout << "no card..." <<std::endl;
         return false;
