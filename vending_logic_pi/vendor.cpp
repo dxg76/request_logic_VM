@@ -105,8 +105,8 @@ std::string Vendor::generate_prompt(Node* current_node){
         return current_node->get_audio_path();
     }
 
-
 }
+
 void Vendor::parse(std::string request, Node* current_node){
 
     char* token;
@@ -501,8 +501,8 @@ bool Vendor::try_payment(float item_cost){
         tcflush(abstract,TCIOFLUSH);
         //poll payment peripherals
         while(total_currency < item_cost && !card_payment){
-            total_currency += accept_coins();
-            total_currency += accept_bills();
+            total_currency += check_bills();
+            total_currency += check_coins();
             //card_payment = check_card_payment(item_cost);
         }
         std::cout << "payment complete!" << std::endl;
@@ -531,6 +531,54 @@ bool Vendor::check_card_payment(float item_cost) {
         return false;
     }else write_to_MDB(vend_confirmed);
     return true;
+}
+
+float Vendor::check_bills(){
+    std::string poll_bill = "R,33";
+    float inserted_currency = 0;
+
+    //request bill validator for update
+    write_to_MDB(poll_bill);
+    std::cout << "checking bills..." << std::endl;
+    std::string response = read_from_MDB();
+    if(debug_mode){
+        std::cout << response << std::endl;
+    }
+    
+    //get hex code from machine  
+    response = get_hex(response);
+    //read code
+    std::cout <<"hex code: " << response << std::endl;
+    std::cout << "\nend hex code" << std::endl;
+
+    inserted_currency = read_hex_code(response);
+    //implement some string parsing and cost calculation
+    if(inserted_currency > .01){
+        return inserted_currency;
+    }else return 0;
+}
+
+float Vendor::check_coins(){
+    std::string poll_coin = "R,0B";
+    float inserted_currency = 0;
+    //request coin mech for update
+    write_to_MDB(poll_coin);
+    std::cout << "checking coins... " << std::endl;
+    std::string response = read_from_MDB();
+    if(debug_mode){
+        std::cout << response << std::endl;
+    }
+    
+    //get hex code from machine
+    response = get_hex(response);
+    //read code
+    std::cout <<"hex code: " << response << std::endl;
+    std::cout << "\nend hex code" << std::endl;
+    inserted_currency = read_hex_code(response);
+
+    if(inserted_currency > .01){
+        return inserted_currency;
+    }else return 0;
 }
 
 float Vendor::accept_coins(int hex) {

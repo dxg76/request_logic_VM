@@ -46,8 +46,9 @@ class Vendor{
     void print_mdb_response();
     
     /*accept payments*/
-    bool check_payment(float item_cost);
     bool check_card_payment(float item_cost);
+    float check_coins();
+    float check_bills();
     float accept_coins(int hex); //returns 0 if no currency input to machine
     float accept_bills(int hex); //returns 0 if no currency input to machine
 
