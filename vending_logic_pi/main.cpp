@@ -34,8 +34,6 @@
 transcriber vars
 */
 //vars
-volatile int row = 0;
-volatile int col = 0;
 int a_pin = 2;
 int b_pin = 3;
 int c_pin = 4;
@@ -50,6 +48,7 @@ int five_pin = 24;
 int six_pin = 25;
 int seven_pin = 8;
 int eight_pin = 7;
+
 //ISR rows
 void click_a();
 void click_b();
@@ -76,7 +75,6 @@ int m3 = 5;
 int m4 = 6;
 int m5 = 12;
 int m6 = 13;
-
 char row;
 char col;
 //linked list struct
