@@ -643,7 +643,7 @@ float Vendor::accept_bills(int hex) {
 //ISR methods
 void Vendor::set_up_interrupts() {
     // rows
-    if (wiringPiISR(a_pin, INT_EDGE_FALLING, &Vendor::click_a) != 0)
+    if (wiringPiISR(a_pin, INT_EDGE_FALLING, &click_a) != 0)
         std::cout << "Pin: " << a_pin << " interrupt failed." << std::endl;
     if (wiringPiISR(b_pin, INT_EDGE_FALLING, &Vendor::click_b) != 0)
         std::cout << "Pin: " << b_pin << " interrupt failed." << std::endl;
