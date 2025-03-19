@@ -18,16 +18,16 @@ void Vendor::set_debug(bool mode){
     }
 }
 
-void Vendor::try_vend(std::string loc, float price){
+char Vendor::try_vend(std::string loc, float price){
     //fill in with vending sequence
     if(state ==3){
         if(debug_mode){
             std::cout << "Vending..." << std::endl;
-            char row = loc[0];
-            char col = loc[1];
-            motor_control = get_vend_code(row,col);
-            std::cout << "vend complete! returning to main menu \n\n" << std::endl;
+            
         }
+        char row = loc[0];
+        char col = loc[1];
+        return get_vend_code(row,col);
     }
 }
 

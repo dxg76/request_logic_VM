@@ -27,7 +27,6 @@ class Vendor{
     bool vend_complete;
     bool list_menu;
     bool confirmation_prompt;
-    char motor_control;
     bool voice_control;
     
 
@@ -54,7 +53,7 @@ class Vendor{
 
     /*vend methods*/
     void set_debug(bool mode); 
-    void try_vend(std::string loc, float price);
+    char try_vend(std::string loc, float price);
     bool try_payment(float item_cost);
     
     /*token methods*/

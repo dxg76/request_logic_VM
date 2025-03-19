@@ -30,10 +30,8 @@
 *This is the driver file for the MRSTV logic
 */
 
-/*
-transcriber vars
-*/
-//vars
+
+/*pin vars*/
 int a_pin = 2;
 int b_pin = 3;
 int c_pin = 4;
@@ -75,8 +73,9 @@ int m3 = 5;
 int m4 = 6;
 int m5 = 12;
 int m6 = 13;
-char row;
-char col;
+volatile char row;
+volatile char col;
+char motor_control;
 //linked list struct
 struct list_node{
     std::string filename;
@@ -102,6 +101,9 @@ int list_size = 0;
 Transcriber Methods
 */
 
+void drive_motors(char motor_control){
+
+}
 //method for generating new ma files
 int new_file(char* filename, ma_encoder_config encoder_config,  ma_encoder encoder){
 
@@ -529,7 +531,11 @@ int main(int argc, const char** argv){
                     vendor.list_menu = false;
                 }
                 //Simulate vend with sleep (temporary) DG
-                vendor.try_vend(current_node->get_loc(), current_node->get_price());
+                motor_control = vendor.try_vend(current_node->get_loc(), current_node->get_price());
+                //dispense snack using motors
+                if(motor_control != 0){
+                    drive_motors(motor_control);
+                }
                 play_wav_file("wav files/anything_else.wav");
             }
 
@@ -651,14 +657,27 @@ void set_all_gpio(){
     pinMode(six_pin, INPUT);
     pinMode(seven_pin, INPUT);
     pinMode(eight_pin, INPUT);
-    //rows
+    //motor control
+    pinMode(m1, OUTPUT);
+    pinMode(m2, OUTPUT);
+    pinMode(m3, OUTPUT);
+    pinMode(m4, OUTPUT);
+    pinMode(m5, OUTPUT);
+    pinMode(m6, OUTPUT);
+    digitalWrite(m1, 0);
+    digitalWrite(m2, 0);
+    digitalWrite(m3, 0);
+    digitalWrite(m4, 0);
+    digitalWrite(m5, 0);
+    digitalWrite(m6, 0);
+    //rows pullups
     pullUpDnControl(a_pin, PUD_UP);
     pullUpDnControl(b_pin, PUD_UP);
     pullUpDnControl(c_pin, PUD_UP);
     pullUpDnControl(d_pin, PUD_UP);
     pullUpDnControl(e_pin, PUD_UP);
     pullUpDnControl(f_pin, PUD_UP);
-    //columns
+    //columns pullups
     pullUpDnControl(one_pin, PUD_UP);
     pullUpDnControl(two_pin, PUD_UP);
     pullUpDnControl(three_pin, PUD_UP);
