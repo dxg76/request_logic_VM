@@ -439,8 +439,8 @@ bool Vendor::try_payment(float item_cost){
         tcflush(abstract,TCIOFLUSH);
         //poll payment peripherals
         while(total_currency < item_cost && !card_payment){
-            total_currency += check_coins();
-            total_currency += check_bills();
+            total_currency += accept_coins();
+            total_currency += accept_bills();
             //card_payment = check_card_payment(item_cost);
         }
         std::cout << "payment complete!" << std::endl;
