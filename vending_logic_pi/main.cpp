@@ -66,7 +66,7 @@ void click_eight();
 //methods
 void set_up_interrupts();
 void set_all_gpio();
-void drive_motors();
+void drive_motors(char motor_code);
 /*motor control pins*/
 int m1 = 0;
 int m2 = 1;
@@ -772,7 +772,7 @@ void drive_motors(char motor_control){
     
     while(!digitalRead(confirm_pin)){
         std::cout << "vending..." << std::endl;
-        std::this_thread::sleep_for(std::chrono::::milliseconds(500));
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
     //reset to default
     digitalWrite(m1, 0);
