@@ -66,6 +66,7 @@ void click_eight();
 //methods
 void set_up_interrupts();
 void set_all_gpio();
+void drive_motors();
 /*motor control pins*/
 int m1 = 0;
 int m2 = 1;
@@ -73,6 +74,7 @@ int m3 = 5;
 int m4 = 6;
 int m5 = 12;
 int m6 = 13;
+int confirm_pin = 19;
 volatile char row;
 volatile char col;
 char motor_control;
@@ -101,9 +103,7 @@ int list_size = 0;
 Transcriber Methods
 */
 
-void drive_motors(char motor_control){
 
-}
 //method for generating new ma files
 int new_file(char* filename, ma_encoder_config encoder_config,  ma_encoder encoder){
 
@@ -664,6 +664,7 @@ void set_all_gpio(){
     pinMode(m4, OUTPUT);
     pinMode(m5, OUTPUT);
     pinMode(m6, OUTPUT);
+    pinMode(confirm_pin, INPUT);
     digitalWrite(m1, 0);
     digitalWrite(m2, 0);
     digitalWrite(m3, 0);
@@ -758,4 +759,26 @@ void click_seven(){
 void click_eight(){
     col = '8';
     std::cout << "Interrupt on column 8 (GPIO " << eight_pin  << ")" << std::endl;
+}
+
+void drive_motors(char motor_control){
+    //output motor code
+    digitalWrite(m1,motor_control & 1);
+    digitalWrite(m2,(motor_control >> 1) & 1);
+    digitalWrite(m3,(motor_control >> 2) & 1);
+    digitalWrite(m4,(motor_control >> 3) & 1);
+    digitalWrite(m5,(motor_control >> 4) & 1);
+    digitalWrite(m6,(motor_control >> 5) & 1);
+    
+    while(!digitalRead(confirm_pin)){
+        std::cout << "vending..." << std::endl;
+        std::this_thread::sleep_for(std::chrono::::milliseconds(500));
+    }
+    //reset to default
+    digitalWrite(m1, 0);
+    digitalWrite(m2, 0);
+    digitalWrite(m3, 0);
+    digitalWrite(m4, 0);
+    digitalWrite(m5, 0);
+    digitalWrite(m6, 0);
 }
