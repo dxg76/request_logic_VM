@@ -74,6 +74,7 @@ int m3 = 5;
 int m4 = 6;
 int m5 = 12;
 int m6 = 13;
+int m7 = 16;
 int confirm_pin = 19;
 volatile char row;
 volatile char col;
