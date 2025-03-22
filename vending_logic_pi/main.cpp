@@ -785,4 +785,5 @@ void drive_motors(char motor_control){
     digitalWrite(m4, 0);
     digitalWrite(m5, 0);
     digitalWrite(m6, 0);
+    std::cout << "done vending!" << std::endl;
 }
