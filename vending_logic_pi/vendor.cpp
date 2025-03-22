@@ -3,7 +3,7 @@
 //constructor
 Vendor::Vendor(bool mode){
     total_currency = 0;
-    state = 2;
+    state = 1;
     list_menu = false;
     confirmation_prompt = false;
     voice_control = true;
@@ -260,7 +260,7 @@ char Vendor::get_vend_code(char row, char col){
     char row_code;
     char col_code;
     //form row 
-    switch('C'){
+    switch(row){
         case 'A':
             row_code = 0;
             break;
@@ -281,7 +281,7 @@ char Vendor::get_vend_code(char row, char col){
             row_code = 0;
     }
     //form col
-    switch('2'){
+    switch(col){
         case '1':
             col_code = 1;
             break;
@@ -500,7 +500,7 @@ bool Vendor::try_payment(float item_cost){
     if(state == 2){
         std::cout << "paying..." << std::endl;
         state = 3;
-        /*
+        
         tcflush(abstract,TCIOFLUSH);
         //poll payment peripherals
         while(total_currency < item_cost && !card_payment){
@@ -512,7 +512,7 @@ bool Vendor::try_payment(float item_cost){
         list_menu = true;
         state = 3;
         return true;
-        */
+        
     }
     return false;
 }
