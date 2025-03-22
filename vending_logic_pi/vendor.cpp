@@ -3,9 +3,10 @@
 //constructor
 Vendor::Vendor(bool mode){
     total_currency = 0;
-    state = 1;
+    state = 0;
     list_menu = false;
     confirmation_prompt = false;
+    voice_control = true;
     configure_all();
     set_debug(mode);
 }
@@ -18,61 +19,69 @@ void Vendor::set_debug(bool mode){
     }
 }
 
-void Vendor::try_vend(std::string loc, float price){
+char Vendor::try_vend(std::string loc, float price){
     //fill in with vending sequence
     if(state ==3){
         if(debug_mode){
             std::cout << "Vending..." << std::endl;
-            std::cout << "vend complete! returning to main menu \n\n" << std::endl;
+            
         }
+        char row = loc[0];
+        char col = loc[1];
+        return get_vend_code(row,col);
     }
 }
 
-bool Vendor::try_payment(float item_cost){
-    //paid by card
-    //bool card_payment = false;
-    if(state == 2){
-        std::cout << "paying..." << std::endl;
-        std::cout << "payment complete!" << std::endl;
-        list_menu = true;
-        state = 3;
-        return true;
-        /*
-        //poll payment peripherals
-        while(total_currency > item_cost && !card_payment){
-            total_currency += accept_coin_payment();
-            total_currency += accept_bill_payment();
-            card_payment = accept_card_payment(item_cost);
-        }
-        return true;
-        */
-    }
-    return false;
-}
 
 //token methods
 std::string Vendor::get_hex(std::string response){
     std::string hex_code;
-    int start_index = response.find(',');
-    hex_code = response.substr(start_index);
+    std::cout << "this is response: " << response <<std::endl;
+    size_t start_index = response.find(',');
+    int end_index = response.find('\r');
+
+    hex_code = response.substr(start_index+1, end_index-start_index-1);
+    
+    std::cout << "Invisible characters found at indices: ";
+    for (size_t i = 0; i < hex_code.size(); ++i) {
+        if (!std::isprint(hex_code[i])) { // Checks for non-printable characters
+            std::cout << i << " (ASCII " << static_cast<int>(hex_code[i]) << "), ";
+        }
+    }
+    std::cout << std::endl;
+    
     return hex_code;
 }
 
-float Vendor::read_coin_code(std::string hex_code){
-    //no updates for the coin mech to share
-    if(hex_code == "ack"){
+float Vendor::read_hex_code(std::string hex_code){
+    //no updates to share
+    int compare_code = hex_code.compare("ACK");
+    //std::cout <<"compare code: " << compare_code <<std::endl;
+    if(compare_code == 0){
+        std::cout <<"no currency added" << std::endl;
         return 0;
     }
+    compare_code = hex_code.compare("NACK");
+    //std::cout <<"compare code: " << compare_code <<std::endl;
+    if(compare_code == 0){
+        return 0;
+    }
+    
+    //response is from card reader
+    if(hex_code[0] == 'd'){
+        //card logic
+        card_payment = true;
+        return 0;
+    }
+
     //convert the string to a hexadecimal integer
-    //int hex = std::stoi(hex_code, nullptr, 16);
+    int hex = std::stoi(hex_code, nullptr, 16);
+    //coin detected
+    if((hex >> 15) != 1) //need to fix this statement because bill returns 2 byte code also
+        return accept_coins(hex);
+    //bill detected
+    else return accept_bills(hex);
 
-    //get bytes
-
-    return 0;
-}
-
-float Vendor::read_bill_code(std::string hex_code){
-    return 0;
 }
 
 std::string Vendor::generate_prompt(Node* current_node){
@@ -97,8 +106,8 @@ std::string Vendor::generate_prompt(Node* current_node){
         return current_node->get_audio_path();
     }
 
-
 }
+
 void Vendor::parse(std::string request, Node* current_node){
 
     char* token;
@@ -246,6 +255,64 @@ void Vendor::empty_tokens(){
         //std::cout << "Tokens Dumped" << std::endl;
     }
 }
+
+char Vendor::get_vend_code(char row, char col){
+    char row_code;
+    char col_code;
+    //form row 
+    switch(row){
+        case 'A':
+            row_code = 0;
+            break;
+        case 'B':
+            row_code = 1;
+            break;
+        case 'C':
+            row_code = 2;
+            break;
+        case 'D':
+            row_code = 3;
+            break;
+        case 'E':
+            row_code = 4;
+            break; 
+        default:
+            std::cout << "row not found" <<std::endl;
+            row_code = 0;
+    }
+    //form col
+    switch(col){
+        case '1':
+            col_code = 1;
+            break;
+        case '2':
+            col_code = 2;
+            break;
+        case '3':
+            col_code = 3;
+            break;
+        case '4':
+            col_code = 4;
+            break;
+        case '5':
+            col_code = 5;
+            break;
+        case '6':
+            col_code = 6;
+            break;
+        case '7':
+            col_code = 7;
+            break;
+        default:
+            std::cout << "column not found" <<std::endl;
+            col_code = 0;
+    }
+    char code = ((row_code<<3) | col_code) + 32;
+    std::cout <<"motor control code: " << code << std::endl;
+    return code;
+}
+
+//end token methods
 
 //serial methods
 int Vendor::open_serial(const char* port_name) {
@@ -422,15 +489,47 @@ int Vendor::configure_bill_validator() {
     std::cout << "[bill validator configured]" << std::endl;
     return 0;
 }
-
+void Vendor::print_mdb_response(){
+    std::cout << read_from_MDB() <<std::endl;
+}
 //MDB pay
-bool Vendor::accept_card_payment(float item_cost) {
+
+bool Vendor::try_payment(float item_cost){
+    //paid by card
+    //bool card_payment = false;
+    if(state == 2){
+        std::cout << "paying..." << std::endl;
+        state = 3;
+        
+        tcflush(abstract,TCIOFLUSH);
+        //poll payment peripherals
+        while(total_currency < item_cost && !card_payment){
+            total_currency += check_bills();
+            total_currency += check_coins();
+            //card_payment = check_card_payment(item_cost);
+        }
+        std::cout << "payment complete!" << std::endl;
+        list_menu = true;
+        state = 3;
+        return true;
+        
+    }
+    return false;
+}
+bool Vendor::check_card_payment(float item_cost) {
     std::string request_payment = "D,REQ," + std::to_string(item_cost);
     std::string vend_confirmed;
     std::string vend_rejected;
+    std::string response;
 
-    while (read_from_MDB() != "placeholder"){}
-        write_to_MDB(request_payment);
+    write_to_MDB(request_payment);
+    read_from_MDB() = response;
+    if(response.find("d,STATUS,RESULT,1")){
+        std::cout << "no card..." <<std::endl;
+        return false;
+    }
+
+    write_to_MDB(request_payment);
     if(read_from_MDB() != "placeholder"){
         write_to_MDB(vend_rejected);
         return false;
@@ -438,32 +537,37 @@ bool Vendor::accept_card_payment(float item_cost) {
     return true;
 }
 
-float Vendor::accept_coin_payment() {
-    std::string poll_coin = "R,0B";
-    float inserted_currency = 0;
-    //request coin mech for update
-    write_to_MDB(poll_coin);
-    std::string response = read_from_MDB();
-    if(debug_mode){
-        std::cout << response << std::endl;
-    }
-    
-    //get hex code from machine
-    response = get_hex(response);
-    //read code
-    inserted_currency = read_coin_code(response);
-    //implement some string parsing and cost calculation
-    if(inserted_currency > .01){
-        return inserted_currency;
-    }else return 0;
-}
-
-float Vendor::accept_bill_payment() {
+float Vendor::check_bills(){
     std::string poll_bill = "R,33";
     float inserted_currency = 0;
 
     //request bill validator for update
     write_to_MDB(poll_bill);
+    std::cout << "checking bills..." << std::endl;
+    std::string response = read_from_MDB();
+    if(debug_mode){
+        std::cout << response << std::endl;
+    }
+    
+    //get hex code from machine  
+    response = get_hex(response);
+    //read code
+    std::cout <<"hex code: " << response << std::endl;
+    std::cout << "\nend hex code" << std::endl;
+
+    inserted_currency = read_hex_code(response);
+    //implement some string parsing and cost calculation
+    if(inserted_currency > .01){
+        return inserted_currency;
+    }else return 0;
+}
+
+float Vendor::check_coins(){
+    std::string poll_coin = "R,0B";
+    float inserted_currency = 0;
+    //request coin mech for update
+    write_to_MDB(poll_coin);
+    std::cout << "checking coins... " << std::endl;
     std::string response = read_from_MDB();
     if(debug_mode){
         std::cout << response << std::endl;
@@ -472,11 +576,72 @@ float Vendor::accept_bill_payment() {
     //get hex code from machine
     response = get_hex(response);
     //read code
-    inserted_currency = read_bill_code(response);
-    //implement some string parsing and cost calculation
+    std::cout <<"hex code: " << response << std::endl;
+    std::cout << "\nend hex code" << std::endl;
+    inserted_currency = read_hex_code(response);
+
     if(inserted_currency > .01){
         return inserted_currency;
     }else return 0;
-
 }
+
+float Vendor::accept_coins(int hex) {
+    //get coin type from code
+    int coin_type = (hex>>8) & 0xF;
+
+    std::cout << "coin id: " << coin_type << std::endl;
+    if(coin_type == 2){
+        std::cout << "quarter inserted" << std::endl;
+        return .25; //quarter
+    }else if(coin_type == 1){
+        std::cout << "dime inserted" << std::endl;
+        return .10; //dime
+    }else if(coin_type == 0){
+        std::cout << "nickel inserted" << std::endl;
+        return .05; //nickel
+    }else return 0; //unknown coin type
+    //get bytes
+    return 0;    
+}
+
+float Vendor::accept_bills(int hex) {
+    //get bill type
+    int bill_type = (hex>>8)  & 0xF;
+    if(bill_type == 2){
+        std::cout << "5 dollar bill inserted!" << std::endl;
+        //accept bill from the escrow
+        write_to_MDB("R,35,1");
+        std::cout << "accepting from escrow..." <<std::endl;
+        print_mdb_response();
+        //poll to ensure the bill is in the clip
+        write_to_MDB("R,33");
+        std::cout << "bill accepted: " <<std::endl;
+        print_mdb_response();
+        return 5;
+    }
+    if(bill_type == 0){
+        std::cout << "1 dollar bill inserted!" << std::endl;
+        //accept bill from the escrow
+        write_to_MDB("R,35,1");
+        std::cout << "accepting from escrow..." <<std::endl;
+        print_mdb_response();
+        //poll to ensure the bill is in the clip
+        write_to_MDB("R,33");
+        std::cout << "bill accepted! " <<std::endl;
+        print_mdb_response();
+        return 1;            
+    }else{
+        //reject bill return to user
+        write_to_MDB("R,35,0");
+        std::cout << "rejecting bill from escrow..." << std::endl;
+        print_mdb_response();
+        //poll to ensure the bill was returned
+        write_to_MDB("R,33");
+        std::cout << "bill rejected!" << std::endl;
+        print_mdb_response();
+
+        return 0; //unknown bill type  
+    }
+}
+
 

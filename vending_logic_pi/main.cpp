@@ -1,5 +1,5 @@
 #include "vendor.hpp"
-
+#include <wiringPi.h>
 #include <fstream>
 #include <thread>
 #include <mutex>
@@ -30,9 +30,55 @@
 *This is the driver file for the MRSTV logic
 */
 
-/*
-transcriber vars
-*/
+
+/*pin vars*/
+int a_pin = 2;
+int b_pin = 3;
+int c_pin = 4;
+int d_pin = 17;
+int e_pin = 27;
+int f_pin = 22;
+int one_pin = 14;
+int two_pin = 15;
+int three_pin = 18;
+int four_pin = 23;
+int five_pin = 24;
+int six_pin = 25;
+int seven_pin = 8;
+int eight_pin = 7;
+
+//ISR rows
+void click_a();
+void click_b();
+void click_c();
+void click_d();
+void click_e();
+void click_f();
+//ISR columns
+void click_one();
+void click_two();
+void click_three();
+void click_four();
+void click_five();
+void click_six();
+void click_seven();
+void click_eight();
+//methods
+void set_up_interrupts();
+void set_all_gpio();
+void drive_motors(char motor_code);
+/*motor control pins*/
+int m1 = 0;
+int m2 = 1;
+int m3 = 5;
+int m4 = 6;
+int m5 = 12;
+int m6 = 13;
+int m7 = 19;
+int confirm_pin = 16;
+volatile char row;
+volatile char col;
+char motor_control;
 //linked list struct
 struct list_node{
     std::string filename;
@@ -57,6 +103,7 @@ int list_size = 0;
 /*
 Transcriber Methods
 */
+
 
 //method for generating new ma files
 int new_file(char* filename, ma_encoder_config encoder_config,  ma_encoder encoder){
@@ -113,7 +160,7 @@ std::vector<float> pcm_buster(std::string filename){
     return padded_buffer;
 }
 
-void ma_stream(list_node* head){
+void ma_stream(list_node* head, int recording_length){
     std::cout << "ma_stream()  begin" << std::endl;
 
     //Encoder Config
@@ -128,7 +175,6 @@ void ma_stream(list_node* head){
         
         std::string audio_file = std::to_string(file_index) + ".wav";
 
-        int recording_length = 2000; //length of clips in milliseconds
         //ENCODER CONFIGURATION
         // initializing mono, wave file, 32bit floating point format encoder with sample rate of 44.1 kHz
         encoder_config = ma_encoder_config_init(ma_encoding_format_wav, ma_format_f32, 1, 16000); 
@@ -285,7 +331,7 @@ void file_close(void * ctx){
 }
 
 void configure_all(){
-    loader.context = fopen("whisper.cpp-master/models/ggml-base.en.bin", "rb"); // Open model file in raw binary
+    loader.context = fopen("whisper.cpp-master/models/ggml-tiny.en.bin", "rb"); // Open model file in raw binary
     loader.read = file_read; //assign read method
     loader.eof = file_eof; //assign eof method
     loader.close = file_close; //assing file close method
@@ -425,6 +471,9 @@ int main(int argc, const char** argv){
     if(argc>1 && strcmp(argv[1], "-d") == 0){
         debug_mode = true;
     }
+    //GPIO
+    wiringPiSetupGpio();
+    set_all_gpio();
     //initailize vendor
     Vendor vendor(debug_mode);
     //Start at the root ("Main Menu")
@@ -440,6 +489,11 @@ int main(int argc, const char** argv){
     //main loop
     while(true){
         
+        //standard function loop
+        while(!vendor.voice_control){
+            current_node = vendor.vendor_menu.root;
+            current_node = current_node->find_child("all");
+        }
 
         /*VENDOR STATE 0 IDLE*/
         if(vendor.state == 0){
@@ -480,7 +534,11 @@ int main(int argc, const char** argv){
                     vendor.list_menu = false;
                 }
                 //Simulate vend with sleep (temporary) DG
-                vendor.try_vend(current_node->get_loc(), current_node->get_price());
+                motor_control = vendor.try_vend(current_node->get_loc(), current_node->get_price());
+                //dispense snack using motors
+                if(motor_control != 0){
+                    drive_motors(motor_control);
+                }
                 play_wav_file("wav files/anything_else.wav");
             }
 
@@ -490,7 +548,10 @@ int main(int argc, const char** argv){
 
         //start recording
         exit_recording.store(false);
-        std::thread audio_thread(ma_stream,head);
+        if(vendor.state == 0){
+            std::thread audio_thread(ma_stream,head, 5000);
+        }else std::thread audio_thread(ma_stream,head, 2000);
+
 
         //Get Input, Tokenize, read
         do{
@@ -549,4 +610,182 @@ int main(int argc, const char** argv){
 
 
     return 0;
+}
+
+//method definitions
+void set_up_interrupts(){
+    //rows
+    if(wiringPiISR(a_pin, INT_EDGE_FALLING, &click_a) != 0)
+        std::cout << "Pin: " << a_pin << " interrupt failed." << std::endl;
+    if(wiringPiISR(b_pin, INT_EDGE_FALLING, &click_b) != 0)
+        std::cout << "Pin: " << b_pin << " interrupt failed." << std::endl;
+    if (wiringPiISR(c_pin, INT_EDGE_FALLING, &click_c) != 0)
+        std::cout << "Pin: " << c_pin << " interrupt failed." << std::endl;
+    if (wiringPiISR(d_pin, INT_EDGE_FALLING, &click_d) != 0)
+        std::cout << "Pin: " << d_pin << " interrupt failed." << std::endl;
+    if (wiringPiISR(e_pin, INT_EDGE_FALLING, &click_e) != 0)
+        std::cout << "Pin: " << e_pin << " interrupt failed." << std::endl;
+    if (wiringPiISR(f_pin, INT_EDGE_FALLING, &click_f) != 0)
+        std::cout << "Pin: " << f_pin << " interrupt failed." << std::endl;
+    //columns
+    if (wiringPiISR(one_pin, INT_EDGE_FALLING, &click_one) != 0)
+        std::cout << "Pin: " << one_pin << " interrupt failed." << std::endl;
+    if (wiringPiISR(two_pin, INT_EDGE_FALLING, &click_two) != 0)
+        std::cout << "Pin: " << two_pin << " interrupt failed." << std::endl;
+    if (wiringPiISR(three_pin, INT_EDGE_FALLING, &click_three) != 0)
+        std::cout << "Pin: " << three_pin << " interrupt failed." << std::endl;
+    if (wiringPiISR(four_pin, INT_EDGE_FALLING, &click_four) != 0)
+        std::cout << "Pin: " << four_pin << " interrupt failed." << std::endl;
+    if (wiringPiISR(five_pin, INT_EDGE_FALLING, &click_five) != 0)
+        std::cout << "Pin: " << five_pin << " interrupt failed." << std::endl;
+    if (wiringPiISR(six_pin, INT_EDGE_FALLING, &click_six) != 0)
+        std::cout << "Pin: " << six_pin << " interrupt failed." << std::endl;
+    if (wiringPiISR(seven_pin, INT_EDGE_FALLING, &click_seven) != 0)
+        std::cout << "Pin: " << seven_pin << " interrupt failed." << std::endl;
+    if (wiringPiISR(eight_pin, INT_EDGE_FALLING, &click_eight) != 0)
+        std::cout << "Pin: " << eight_pin << " interrupt failed." << std::endl;
+    
+}
+void set_all_gpio(){
+    //rows
+    pinMode(a_pin, INPUT);
+    pinMode(b_pin, INPUT);
+    pinMode(c_pin, INPUT);
+    pinMode(d_pin, INPUT);
+    pinMode(e_pin, INPUT);
+    pinMode(f_pin, INPUT);
+    //columns
+    pinMode(one_pin, INPUT);
+    pinMode(two_pin, INPUT);
+    pinMode(three_pin, INPUT);
+    pinMode(four_pin, INPUT);
+    pinMode(five_pin, INPUT);
+    pinMode(six_pin, INPUT);
+    pinMode(seven_pin, INPUT);
+    pinMode(eight_pin, INPUT);
+    //motor control
+    pinMode(m1, OUTPUT);
+    pinMode(m2, OUTPUT);
+    pinMode(m3, OUTPUT);
+    pinMode(m4, OUTPUT);
+    pinMode(m5, OUTPUT);
+    pinMode(m6, OUTPUT);
+    pinMode(confirm_pin, INPUT);
+    digitalWrite(m1, 0);
+    digitalWrite(m2, 0);
+    digitalWrite(m3, 0);
+    digitalWrite(m4, 0);
+    digitalWrite(m5, 0);
+    digitalWrite(m6, 0);
+    //rows pullups
+    pullUpDnControl(a_pin, PUD_UP);
+    pullUpDnControl(b_pin, PUD_UP);
+    pullUpDnControl(c_pin, PUD_UP);
+    pullUpDnControl(d_pin, PUD_UP);
+    pullUpDnControl(e_pin, PUD_UP);
+    pullUpDnControl(f_pin, PUD_UP);
+    //columns pullups
+    pullUpDnControl(one_pin, PUD_UP);
+    pullUpDnControl(two_pin, PUD_UP);
+    pullUpDnControl(three_pin, PUD_UP);
+    pullUpDnControl(four_pin, PUD_UP);
+    pullUpDnControl(five_pin, PUD_UP);
+    pullUpDnControl(six_pin, PUD_UP);
+    pullUpDnControl(seven_pin, PUD_UP);
+    pullUpDnControl(eight_pin, PUD_UP);
+}
+
+//ISR
+void click_a(){
+    row = 'A';
+    std::cout << "Interrupt on row A (GPIO " << a_pin << ")" << std::endl;
+}
+
+void click_b(){
+    row = 'B';
+    std::cout << "Interrupt on row B (GPIO " << b_pin << ")" << std::endl;
+}
+
+void click_c(){
+    row = 'C';
+    std::cout << "Interrupt on row C (GPIO " << c_pin << ")" << std::endl;
+}
+
+void click_d(){
+    row = 'D';
+    std::cout << "Interrupt on row D (GPIO " << d_pin << ")" << std::endl;
+}
+
+void click_e(){
+    row = 'E';
+    std::cout << "Interrupt on row E (GPIO " << e_pin << ")" << std::endl;
+}
+
+void click_f(){
+    row = 'F';
+    std::cout << "Interrupt on row F (GPIO " << f_pin << ")" << std::endl;
+}
+
+// ISR Columns
+void click_one(){
+    col = '1';
+    std::cout << "Interrupt on column 1 (GPIO " << one_pin << ")" << std::endl;
+}
+
+void click_two(){
+    col = '2';
+    std::cout << "Interrupt on column 2 (GPIO " << two_pin << ")" << std::endl;
+}
+
+void click_three(){
+    col = '3';
+    std::cout << "Interrupt on column 3 (GPIO " << three_pin << ")" << std::endl;
+}
+
+void click_four(){
+    col = '4';
+    std::cout << "Interrupt on column 4 (GPIO " << four_pin << ")" << std::endl;
+}
+
+void click_five(){
+    col = '5';
+    std::cout << "Interrupt on column 5 (GPIO " << five_pin << ")" << std::endl;
+}
+
+void click_six(){
+    col = '6';
+    std::cout << "Interrupt on column 6 (GPIO " << six_pin << ")" << std::endl;
+}
+
+void click_seven(){
+    col = '7';
+    std::cout << "Interrupt on column 7 (GPIO " << seven_pin << ")" << std::endl;
+}
+
+void click_eight(){
+    col = '8';
+    std::cout << "Interrupt on column 8 (GPIO " << eight_pin  << ")" << std::endl;
+}
+
+void drive_motors(char motor_control){
+    //output motor code
+    digitalWrite(m1,motor_control & 1);
+    digitalWrite(m2,(motor_control >> 1) & 1);
+    digitalWrite(m3,(motor_control >> 2) & 1);
+    digitalWrite(m4,(motor_control >> 3) & 1);
+    digitalWrite(m5,(motor_control >> 4) & 1);
+    digitalWrite(m6,(motor_control >> 5) & 1);
+    
+    while(!digitalRead(confirm_pin)){
+        std::cout << "vending..." << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
+    //reset to default
+    digitalWrite(m1, 0);
+    digitalWrite(m2, 0);
+    digitalWrite(m3, 0);
+    digitalWrite(m4, 0);
+    digitalWrite(m5, 0);
+    digitalWrite(m6, 0);
+    std::cout << "done vending!" << std::endl;
 }

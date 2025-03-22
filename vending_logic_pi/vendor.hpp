@@ -27,6 +27,7 @@ class Vendor{
     bool vend_complete;
     bool list_menu;
     bool confirmation_prompt;
+    bool voice_control;
     
 
     /*serial methods*/
@@ -44,14 +45,15 @@ class Vendor{
     void print_mdb_response();
     
     /*accept payments*/
-    bool check_payment(float item_cost);
     bool check_card_payment(float item_cost);
+    float check_coins();
+    float check_bills();
     float accept_coins(int hex); //returns 0 if no currency input to machine
     float accept_bills(int hex); //returns 0 if no currency input to machine
 
     /*vend methods*/
     void set_debug(bool mode); 
-    void try_vend(std::string loc, float price);
+    char try_vend(std::string loc, float price);
     bool try_payment(float item_cost);
     
     /*token methods*/
@@ -67,6 +69,7 @@ class Vendor{
     void print_tokens();
     std::string get_hex(std::string response);
     float read_hex_code(std::string hex_code);
+    char get_vend_code(char row, char col);
     /*token vars*/
     std::vector<std::string> tokens;
 
@@ -74,46 +77,6 @@ class Vendor{
     Menu_tree vendor_menu;
     float selection_price;
     std::string selection_loc;
-
-    /*interrupt vars*/
-    volatile int row = 0;
-    volatile int col = 0;
-    int a_pin = 2;
-    int b_pin = 3;
-    int c_pin = 4;
-    int d_pin = 17;
-    int e_pin = 27;
-    int f_pin = 22;
-    int one_pin = 14;
-    int two_pin = 15;
-    int three_pin = 18;
-    int four_pin = 23;
-    int five_pin = 24;
-    int six_pin = 25;
-    int seven_pin = 8;
-    int eight_pin = 7;
-
-    //ISR rows
-    void click_a();
-    void click_b();
-    void click_c();
-    void click_d();
-    void click_e();
-    void click_f();
-
-    //ISR columns
-    void click_one();
-    void click_two();
-    void click_three();
-    void click_four();
-    void click_five();
-    void click_six();
-    void click_seven();
-    void click_eight();
-
-    //interrupt methods
-    void set_up_interrupts();
-    void set_all_gpio();
 
     //public vars
     const std::string WELCOME_AUDIO = "wav files/Hello_Statement.wav"; 
