@@ -521,7 +521,7 @@ int main(int argc, const char** argv){
         }
         /*VENDOR STATE 2 Payment*/
         else if(vendor.state == 2){
-            play_wav_file("wav files/direct_pay.wav");
+            //play_wav_file("wav files/direct_pay.wav");
             vendor.try_payment(current_node->get_price());
 
             /*VENDOR STATE 3*/
