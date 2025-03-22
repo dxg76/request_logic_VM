@@ -332,7 +332,7 @@ void file_close(void * ctx){
 }
 
 void configure_all(){
-    loader.context = fopen("whisper.cpp-master/models/ggml-base.en.bin", "rb"); // Open model file in raw binary
+    loader.context = fopen("whisper.cpp-master/models/ggml-tiny.en.bin", "rb"); // Open model file in raw binary
     loader.read = file_read; //assign read method
     loader.eof = file_eof; //assign eof method
     loader.close = file_close; //assing file close method
