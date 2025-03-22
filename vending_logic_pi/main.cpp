@@ -472,6 +472,9 @@ int main(int argc, const char** argv){
     if(argc>1 && strcmp(argv[1], "-d") == 0){
         debug_mode = true;
     }
+    //GPIO
+    wiringPiSetupGpio();
+    set_all_gpio();
     //initailize vendor
     Vendor vendor(debug_mode);
     //Start at the root ("Main Menu")
