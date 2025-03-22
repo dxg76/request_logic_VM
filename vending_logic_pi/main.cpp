@@ -160,7 +160,7 @@ std::vector<float> pcm_buster(std::string filename){
     return padded_buffer;
 }
 
-void ma_stream(list_node* head){
+void ma_stream(list_node* head, int recording_length){
     std::cout << "ma_stream()  begin" << std::endl;
 
     //Encoder Config
@@ -175,7 +175,6 @@ void ma_stream(list_node* head){
         
         std::string audio_file = std::to_string(file_index) + ".wav";
 
-        int recording_length = 5000; //length of clips in milliseconds
         //ENCODER CONFIGURATION
         // initializing mono, wave file, 32bit floating point format encoder with sample rate of 44.1 kHz
         encoder_config = ma_encoder_config_init(ma_encoding_format_wav, ma_format_f32, 1, 16000); 
@@ -549,7 +548,10 @@ int main(int argc, const char** argv){
 
         //start recording
         exit_recording.store(false);
-        std::thread audio_thread(ma_stream,head);
+        if(vendor.state == 0){
+            std::thread audio_thread(ma_stream,head, 5000);
+        }else std::thread audio_thread(ma_stream,head, 2000);
+
 
         //Get Input, Tokenize, read
         do{

@@ -13,7 +13,7 @@
 *Updated 3/5/25
 */
 
-Node::Node(const std::string& id,const std::string loc, float price, int quantity, const std::string& audio_path) 
+Node::Node(const std::string& id,const std::string loc, float price, std::vector<int> quantity, const std::string& audio_path) 
     : id(id), loc(loc), price(price), quantity(quantity), audio_path(audio_path) {}
 
 //Getters
