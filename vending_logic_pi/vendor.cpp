@@ -307,7 +307,7 @@ char Vendor::get_vend_code(char row, char col){
             std::cout << "column not found" <<std::endl;
             col_code = 0;
     }
-    char code = ((row_code<<4) | col_code) + 32;
+    char code = ((row_code<<3) | col_code) + 32;
     std::cout <<"motor control code: " << code << std::endl;
     return code;
 }
