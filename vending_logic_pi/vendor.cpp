@@ -6,6 +6,7 @@ Vendor::Vendor(bool mode){
     state = 1;
     list_menu = false;
     confirmation_prompt = false;
+    voice_control = true;
     configure_all();
     set_debug(mode);
 }
