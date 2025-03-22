@@ -281,7 +281,7 @@ char Vendor::get_vend_code(char row, char col){
             row_code = 0;
     }
     //form col
-    switch('3'){
+    switch('1'){
         case '1':
             col_code = 1;
             break;
