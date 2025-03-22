@@ -260,7 +260,7 @@ char Vendor::get_vend_code(char row, char col){
     char row_code;
     char col_code;
     //form row 
-    switch('B'){
+    switch('C'){
         case 'A':
             row_code = 0;
             break;
@@ -281,7 +281,7 @@ char Vendor::get_vend_code(char row, char col){
             row_code = 0;
     }
     //form col
-    switch('1'){
+    switch('2'){
         case '1':
             col_code = 1;
             break;
