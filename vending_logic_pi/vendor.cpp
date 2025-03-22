@@ -499,6 +499,7 @@ bool Vendor::try_payment(float item_cost){
     //bool card_payment = false;
     if(state == 2){
         std::cout << "paying..." << std::endl;
+        state = 3;
         /*
         tcflush(abstract,TCIOFLUSH);
         //poll payment peripherals
