@@ -26,7 +26,7 @@ char Vendor::try_vend(std::string loc, float price, std::vector<int> quantity){
             std::cout << "Vending: " << loc << "..." << std::endl;
             
         }
-        if(decrease_quantity()){
+        if(decrease_quantity(quantity)){
             char row = loc[0];
             char col = loc[1];
             return get_vend_code(row,col);
