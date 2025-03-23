@@ -551,7 +551,7 @@ int main(int argc, const char** argv){
             recording_size_milli = 5000;
         }else recording_size_milli = 3000;
 
-        std::audio_thread(ma_stream, head, recording_size_milli);
+        std::thread audio_thread(ma_stream, head, recording_size_milli);
         //Get Input, Tokenize, read
         do{
             vendor.parse(get_command(), current_node);
