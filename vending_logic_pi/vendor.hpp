@@ -26,9 +26,10 @@ class Vendor{
     /*vendor vars*/
     short state; //[0 == idle],[1 == select mode], [2 == payment mode], [3 == vend mode]
     bool vend_complete;
-    bool list_menu;
-    bool confirmation_prompt;
-    bool voice_control;
+    bool list_menu; //list product menu
+    bool confirmation_prompt; //send confirmation prompt
+    bool voice_control; //interviw mode
+    bool no_charge; //dont poll payment devices
     
 
     /*serial methods*/
