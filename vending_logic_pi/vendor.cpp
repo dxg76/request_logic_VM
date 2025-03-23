@@ -45,7 +45,7 @@ bool Vendor::decrease_quantity(std::vector<int>& quantities){ /*Function to decr
             for(size_t i = 0; i < quantities.size(); ++i){
                 quantity += quantities[i];
             }
-            std::cout << "Units remaining: " <<quantity std::endl;
+            std::cout << "Units remaining: " << quantity << std::endl;
             return true; 
             
         }
