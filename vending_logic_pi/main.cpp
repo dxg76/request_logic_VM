@@ -175,6 +175,10 @@ void ma_stream(list_node* head, int recording_length){
         
         std::string audio_file = std::to_string(file_index) + ".wav";
 
+<<<<<<< HEAD
+        int recording_length = 3000; //length of clips in milliseconds
+=======
+>>>>>>> e3aa8e0cdb57aa2b008ac2fae4403f13616652b0
         //ENCODER CONFIGURATION
         // initializing mono, wave file, 32bit floating point format encoder with sample rate of 44.1 kHz
         encoder_config = ma_encoder_config_init(ma_encoding_format_wav, ma_format_f32, 1, 16000); 
