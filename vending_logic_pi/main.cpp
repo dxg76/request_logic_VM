@@ -545,14 +545,13 @@ int main(int argc, const char** argv){
         }
         
 
-        std::thread audio_thread;
         //start recording
-        exit_recording.store(false);
-        if(vendor.state == 0){
-            audio_thread = std::thread(ma_stream,head, 5000);
-        }else audio_thread  = std::thread(ma_stream,head, 2000);
+        int recording_size_milli;
+        if(state == 0){
+            recording_size_milli = 5000;
+        }else recording_size_milli = 3000;
 
-
+        std::audio_thread(ma_stream, head, recording_size_milli);
         //Get Input, Tokenize, read
         do{
             vendor.parse(get_command(), current_node);
