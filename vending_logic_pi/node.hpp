@@ -23,7 +23,7 @@ class Node{
     public:
 
         //constructor
-        Node(const std::string& id,  const std::string loc = "", float price = 0.0, int quantity = 0, const std::string& audio_path = "");
+        Node(const std::string& id,  const std::string loc = "", float price = 0.0, std::vector<int> quantity = {0,0,0,0}, const std::string& audio_path = "");
         
         //Accessors
         std::string get_id() const;
@@ -54,7 +54,7 @@ class Node{
         std::string id;
         std::string loc;
         float price;
-        int quantity; 
+        std::vector<int> quantity; 
         std::vector<Node*> children;
         std::string audio_path;
 
