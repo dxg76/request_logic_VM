@@ -470,7 +470,7 @@ int Vendor::configure_card_reader() {
 
 int Vendor::configure_coin_mech() {
     tcflush(abstract,TCIOFLUSH);
-    std::string coin_setup = "R,0C,FFFF";
+    std::string coin_setup = "R,0C,FFFFFFFF";
     if(write_to_MDB(coin_setup) < 0){
         return -1;
     }
@@ -481,7 +481,7 @@ int Vendor::configure_coin_mech() {
 
 int Vendor::configure_bill_validator() {
     tcflush(abstract,TCIOFLUSH);
-    std::string bill_setup = "R,34,FFFF";
+    std::string bill_setup = "R,34,FFFFFFFF";
     if(write_to_MDB(bill_setup) < 0){
         return -1;
     }
