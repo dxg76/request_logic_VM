@@ -546,6 +546,7 @@ int main(int argc, const char** argv){
         
 
         //start recording
+        exit_recording.store(false);
         int recording_size_milli;
         if(vendor.state == 0){
             recording_size_milli = 5000;
