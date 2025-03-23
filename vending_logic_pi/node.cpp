@@ -39,7 +39,7 @@ float Node::get_price() const{
 
     return price;
 
-
+}
 std::vector<int> Node::get_quantity() const{
 
     return quantity;

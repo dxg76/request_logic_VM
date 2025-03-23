@@ -30,7 +30,7 @@ class Node{
         std::string get_loc() const;
         std::string get_audio_path() const;
         float get_price() const;
-        int get_quantity() const;
+        std::vector<int> get_quantity() const;
         const std::vector<Node*>& get_children() const{return children;}
 
         //Mutators
