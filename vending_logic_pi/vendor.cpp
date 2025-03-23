@@ -3,7 +3,7 @@
 //constructor
 Vendor::Vendor(bool mode){
     total_currency = 0;
-    state = 0;
+    state = 2;
     list_menu = false;
     confirmation_prompt = false;
     voice_control = true;
@@ -38,7 +38,7 @@ std::string Vendor::get_hex(std::string response){
     std::string hex_code;
     std::cout << "this is response: " << response <<std::endl;
     size_t start_index = response.find(',');
-    int end_index = response.find('\r');
+    int end_index = response.find('\n');
 
     hex_code = response.substr(start_index+1, end_index-start_index-1);
     
@@ -260,7 +260,7 @@ char Vendor::get_vend_code(char row, char col){
     char row_code;
     char col_code;
     //form row 
-    switch(row){
+    switch('A'){
         case 'A':
             row_code = 0;
             break;
@@ -281,7 +281,7 @@ char Vendor::get_vend_code(char row, char col){
             row_code = 0;
     }
     //form col
-    switch(col){
+    switch('1'){
         case '1':
             col_code = 1;
             break;
@@ -372,6 +372,7 @@ bool Vendor::configure_serial(int speed) {
 //mdb methods
 int Vendor::write_to_MDB(std::string msg) {
     msg = msg + '\n';
+    std::cout <<"MDB WRITE!!!!!! " << msg << std::endl;
     const char* msg_ready = msg.c_str();
     if (write(abstract, msg_ready, strlen(msg_ready)) < 0) {
         std::cerr << "write error: "
@@ -385,6 +386,7 @@ std::string Vendor::read_from_MDB() {
     char buffer[BUFFER_SIZE] = "";
     int bytes_read = 1;
     std::string response = "";
+    std::cout << "MDB READ!!!!! " << std::endl;
     while(bytes_read>0){
         bytes_read = read(abstract,buffer,BUFFER_SIZE);
         response += buffer;
@@ -424,7 +426,9 @@ int Vendor::configure_all() {
     std::string start_gen_master = "M,1";
     write_to_MDB(start_gen_master);
     std::cout << read_from_MDB() << std::endl;
-    // Implementation goes here
+    configure_coin_mech();
+    configure_bill_validator();    
+    //Implementation goes here
     return 0;
 }
 
@@ -470,7 +474,7 @@ int Vendor::configure_card_reader() {
 
 int Vendor::configure_coin_mech() {
     tcflush(abstract,TCIOFLUSH);
-    std::string coin_setup = "R,0C,FFFF";
+    std::string coin_setup = "R,0C,FFFFFFFF";
     if(write_to_MDB(coin_setup) < 0){
         return -1;
     }
@@ -481,7 +485,7 @@ int Vendor::configure_coin_mech() {
 
 int Vendor::configure_bill_validator() {
     tcflush(abstract,TCIOFLUSH);
-    std::string bill_setup = "R,34,FFFF";
+    std::string bill_setup = "R,34,FFFFFFFF";
     if(write_to_MDB(bill_setup) < 0){
         return -1;
     }
@@ -495,18 +499,18 @@ void Vendor::print_mdb_response(){
 //MDB pay
 
 bool Vendor::try_payment(float item_cost){
+    item_cost = 1;
     //paid by card
     //bool card_payment = false;
     if(state == 2){
         std::cout << "paying..." << std::endl;
-        state = 3;
-        
+        total_currency = 0;
         tcflush(abstract,TCIOFLUSH);
         //poll payment peripherals
         while(total_currency < item_cost && !card_payment){
-            total_currency += check_bills();
-            total_currency += check_coins();
-            //card_payment = check_card_payment(item_cost);
+            //total_currency += check_bills();
+            //total_currency += check_coins();
+            card_payment = check_card_payment(item_cost);
         }
         std::cout << "payment complete!" << std::endl;
         list_menu = true;
@@ -517,23 +521,32 @@ bool Vendor::try_payment(float item_cost){
     return false;
 }
 bool Vendor::check_card_payment(float item_cost) {
-    std::string request_payment = "D,REQ," + std::to_string(item_cost);
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+    int item_cost_int = item_cost;
+    std::string request_payment = "D,REQ," + std::to_string(item_cost_int);
+    
     std::string vend_confirmed;
     std::string vend_rejected;
     std::string response;
+    std::cout << "request payment: " << request_payment << std::endl;
+    if(write_to_MDB(request_payment) != 0){
+        std::cout << "write error" << std::endl;
+    }
 
-    write_to_MDB(request_payment);
-    read_from_MDB() = response;
+    response = read_from_MDB();
+    std::cout << "response: " << response << std::endl;
+  
     if(response.find("d,STATUS,RESULT,1")){
         std::cout << "no card..." <<std::endl;
         return false;
     }
 
-    write_to_MDB(request_payment);
-    if(read_from_MDB() != "placeholder"){
-        write_to_MDB(vend_rejected);
+    //approve vend
+    write_to_MDB("C,VEND,1");
+    if(read_from_MDB() != "d,status,result,-1"){
+        write_to_MDB("D,END,-1");
         return false;
-    }else write_to_MDB(vend_confirmed);
+    }else write_to_MDB("D,END");
     return true;
 }
 

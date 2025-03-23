@@ -1,7 +1,9 @@
 #ifndef VENDOR_HPP
 #define VENDOR_HPP
-#define BUFFER_SIZE 512
+#define BUFFER_SIZE 4096
 
+#include <thread>
+#include <chrono>
 #include <cstring>
 #include <termios.h>
 #include <fcntl.h>
@@ -9,7 +11,6 @@
 #include <errno.h>
 #include <wiringPi.h>
 #include "menu-tree.hpp"
-#define BUFFER_SIZE 512
 
 class Vendor{
     public:
