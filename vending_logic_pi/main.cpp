@@ -545,7 +545,7 @@ int main(int argc, const char** argv){
         }
         
 
-        std::thread audio_thread
+        std::thread audio_thread;
         //start recording
         exit_recording.store(false);
         if(vendor.state == 0){
