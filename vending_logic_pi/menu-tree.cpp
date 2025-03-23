@@ -49,6 +49,11 @@ Menu_tree::Menu_tree(){
 }
 
 void Menu_tree::selection_menu(Node* node, int level) const{
+    std::vector stock = node->get_quantity();
+    int quantity = 0;
+    for(size_t i = 0; i < stock.size(); ++i){
+        quantity += stock[i];
+    }
 
     if(node == nullptr){
         std::cout << "empty pointer" << std::endl;
@@ -66,7 +71,7 @@ void Menu_tree::selection_menu(Node* node, int level) const{
 
     if(node->get_price() > 0.0){
         
-        std::cout << " - $" << node->get_price() << " " << node->get_quantity() << " remaining" << std::endl;
+        std::cout << " - $" << node->get_price() << " " << quantity << " remaining" << std::endl;
 
     }
 
