@@ -534,7 +534,7 @@ int main(int argc, const char** argv){
                     vendor.list_menu = false;
                 }
                 //Simulate vend with sleep (temporary) DG
-                motor_control = vendor.try_vend(current_node->get_loc(), current_node->get_price());
+                motor_control = vendor.try_vend(current_node->get_loc(), current_node->get_price(),current_node->get_quantity());
                 //dispense snack using motors
                 if(motor_control != 0){
                     drive_motors(motor_control);

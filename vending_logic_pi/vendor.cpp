@@ -19,20 +19,41 @@ void Vendor::set_debug(bool mode){
     }
 }
 
-char Vendor::try_vend(std::string loc, float price){
+char Vendor::try_vend(std::string loc, float price, std::vector<int> quantity){
     //fill in with vending sequence
     if(state ==3){
         if(debug_mode){
-            std::cout << "Vending..." << std::endl;
+            std::cout << "Vending: " << loc << "..." << std::endl;
             
         }
-        char row = loc[0];
-        char col = loc[1];
-        return get_vend_code(row,col);
+        if(decrease_quantity()){
+            char row = loc[0];
+            char col = loc[1];
+            return get_vend_code(row,col);
+        }else return 0;
     }
 }
 
+bool Vendor::decrease_quantity(std::vector<int>& quantities){ /*Function to decrement quantities*/
+    int quantity = 0;
 
+    for(size_t i = 0; i < quantities.size(); ++i){
+        
+        if(quantities[i] > 0){
+            
+            quantities[i]--; /*Decrements the quantity stored*/
+            for(size_t i = 0; i < quantities.size(); ++i){
+                quantity += quantities[i];
+            }
+            std::cout << "Units remaining: " <<quantity std::endl;
+            return true; 
+            
+        }
+    }
+
+    
+    return false; /*Returns false when 0*/
+}
 //token methods
 std::string Vendor::get_hex(std::string response){
     std::string hex_code;
