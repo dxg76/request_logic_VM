@@ -35,7 +35,7 @@ class Node{
 
         //Mutators
         void set_loc(const std::string& loc);
-        void set_quantity(int quantity);
+        void set_quantity(std::vector<int> quantity);
         void set_price(float price);
         void set_audio_path(const std::string& audio_path);
 

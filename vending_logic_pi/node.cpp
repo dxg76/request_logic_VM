@@ -59,7 +59,7 @@ void Node::set_price(float price){
 
 }
 
-void Node::set_quantity(int quantity){
+void Node::set_quantity(std::vector<int> quantity){
 
     this->quantity = quantity;
 
