@@ -49,7 +49,7 @@ Menu_tree::Menu_tree(){
 }
 
 void Menu_tree::selection_menu(Node* node, int level) const{
-    std::vector stock = node->get_quantity();
+    std::vector<int> stock = node->get_quantity();
     int quantity = 0;
     for(size_t i = 0; i < stock.size(); ++i){
         quantity += stock[i];
