@@ -549,8 +549,8 @@ int main(int argc, const char** argv){
         //start recording
         exit_recording.store(false);
         if(vendor.state == 0){
-            audio_thread(ma_stream,head, 5000);
-        }else audio_thread(ma_stream,head, 2000);
+            audio_thread = std::thread(ma_stream,head, 5000);
+        }else audio_thread  = std::thread(ma_stream,head, 2000);
 
 
         //Get Input, Tokenize, read
