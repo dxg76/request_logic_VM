@@ -56,7 +56,7 @@ class Vendor{
     void set_debug(bool mode); 
     char try_vend(std::string loc, float price, std::vector<int> quantity);
     bool try_payment(float item_cost);
-    bool decrease_quantity(std::vector<int>& quantities);
+    bool decrease_quantity(std::vector<int>& quantities,int &offset);
     
     /*token methods*/
     std::string generate_prompt(Node* current_node);

@@ -21,20 +21,21 @@ void Vendor::set_debug(bool mode){
 
 char Vendor::try_vend(std::string loc, float price, std::vector<int> quantity){
     //fill in with vending sequence
-    if(state ==3){
-        if(debug_mode){
-            std::cout << "Vending: " << loc << "..." << std::endl;
-            
-        }
-        if(decrease_quantity(quantity)){
-            char row = loc[0];
-            char col = loc[1];
-            return get_vend_code(row,col);
-        }else return 0;
+    int offset;
+    if(debug_mode){
+        std::cout << "Vending: " << loc << "..." << std::endl;
+        
     }
+    if(decrease_quantity(quantity, offset)){
+        char row = loc[0];
+        char col = loc[1];
+        col += offset;
+        return get_vend_code(row,col);
+    }else return 0;
+    
 }
 
-bool Vendor::decrease_quantity(std::vector<int>& quantities){ /*Function to decrement quantities*/
+bool Vendor::decrease_quantity(std::vector<int>& quantities, int &offset){ /*Function to decrement quantities*/
     int quantity = 0;
 
     for(size_t i = 0; i < quantities.size(); ++i){
@@ -46,6 +47,7 @@ bool Vendor::decrease_quantity(std::vector<int>& quantities){ /*Function to decr
                 quantity += quantities[i];
             }
             std::cout << "Units remaining: " << quantity << std::endl;
+            offset = i;
             return true; 
             
         }
