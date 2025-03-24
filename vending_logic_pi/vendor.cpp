@@ -424,7 +424,8 @@ int Vendor::configure_all() {
     std::string start_gen_master = "M,1";
     write_to_MDB(start_gen_master);
     std::cout << read_from_MDB() << std::endl;
-    // Implementation goes here
+    configure_coin_mech();
+    configure_bill_validator();
     return 0;
 }
 
