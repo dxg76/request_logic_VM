@@ -545,7 +545,8 @@ bool Vendor::try_payment(float item_cost){
     return false;
 }
 bool Vendor::check_card_payment(float item_cost) {
-    //std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+    std::cout << "card waiting." << std::endl;
+    std::this_thread::sleep_for(std::chrono::milliseconds(5000));
     int item_cost_int = item_cost;
     std::string request_payment = "D,REQ," + std::to_string(item_cost_int);
     
