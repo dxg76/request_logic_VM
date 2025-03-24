@@ -560,7 +560,7 @@ bool Vendor::check_card_payment(float item_cost) {
     response = read_from_MDB();
     std::cout << "response: " << response << std::endl;
   
-    if(response.find("d,STATUS,RESULT,1")){
+    if(response.find("d,STATUS,RESULT,1") != std::npos){
         std::cout << "no card..." <<std::endl;
 	//cancel request
 	write_to_MDB("D,REQ,-1");
