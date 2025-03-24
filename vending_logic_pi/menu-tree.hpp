@@ -7,21 +7,16 @@
 
 /*
 *Dante Gordon
-*1/24/25
 *
 *Class Header file for the menu tree data structure
 */
 
 /*
 *Devan Rivera
-*1/28/25
 *
 *The menu tree class is used to create a tree structure 
 *for the vending machine menu.
 *
-*Updated 1/29/25
-*Updated 2/1/25
-*Updated 2/3/25
 */
 
 class Menu_tree{

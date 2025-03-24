@@ -7,16 +7,12 @@
 #include <algorithm> //need to identify
 
 /*
-*Devan Rivera 1/28/25 
+*Devan Rivera 
 *
 *Node class is used to create a tree structure 
 *for the vending machine menu. Each node has information 
 *stored and can be manipulated.
 *
-*Updated 1/29/25
-*Updated 2/1/25
-*Updated 2/3/25
-*Updated 3/5/25
 */
 
 class Node{
