@@ -14,20 +14,12 @@
 
 /*
 *
+*Developers:
 *Dante Gordon
 *Devan Rivera
-*Updated 10/13/24
 *
-*Updated 2/3/25
-*Updated 2/6/25
-*Updated 2/7/25
-*Updated 2/17/25
-*Updated 2/18/25
-*Updated 3/2/25
-*Updated 3/3/25
-*Updated 3/5/25
+*This is the driver file for the MRSTV logic and transcription. (See READme for details)
 *
-*This is the driver file for the MRSTV logic
 */
 
 
@@ -192,7 +184,7 @@ void ma_stream(list_node* head, int recording_length){
         device_config.capture.channels = 1; // matching encoder channels
         device_config.sampleRate       = 16000; // matching encoder sample rate
         device_config.dataCallback     = data_callback; //assigning data call back method to device configuration
-        device_config.pUserData        = &encoder; //TBD
+        device_config.pUserData        = &encoder; 
        
         result = ma_device_init(NULL, &device_config, &device); //initializing device
         if (result != MA_SUCCESS) {
@@ -254,18 +246,13 @@ void destroy_list(list_node* head){
 
 std::string get_command(){
     //audio thread start
-   
 
-    
     //quit bool
     //bool exit_transcription = false;
     //transcribed text
     std::string text;
 
     //transcribe loop
-    /*
-    while(!exit_transcription){
-    */
         while(head->filename == "placeholder"){
             std::cout << "file not ready" << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
@@ -275,7 +262,6 @@ std::string get_command(){
         std::vector<float> samples = pcm_buster(head->filename);
 
         //transcribe the audio from samples
-        //std::cout << "starting transcription..."  << std::endl;
         std::cout << "transcribing..." << head->filename << std::endl;
         const auto start = std::chrono::high_resolution_clock::now();
         if(whisper_full(ctx, full_params, samples.data(), samples.size()) != 0){
@@ -299,18 +285,6 @@ std::string get_command(){
         delete temp; //delete head
         remove(expired_file.c_str());
 
-        /*
-        //check for command
-        if(text.find("Mr. Steve") != std::string::npos){
-            exit_transcription = true;
-        } //end transcribe loop
-    }*/
-    //exit_recording.store(true);
-    //audio_thread.join();
-    //std::cout << "thread joined" <<std::endl;
-    
-    //destroy list leftovers
-    //destroy_list(head);
     return text;
 }
 

@@ -3,12 +3,6 @@
 #include "menu-tree.hpp"
 /*
 *Devan Rivera (See ReadME for details)
-*Updated 1/29/25
-*Updated 2/3/25
-*Updated 2/17/25
-*Updated 2/18/25
-*Updated 3/4/25
-*Updated 3/5/25
 */
 
 Menu_tree::Menu_tree(){
