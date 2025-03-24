@@ -3,13 +3,13 @@
 //constructor
 Vendor::Vendor(bool mode){
     total_currency = 0;
-    state = 1;
+    state = 2;
     list_menu = false;
     confirmation_prompt = false;
     voice_control = true;
     configure_all();
     set_debug(mode);
-    no_charge = true;
+    no_charge = false;
 }
 
 //vendor methods
@@ -71,7 +71,7 @@ std::string Vendor::get_hex(std::string response){
         if (!std::isprint(hex_code[i])) { // Checks for non-printable characters
             std::cout << i << " (ASCII " << static_cast<int>(hex_code[i]) << "), ";
         }
-    }
+   }
     std::cout << std::endl;
     
     return hex_code;
@@ -284,7 +284,7 @@ char Vendor::get_vend_code(char row, char col){
     char row_code;
     char col_code;
     //form row 
-    switch('A'){
+    switch(row){
         case 'A':
             row_code = 0;
             break;
@@ -305,7 +305,7 @@ char Vendor::get_vend_code(char row, char col){
             row_code = 0;
     }
     //form col
-    switch('1'){
+    switch(col){
         case '1':
             col_code = 1;
             break;
@@ -545,14 +545,14 @@ bool Vendor::try_payment(float item_cost){
     return false;
 }
 bool Vendor::check_card_payment(float item_cost) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+    //std::this_thread::sleep_for(std::chrono::milliseconds(10000));
     int item_cost_int = item_cost;
     std::string request_payment = "D,REQ," + std::to_string(item_cost_int);
     
     std::string vend_confirmed;
     std::string vend_rejected;
     std::string response;
-    std::cout << "request payment: " << request_payment << std::endl;
+    std::cout << "request payment: \n" << request_payment << std::endl;
     if(write_to_MDB(request_payment) != 0){
         std::cout << "write error" << std::endl;
     }
@@ -562,6 +562,9 @@ bool Vendor::check_card_payment(float item_cost) {
   
     if(response.find("d,STATUS,RESULT,1")){
         std::cout << "no card..." <<std::endl;
+	//cancel request
+	write_to_MDB("D,REQ,-1");
+	print_mdb_response();
         return false;
     }
 
