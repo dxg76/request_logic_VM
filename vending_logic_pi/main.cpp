@@ -534,7 +534,7 @@ int main(int argc, const char** argv){
                     vendor.list_menu = false;
                 }
                 //Simulate vend with sleep (temporary) DG
-                motor_control = vendor.try_vend(current_node->get_loc(), current_node->get_price());
+                motor_control = vendor.try_vend(current_node->get_loc(), current_node->get_price(),current_node->get_quantity());
                 //dispense snack using motors
                 if(motor_control != 0){
                     drive_motors(motor_control);
@@ -545,14 +545,14 @@ int main(int argc, const char** argv){
         }
         
 
-
         //start recording
         exit_recording.store(false);
+        int recording_size_milli;
         if(vendor.state == 0){
-            std::thread audio_thread(ma_stream,head, 5000);
-        }else std::thread audio_thread(ma_stream,head, 2000);
+            recording_size_milli = 5000;
+        }else recording_size_milli = 3000;
 
-
+        std::thread audio_thread(ma_stream, head, recording_size_milli);
         //Get Input, Tokenize, read
         do{
             vendor.parse(get_command(), current_node);

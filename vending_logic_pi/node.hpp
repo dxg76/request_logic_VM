@@ -30,12 +30,12 @@ class Node{
         std::string get_loc() const;
         std::string get_audio_path() const;
         float get_price() const;
-        int get_quantity() const;
+        std::vector<int> get_quantity() const;
         const std::vector<Node*>& get_children() const{return children;}
 
         //Mutators
         void set_loc(const std::string& loc);
-        void set_quantity(int quantity);
+        void set_quantity(std::vector<int> quantity);
         void set_price(float price);
         void set_audio_path(const std::string& audio_path);
 

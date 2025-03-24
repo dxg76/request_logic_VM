@@ -40,8 +40,7 @@ float Node::get_price() const{
     return price;
 
 }
-
-int Node::get_quantity() const{
+std::vector<int> Node::get_quantity() const{
 
     return quantity;
 
@@ -60,7 +59,7 @@ void Node::set_price(float price){
 
 }
 
-void Node::set_quantity(int quantity){
+void Node::set_quantity(std::vector<int> quantity){
 
     this->quantity = quantity;
 

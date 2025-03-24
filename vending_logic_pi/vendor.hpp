@@ -1,7 +1,9 @@
 #ifndef VENDOR_HPP
 #define VENDOR_HPP
-#define BUFFER_SIZE 512
+#define BUFFER_SIZE 4096
 
+#include <thread>
+#include <chrono>
 #include <cstring>
 #include <termios.h>
 #include <fcntl.h>
@@ -9,7 +11,6 @@
 #include <errno.h>
 #include <wiringPi.h>
 #include "menu-tree.hpp"
-#define BUFFER_SIZE 512
 
 class Vendor{
     public:
@@ -25,9 +26,10 @@ class Vendor{
     /*vendor vars*/
     short state; //[0 == idle],[1 == select mode], [2 == payment mode], [3 == vend mode]
     bool vend_complete;
-    bool list_menu;
-    bool confirmation_prompt;
-    bool voice_control;
+    bool list_menu; //list product menu
+    bool confirmation_prompt; //send confirmation prompt
+    bool voice_control; //interviw mode
+    bool no_charge; //dont poll payment devices
     
 
     /*serial methods*/
@@ -53,8 +55,9 @@ class Vendor{
 
     /*vend methods*/
     void set_debug(bool mode); 
-    char try_vend(std::string loc, float price);
+    char try_vend(std::string loc, float price, std::vector<int> quantity);
     bool try_payment(float item_cost);
+    bool decrease_quantity(std::vector<int>& quantities,int &offset);
     
     /*token methods*/
     std::string generate_prompt(Node* current_node);
