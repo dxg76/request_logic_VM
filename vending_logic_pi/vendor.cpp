@@ -3,7 +3,7 @@
 //constructor
 Vendor::Vendor(bool mode){
     total_currency = 0;
-    state = 2;
+    state = 1;
     list_menu = false;
     confirmation_prompt = false;
     voice_control = true;
@@ -421,7 +421,7 @@ std::string Vendor::read_from_MDB() {
 
 
 
-    //std::cout << "this is the buffer: " << buffer << "the number of bytes transmitted is: " <<strlen(buffer) <<std::endl;
+   std::cout << "this is the read repsonse: " << response << "\n\nthe number of bytes transmitted is: " <<strlen(buffer) <<std::endl;
     return response; //success    
 }
 
@@ -554,17 +554,17 @@ bool Vendor::check_card_payment(float item_cost) {
     std::string vend_confirmed;
     std::string vend_rejected;
     std::string response;
-    std::cout << "request payment: \n" << request_payment << std::endl;
-    
-    if(write_to_MDB("C,START,1") != 0){
-        std::cout << "write error" << std::endl;
-    }
+    //std::cout << "request payment: \n" << request_payment << std::endl;
+    tcflush(abstract,TCIOFLUSH);
+    //if(write_to_MDB("C,START,1") != 0){
+    //    std::cout << "write error" << std::endl;
+    //}
     if(write_to_MDB(request_payment) != 0){
         std::cout << "write error" << std::endl;
     }
 
     response = read_from_MDB();
-    std::cout << "response: \n" << response << std::endl;
+    //std::cout << "response: \n" << response << std::endl;
   
     if(response.find("d,STATUS,RESULT,1") == std::string::npos){
         std::cout << "no card..." <<std::endl;
