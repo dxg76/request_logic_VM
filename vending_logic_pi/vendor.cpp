@@ -477,6 +477,7 @@ int Vendor::configure_card_reader() {
     if(write_to_MDB(c_peripheral) != 0){
         return -1;
     }
+
     //MDB response to enabling cashless peripheral
     std::cout << "mdb response: \n" << read_from_MDB() <<std::endl;
 
