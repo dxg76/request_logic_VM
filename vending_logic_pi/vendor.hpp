@@ -15,7 +15,7 @@
 class Vendor{
     public:
     
-    Vendor(bool mode, bool voice_control = true, bool no_charge = false );
+    Vendor(bool mode, bool voice_control, bool no_charge);
 
     /*serial variables*/
     int abstract;

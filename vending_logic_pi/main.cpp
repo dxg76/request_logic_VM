@@ -39,6 +39,7 @@ int six_pin = 25;
 int seven_pin = 8;
 int eight_pin = 7;
 
+bool voice_less = false;
 //ISR rows
 void click_a();
 void click_b();
@@ -70,8 +71,8 @@ int m7 = 19;
 int confirm_pin = 16;
 /*Ultrasound Pin*/
 int object_detected = 21;
-volatile char row;
-volatile char col;
+volatile char row = '#';
+volatile char col = '#';
 char motor_control;
 //linked list struct
 struct list_node{
@@ -440,16 +441,26 @@ void play_confirm(Node* current_node){
 int main(int argc, const char** argv){
     
     //setup begin 
-    //debug
+    //Vendor settings
     bool debug_mode = false;
+    bool voice_control = true;
+    bool no_charge;
     if(argc>1 && strcmp(argv[1], "-d") == 0){
         debug_mode = true;
+        if(argc>2 && strcmp(argv[2], "voice_off") == 0){
+            voice_control = false;
+            if(argc>3 && strcmp(argv[3], "no_charge") == 0){
+                no_charge = true;
+            }
+        }
     }
+    
+    
     //GPIO
     wiringPiSetupGpio();
     set_all_gpio();
     //initailize vendor
-    Vendor vendor(debug_mode);
+    Vendor vendor(debug_mode, voice_control, no_charge);
     int fail_count = 0; //number of fails
     bool no_answer = false;
     //Start at the root ("Main Menu")
@@ -465,12 +476,27 @@ int main(int argc, const char** argv){
     //main loop
     while(true){
         
-        //standard function loop
+        //voiceless loop
         while(!vendor.voice_control){
-            current_node = vendor.vendor_menu.root;
-            current_node = current_node->find_child("all");
-        }
+            std::cout << "-----VOICELESS VENDOR ACTIVE-----" << std::endl;
+            while(col == "#" || row == '#'){}
+            std::cout << "Selection made: " << row << col <<std::endl;
 
+            play_wav_file("wav files/direct_pay.wav");
+            while(vendor.try_payment(1)){
+                std::cout << "waiting for pay (voiceless)" << std::endl;
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            }
+            /*
+            implement all node and match code to get price 
+            but all product one dollar for rn
+            */
+            motor_control = vendor.get_vend_code(row,col);
+
+            /*exit voiceless loop*/
+            vendor.voice_control = true;
+        }
+        //standard function loop
         /*VENDOR STATE 0 IDLE*/
         if(vendor.state == 0){
             //person detected
@@ -533,39 +559,46 @@ int main(int argc, const char** argv){
 
         std::thread audio_thread(ma_stream, head, recording_size_milli);
 
-        /*Get Input, Tokenize, Read*/
+        /*Transcribe/Decision Loop*/
         do{
-            std::cout << "Vendor state: " << vendor.state << std::endl;
-            vendor.parse(get_command(), current_node);
-            const auto start = std::chrono::high_resolution_clock::now();
-            vendor_result = vendor.read_tokens(current_node);
-            const auto end = std::chrono::high_resolution_clock::now();
-            const std::chrono::duration<double,std::milli> elapsed = end - start;
-            std::cout << "token read time (secs):  " << elapsed.count()/1000.0 << std::endl;
-            std::cout << "vendor result: " << vendor_result << std::endl;  
-            
-            //fail counter
-            if(vendor_result == "err" && vendor.state != 0){
-		std::cout << "fail count: " << fail_count << std::endl;
-                fail_count +=1;
-                if(fail_count == 5){
-                    std::cout << "failed to understand" <<std::endl;
-                    //play_wav_file("wav files/try_again");
-                }
-                if(fail_count == 10){
-                    std::cout << "going to idle " << std::endl;
-                    vendor_result = "idle";
-                    fail_count = 0;
-		    no_answer = true;
-                    break;
-                }
-            } 
-            if(vendor.state == 0){
-                //person detected
-                if(digitalRead(object_detected) && !no_answer){
-                    vendor_result = "awaken";
-                }
-            }  
+            /*Keypad Conditions*/
+            if(voice_less){
+                vendor_result = "silence";
+            }else{
+                /*Get Input, Tokenize, Read*/
+                std::cout << "Vendor state: " << vendor.state << std::endl;
+                vendor.parse(get_command(), current_node);
+                const auto start = std::chrono::high_resolution_clock::now();
+                vendor_result = vendor.read_tokens(current_node);
+                const auto end = std::chrono::high_resolution_clock::now();
+                const std::chrono::duration<double,std::milli> elapsed = end - start;
+                std::cout << "token read time (secs):  " << elapsed.count()/1000.0 << std::endl;
+                std::cout << "vendor result: " << vendor_result << std::endl;  
+                
+                /*Timeout Conditions*/
+                if(vendor_result == "err" && vendor.state != 0){
+                    std::cout << "fail count: " << fail_count << std::endl;
+                    fail_count +=1;
+                    if(fail_count == 5){
+                        std::cout << "failed to understand" <<std::endl;
+                        //play_wav_file("wav files/try_again");
+                    }
+                    if(fail_count == 10){
+                        std::cout << "going to idle " << std::endl;
+                        vendor_result = "idle";
+                        fail_count = 0;
+                        no_answer = true;
+                        break;
+                    }
+                } 
+                if(vendor.state == 0){
+                    //person detected
+                    if(digitalRead(object_detected) && !no_answer){
+                    
+                        vendor_result = "awaken";
+                    }
+                }  
+            }
         }while(vendor_result == "err");
         //stop recording
         exit_recording.store(true);
@@ -594,6 +627,11 @@ int main(int argc, const char** argv){
             vendor.state = 1;
             play_wav_file("wav files/return_from_idle.wav");
             no_answer = false;
+        }
+        else if(vendor.result == "silence"){
+            vendor.voice_control = false;
+            vendor.state = 0;
+            current_node = vendor.vendor_menu.root;
         }
         //navigate node based on command
         else {
@@ -736,41 +774,49 @@ void click_f(){
 // ISR Columns
 void click_one(){
     col = '1';
+    voice_less = true;
     std::cout << "Interrupt on column 1 (GPIO " << one_pin << ")" << std::endl;
 }
 
 void click_two(){
     col = '2';
+    voice_less = true;
     std::cout << "Interrupt on column 2 (GPIO " << two_pin << ")" << std::endl;
 }
 
 void click_three(){
     col = '3';
+    voice_less = true;
     std::cout << "Interrupt on column 3 (GPIO " << three_pin << ")" << std::endl;
 }
 
 void click_four(){
     col = '4';
+    voice_less = true;
     std::cout << "Interrupt on column 4 (GPIO " << four_pin << ")" << std::endl;
 }
 
 void click_five(){
     col = '5';
+    voice_less = true;
     std::cout << "Interrupt on column 5 (GPIO " << five_pin << ")" << std::endl;
 }
 
 void click_six(){
     col = '6';
+    voice_less = true;
     std::cout << "Interrupt on column 6 (GPIO " << six_pin << ")" << std::endl;
 }
 
 void click_seven(){
     col = '7';
+    voice_less = true;
     std::cout << "Interrupt on column 7 (GPIO " << seven_pin << ")" << std::endl;
 }
 
 void click_eight(){
     col = '8';
+    voice_less = true;
     std::cout << "Interrupt on column 8 (GPIO " << eight_pin  << ")" << std::endl;
 }
 
