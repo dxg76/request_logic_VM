@@ -450,6 +450,7 @@ int main(int argc, const char** argv){
     set_all_gpio();
     //initailize vendor
     Vendor vendor(debug_mode);
+    int fail_count = 0; //number of fails
     //Start at the root ("Main Menu")
     Node* current_node = vendor.vendor_menu.root;
     std::string vendor_result;
@@ -470,9 +471,7 @@ int main(int argc, const char** argv){
         }
 
         /*VENDOR STATE 0 IDLE*/
-        if(vendor.state == 0){
-
-        }
+        if(vendor.state == 0){}
         /*VENDOR STATE 1 SELECTION*/
         else if(vendor.state ==1){
             std::string file_path = vendor.generate_prompt(current_node);
@@ -494,7 +493,7 @@ int main(int argc, const char** argv){
         }
         /*VENDOR STATE 2 Payment*/
         else if(vendor.state == 2){
-            //play_wav_file("wav files/direct_pay.wav");
+            play_wav_file("wav files/direct_pay.wav");
             vendor.try_payment(current_node->get_price());
 
             /*VENDOR STATE 3*/
@@ -535,9 +534,23 @@ int main(int argc, const char** argv){
             const auto end = std::chrono::high_resolution_clock::now();
             const std::chrono::duration<double,std::milli> elapsed = end - start;
             std::cout << "token read time (secs):  " << elapsed.count()/1000.0 << std::endl;
-            std::cout << "vendor result: " << vendor_result << std::endl;     
+            std::cout << "vendor result: " << vendor_result << std::endl;  
+            
+            std::cout << "fail count" << fail_count << std::endl;
+            //fail counter
+            if(vendor_result == "err"){
+                fail_count +=1;
+                if(fail_count == 5){
+                    std::cout << "failed to understand" <<std::endl;
+                    //play_wav_file("wav files/try_again");
+                }
+                if(fail_count == 10){
+                    std::cout << "going to idle " << std::endl;
+                    vendor_result = "idle";
+                    break;
+                }
+            }   
         }while(vendor_result == "err");
-
         //stop recording
         exit_recording.store(true);
         audio_thread.join();

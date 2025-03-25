@@ -3,7 +3,7 @@
 //constructor
 Vendor::Vendor(bool mode){
     total_currency = 0;
-    state = 2;
+    state = 1;
     list_menu = false;
     confirmation_prompt = false;
     voice_control = true;
@@ -193,8 +193,6 @@ std::string Vendor::check_inventory(std::vector<Node*> items){
         std::cout << "cannot find the item you are looking for :(\n" << std::endl;
     }
     //item not found
-    std::cout << "I'm sorry, I didn't quite understand that, please repeat your request." //command unrecognized
-    << std::endl;
     return "err"; 
 }
 
@@ -421,7 +419,7 @@ std::string Vendor::read_from_MDB() {
 
 
 
-    //std::cout << "this is the buffer: " << buffer << "the number of bytes transmitted is: " <<strlen(buffer) <<std::endl;
+   std::cout << "this is the read repsonse: " << response << "\n\nthe number of bytes transmitted is: " <<strlen(buffer) <<std::endl;
     return response; //success    
 }
 
@@ -477,6 +475,7 @@ int Vendor::configure_card_reader() {
     if(write_to_MDB(c_peripheral) != 0){
         return -1;
     }
+
     //MDB response to enabling cashless peripheral
     std::cout << "mdb response: \n" << read_from_MDB() <<std::endl;
 
@@ -545,26 +544,28 @@ bool Vendor::try_payment(float item_cost){
     return false;
 }
 bool Vendor::check_card_payment(float item_cost) {
-    //std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+    std::cout << "card waiting." << std::endl;
+    std::this_thread::sleep_for(std::chrono::milliseconds(5000));
     int item_cost_int = item_cost;
     std::string request_payment = "D,REQ," + std::to_string(item_cost_int);
     
     std::string vend_confirmed;
     std::string vend_rejected;
     std::string response;
-    std::cout << "request payment: \n" << request_payment << std::endl;
+    //std::cout << "request payment: \n" << request_payment << std::endl;
+    tcflush(abstract,TCIOFLUSH);
+    //if(write_to_MDB("C,START,1") != 0){
+    //    std::cout << "write error" << std::endl;
+    //}
     if(write_to_MDB(request_payment) != 0){
         std::cout << "write error" << std::endl;
     }
 
     response = read_from_MDB();
-    std::cout << "response: " << response << std::endl;
+    //std::cout << "response: \n" << response << std::endl;
   
-    if(response.find("d,STATUS,RESULT,1")){
+    if(response.find("d,STATUS,RESULT,1") == std::string::npos){
         std::cout << "no card..." <<std::endl;
-	//cancel request
-	write_to_MDB("D,REQ,-1");
-	print_mdb_response();
         return false;
     }
 
