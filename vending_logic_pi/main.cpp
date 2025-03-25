@@ -548,7 +548,7 @@ int main(int argc, const char** argv){
                     break;
                 }
             }   
-
+        }
         //stop recording
         exit_recording.store(true);
         audio_thread.join();
