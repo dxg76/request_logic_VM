@@ -536,6 +536,7 @@ int main(int argc, const char** argv){
             std::cout << "token read time (secs):  " << elapsed.count()/1000.0 << std::endl;
             std::cout << "vendor result: " << vendor_result << std::endl;  
             
+            std::cout << "fail count" << fail_count << std::endl
             //fail counter
             if(vendor_result == "err"){
                 fail_count +=1;
