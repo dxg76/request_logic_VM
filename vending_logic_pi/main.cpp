@@ -253,8 +253,8 @@ std::string get_command(){
 
     //transcribe loop
         while(head->filename == "placeholder"){
-            std::cout << "file not ready" << std::endl;
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            //std::cout << "file not ready" << std::endl;
+            //std::this_thread::sleep_for(std::chrono::milliseconds(500));
         }
         std::cout << "exit loop: " << std::endl;
         //get samples
@@ -426,6 +426,7 @@ void play_confirm(Node* current_node){
     play_wav_file(current_node->get_audio_path());
     play_wav_file("wav files/Confirm_Deny_Statement.wav");
 }
+
 /*
 *
 *
@@ -531,8 +532,10 @@ int main(int argc, const char** argv){
         }else recording_size_milli = 3000;
 
         std::thread audio_thread(ma_stream, head, recording_size_milli);
-        //Get Input, Tokenize, read
+
+        /*Get Input, Tokenize, Read*/
         do{
+            std::cout << "Vendor state: " << vendor.state << std::endl;
             vendor.parse(get_command(), current_node);
             const auto start = std::chrono::high_resolution_clock::now();
             vendor_result = vendor.read_tokens(current_node);
@@ -541,9 +544,9 @@ int main(int argc, const char** argv){
             std::cout << "token read time (secs):  " << elapsed.count()/1000.0 << std::endl;
             std::cout << "vendor result: " << vendor_result << std::endl;  
             
-            std::cout << "fail count" << fail_count << std::endl;
             //fail counter
-            if(vendor_result == "err"){
+            if(vendor_result == "err" && vendor.state != 0){
+		std::cout << "fail count: " << fail_count << std::endl;
                 fail_count +=1;
                 if(fail_count == 5){
                     std::cout << "failed to understand" <<std::endl;
@@ -552,7 +555,8 @@ int main(int argc, const char** argv){
                 if(fail_count == 10){
                     std::cout << "going to idle " << std::endl;
                     vendor_result = "idle";
-                    no_answer = true;
+                    fail_count = 0;
+		    no_answer = true;
                     break;
                 }
             } 

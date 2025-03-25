@@ -1,7 +1,7 @@
 #include "vendor.hpp"
 
 //constructor
-Vendor::Vendor(bool mode, bool voice_control = true, bool no_charge = true){
+Vendor::Vendor(bool mode, bool voice_control, bool no_charge){
     total_currency = 0;
     state = 1;
     list_menu = false;
