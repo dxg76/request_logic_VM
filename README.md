@@ -122,6 +122,15 @@ Added aditional audio logic for statements to be played outside of the tree
 Debugged audio logic
 Needs testing with a speaker to ensure audio output
 
+3/10/25
+*Devan Rivera*:
+Successful compilation of decoder logic 
+Needs further implementation of length to play audio files to completion
+
+3/22/25
+*Devan Rivera*
+Created logic for quantity control within the vending algorithm
+Successful testing in seperate file to ensure smooth implementation
 
 ## CAPTURE
 
