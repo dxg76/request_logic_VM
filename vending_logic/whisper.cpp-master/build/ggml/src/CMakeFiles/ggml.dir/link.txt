@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -O3 -DNDEBUG -shared -Wl,-soname,libggml.so -o libggml.so "CMakeFiles/ggml.dir/ggml-backend-reg.cpp.o"  -Wl,-rpath,/mnt/c/Users/devan/OneDrive/Documents/CapstoneProjVS/Request_Logic_VM/request_logic_VM/vending_logic/whisper.cpp-master/build/ggml/src: -ldl libggml-cpu.so libggml-base.so 
