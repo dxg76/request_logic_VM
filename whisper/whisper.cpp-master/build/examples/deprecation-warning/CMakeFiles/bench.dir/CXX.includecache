@@ -1,0 +1,14 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/mnt/c/Users/dante/OneDrive/Desktop/MRSTV_LOCAL/request_logic_vm/whisper/whisper.cpp-master/examples/deprecation-warning/deprecation-warning.cpp
+cstdio
+-
+string
+-
+
