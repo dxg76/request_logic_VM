@@ -541,7 +541,8 @@ int main(int argc, const char** argv){
             if(vendor_result == "err"){
                 fail_count +=1;
                 if(fail_count == 5){
-                    play_wav_file("wav files/try_again");
+                    std::cout "failed to understand" <<std::endl;
+                    //play_wav_file("wav files/try_again");
                 }
                 if(fail_count == 10){
                     vendor_result = "idle";
