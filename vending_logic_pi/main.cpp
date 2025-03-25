@@ -480,7 +480,7 @@ int main(int argc, const char** argv){
         //voiceless loop
         while(!vendor.voice_control){
             std::cout << "-----VOICELESS VENDOR ACTIVE-----" << std::endl;
-            while(col == "#" || row == '#'){}
+            while(col == '#' || row == '#'){}
             std::cout << "Selection made: " << row << col <<std::endl;
 
             play_wav_file("wav files/direct_pay.wav");
@@ -629,7 +629,7 @@ int main(int argc, const char** argv){
             play_wav_file("wav files/return_from_idle.wav");
             no_answer = false;
         }
-        else if(vendor.result == "silence"){
+        else if(vendor_result == "silence"){
             vendor.voice_control = false;
             vendor.state = 0;
             current_node = vendor.vendor_menu.root;
