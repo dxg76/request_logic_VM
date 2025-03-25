@@ -738,6 +738,7 @@ void set_all_gpio(){
     pullUpDnControl(six_pin, PUD_UP);
     pullUpDnControl(seven_pin, PUD_UP);
     pullUpDnControl(eight_pin, PUD_UP);
+    std::cout << "all gpio_set " << std::endl;
 }
 
 //ISR
