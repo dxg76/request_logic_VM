@@ -1,15 +1,15 @@
 #include "vendor.hpp"
 
 //constructor
-Vendor::Vendor(bool mode){
+Vendor::Vendor(bool mode, bool voice_control = true, bool no_charge = true){
     total_currency = 0;
     state = 1;
     list_menu = false;
     confirmation_prompt = false;
-    voice_control = true;
     configure_all();
     set_debug(mode);
-    no_charge = false;
+    this->voice_control = voice_control;
+    this->no_charge = no_charge;
 }
 
 //vendor methods

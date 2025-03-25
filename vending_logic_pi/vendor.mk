@@ -5,6 +5,7 @@ F = -std=c++14 -Wall -I./whisper.cpp-master/include -I./whisper.cpp-master/ggml/
 L = -L./whisper.cpp-master/build/src -lwhisper -pthread -lm -lsndfile -ldl -l wiringPi #linker flags
 
 main: main.o vendor.o node.o menu-tree.o 
+	rm *.wav
 	cd whisper.cpp-master && make tiny.en
 
 	$(X) -g -o $@ $^ $(L)
