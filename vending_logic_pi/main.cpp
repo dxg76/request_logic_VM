@@ -450,6 +450,7 @@ int main(int argc, const char** argv){
     set_all_gpio();
     //initailize vendor
     Vendor vendor(debug_mode);
+    int fail_count = 0; //number of fails
     //Start at the root ("Main Menu")
     Node* current_node = vendor.vendor_menu.root;
     std::string vendor_result;
@@ -533,9 +534,26 @@ int main(int argc, const char** argv){
             const auto end = std::chrono::high_resolution_clock::now();
             const std::chrono::duration<double,std::milli> elapsed = end - start;
             std::cout << "token read time (secs):  " << elapsed.count()/1000.0 << std::endl;
-            std::cout << "vendor result: " << vendor_result << std::endl;     
+            std::cout << "vendor result: " << vendor_result << std::endl;  
+            
+            //fail counter
+            if(vendor_result == "err"){
+                fail_count +=1;
+                if(fail_count == 5){
+                    play_wav_file("wav files/try_again");
+                }
+                if(fail_count == 10){
+                    vendor_result = "idle";
+                    break;
+                }
+            }   
         }while(vendor_result == "err");
-
+        
+        if(fail_count = 5){
+                play_wav_file("try_again");
+        }
+        
+        if(fail_coun)
         //stop recording
         exit_recording.store(true);
         audio_thread.join();

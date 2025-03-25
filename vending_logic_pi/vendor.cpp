@@ -193,8 +193,6 @@ std::string Vendor::check_inventory(std::vector<Node*> items){
         std::cout << "cannot find the item you are looking for :(\n" << std::endl;
     }
     //item not found
-    std::cout << "I'm sorry, I didn't quite understand that, please repeat your request." //command unrecognized
-    << std::endl;
     return "err"; 
 }
 
