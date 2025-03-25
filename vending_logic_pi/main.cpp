@@ -459,6 +459,7 @@ int main(int argc, const char** argv){
     //GPIO
     wiringPiSetupGpio();
     set_all_gpio();
+    set_up_interrupts();
     //initailize vendor
     Vendor vendor(debug_mode, voice_control, no_charge);
     int fail_count = 0; //number of fails
