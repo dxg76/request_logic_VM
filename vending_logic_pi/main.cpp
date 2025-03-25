@@ -23,7 +23,7 @@
 */
 
 
-/*pin vars*/
+/*Keypad Pins*/
 int a_pin = 2;
 int b_pin = 3;
 int c_pin = 4;
@@ -68,6 +68,8 @@ int m5 = 12;
 int m6 = 13;
 int m7 = 19;
 int confirm_pin = 16;
+/*Ultrasound Pin*/
+int object_detected = 21;
 volatile char row;
 volatile char col;
 char motor_control;
@@ -247,9 +249,6 @@ void destroy_list(list_node* head){
 std::string get_command(){
     //audio thread start
 
-    //quit bool
-    //bool exit_transcription = false;
-    //transcribed text
     std::string text;
 
     //transcribe loop
@@ -451,6 +450,7 @@ int main(int argc, const char** argv){
     //initailize vendor
     Vendor vendor(debug_mode);
     int fail_count = 0; //number of fails
+    bool no_answer = false;
     //Start at the root ("Main Menu")
     Node* current_node = vendor.vendor_menu.root;
     std::string vendor_result;
@@ -459,7 +459,7 @@ int main(int argc, const char** argv){
     //setup end
         
     //Plays MR STv's wlecome statement before program starts
-    //play_wav_file(vendor.WELCOME_AUDIO);
+    play_wav_file(vendor.WELCOME_AUDIO);
 
     //main loop
     while(true){
@@ -471,7 +471,12 @@ int main(int argc, const char** argv){
         }
 
         /*VENDOR STATE 0 IDLE*/
-        if(vendor.state == 0){}
+        if(vendor.state == 0){
+            //person detected
+            if(digitalRead(object_detected) && !no_answer){
+                vendor.state = 1;
+            }
+        }
         /*VENDOR STATE 1 SELECTION*/
         else if(vendor.state ==1){
             std::string file_path = vendor.generate_prompt(current_node);
@@ -547,9 +552,16 @@ int main(int argc, const char** argv){
                 if(fail_count == 10){
                     std::cout << "going to idle " << std::endl;
                     vendor_result = "idle";
+                    no_answer = true;
                     break;
                 }
-            }   
+            } 
+            if(vendor.state == 0){
+                //person detected
+                if(digitalRead(object_detected) && !no_answer){
+                    vendor_result = "awaken";
+                }
+            }  
         }while(vendor_result == "err");
         //stop recording
         exit_recording.store(true);
@@ -570,12 +582,14 @@ int main(int argc, const char** argv){
         //go to idle mode
         else if(vendor_result == "idle"){
             play_wav_file("wav files/idle_mode.wav");
+            vendor.state = 0;
             current_node = vendor.vendor_menu.root;
         }
         //exit idle mode
         else if(vendor_result == "awaken"){
             vendor.state = 1;
             play_wav_file("wav files/return_from_idle.wav");
+            no_answer = false;
         }
         //navigate node based on command
         else {
@@ -664,6 +678,8 @@ void set_all_gpio(){
     digitalWrite(m4, 0);
     digitalWrite(m5, 0);
     digitalWrite(m6, 0);
+    //ultrasound
+    pinMode(object_detected, INPUT);
     //rows pullups
     pullUpDnControl(a_pin, PUD_UP);
     pullUpDnControl(b_pin, PUD_UP);

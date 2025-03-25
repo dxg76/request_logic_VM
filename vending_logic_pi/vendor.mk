@@ -5,7 +5,7 @@ F = -std=c++14 -Wall -I./whisper.cpp-master/include -I./whisper.cpp-master/ggml/
 L = -L./whisper.cpp-master/build/src -lwhisper -pthread -lm -lsndfile -ldl -l wiringPi #linker flags
 
 main: main.o vendor.o node.o menu-tree.o 
-	cd whisper.cpp-master && make base.en
+	cd whisper.cpp-master && make tiny.en
 
 	$(X) -g -o $@ $^ $(L)
 
@@ -25,7 +25,7 @@ vendor.o: vendor.cpp vendor.hpp
 
 .PHONY: clean_all
 clean_all:
-	rm  *.o main vendor *.wav whisper.cpp-master/models/ggml-base.en.bin
+	rm  *.o main vendor *.wav whisper.cpp-master/models/ggml-tiny.en.bin
 	rm -rf whisper.cpp-master/build
 
 .PHONY: clean
