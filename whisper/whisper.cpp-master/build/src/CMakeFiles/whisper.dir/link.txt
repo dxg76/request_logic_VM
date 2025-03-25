@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -O3 -DNDEBUG  -shared -Wl,-soname,libwhisper.so.1 -o libwhisper.so.1.7.4 CMakeFiles/whisper.dir/whisper.cpp.o  -Wl,-rpath,/mnt/c/Users/dante/OneDrive/Desktop/MRSTV_LOCAL/request_logic_vm/whisper/whisper.cpp-master/build/ggml/src: ../ggml/src/libggml.so ../ggml/src/libggml-cpu.so ../ggml/src/libggml-base.so 
