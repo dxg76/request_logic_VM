@@ -548,13 +548,7 @@ int main(int argc, const char** argv){
                     break;
                 }
             }   
-        }while(vendor_result == "err");
-        
-        if(fail_count = 5){
-                play_wav_file("try_again");
-        }
-        
-        if(fail_coun)
+
         //stop recording
         exit_recording.store(true);
         audio_thread.join();
