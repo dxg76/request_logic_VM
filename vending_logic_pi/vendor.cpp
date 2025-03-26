@@ -538,23 +538,22 @@ bool Vendor::try_payment(float item_cost){
     item_cost = 1;
     //paid by card
     //bool card_payment = false;
-    if(state == 2){
-        std::cout << "paying..." << std::endl;
-        if(!no_charge){
-            total_currency = 0;
-            tcflush(abstract,TCIOFLUSH);
-            //poll payment peripherals
-            while(total_currency < item_cost && !card_payment){
-                //total_currency += check_bills();
-                //total_currency += check_coins();
-                card_payment = check_card_payment(item_cost);
-            }
-        }            
-        std::cout << "payment complete!" << std::endl;
-        list_menu = true;
-        state = 3;
-        return true;
-    }
+    std::cout << "paying..." << std::endl;
+    if(!no_charge){
+        total_currency = 0;
+        tcflush(abstract,TCIOFLUSH);
+        //poll payment peripherals
+        while(total_currency < item_cost && !card_payment){
+            //total_currency += check_bills();
+            //total_currency += check_coins();
+            card_payment = check_card_payment(item_cost);
+        }
+    }            
+    std::cout << "payment complete!" << std::endl;
+    list_menu = true;
+    state = 3;
+    return true;
+
     return false;
 }
 bool Vendor::check_card_payment(float item_cost) {
