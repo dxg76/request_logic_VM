@@ -449,9 +449,9 @@ int main(int argc, const char** argv){
         debug_mode = true;
         if(argc>2 && strcmp(argv[2], "voice_off") == 0){
             voice_control = false;
-            if(argc>3 && strcmp(argv[3], "no_charge") == 0){
+        }
+	if(argc>2 && strcmp(argv[2], "no_charge") == 0){
                 no_charge = true;
-            }
         }
     }
     
@@ -745,31 +745,37 @@ void set_all_gpio(){
 //ISR
 void click_a(){
     row = 'A';
+    voice_less = true;
     std::cout << "Interrupt on row A (GPIO " << a_pin << ")" << std::endl;
 }
 
 void click_b(){
     row = 'B';
+    voice_less = true;
     std::cout << "Interrupt on row B (GPIO " << b_pin << ")" << std::endl;
 }
 
 void click_c(){
     row = 'C';
+    voice_less = true;
     std::cout << "Interrupt on row C (GPIO " << c_pin << ")" << std::endl;
 }
 
 void click_d(){
     row = 'D';
+    voice_less = true;
     std::cout << "Interrupt on row D (GPIO " << d_pin << ")" << std::endl;
 }
 
 void click_e(){
     row = 'E';
+    voice_less = true;
     std::cout << "Interrupt on row E (GPIO " << e_pin << ")" << std::endl;
 }
 
 void click_f(){
     row = 'F';
+    voice_less = true;
     std::cout << "Interrupt on row F (GPIO " << f_pin << ")" << std::endl;
 }
 
