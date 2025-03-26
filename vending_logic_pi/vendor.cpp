@@ -8,8 +8,8 @@ Vendor::Vendor(bool mode, bool voice_control, bool no_charge){
     confirmation_prompt = false;
     configure_all();
     set_debug(mode);
-    this->voice_control = voice_control;
-    this->no_charge = no_charge;
+    set_voice_control(voice_control);
+    set_no_charge(no_charge);
 }
 
 //vendor methods
@@ -30,7 +30,7 @@ void Vendor::set_voice_control(bool voice_control){
 void Vendor::set_no_charge(bool no_charge){
     this->no_charge = no_charge;
     if(no_charge){
-        std::cout<<"NO CHARGE ACTIVE MODE" << std::endl;
+        std::cout<<"NO CHARGE MODE ACTIVE" << std::endl;
     }
 }
 

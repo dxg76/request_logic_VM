@@ -450,9 +450,11 @@ int main(int argc, const char** argv){
 
     }
     if(argc>2 && strcmp(argv[2], "voice_off") == 0){
+        std::cout << "entered voice off" <<std::endl; 
         voice_control = false;
     }
-	if(argc>2 && strcmp(argv[2], "no_charge") == 0){
+    if(argc>2 && strcmp(argv[2], "no_charge") == 0){
+        std::cout << "entered no_charge" <<std::endl;        
         no_charge = true;
     }
     
