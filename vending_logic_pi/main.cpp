@@ -444,17 +444,17 @@ int main(int argc, const char** argv){
     //Vendor settings
     bool debug_mode = false;
     bool voice_control = true;
-    bool no_charge;
+    bool no_charge = false;
     if(argc>1 && strcmp(argv[1], "-d") == 0){
         debug_mode = true;
-        if(argc>2 && strcmp(argv[2], "voice_off") == 0){
-            voice_control = false;
-        }
-	    if(argc>2 && strcmp(argv[2], "no_charge") == 0){
-                no_charge = true;
-        }
+
     }
-    
+    if(argc>2 && strcmp(argv[2], "voice_off") == 0){
+        voice_control = false;
+    }
+	if(argc>2 && strcmp(argv[2], "no_charge") == 0){
+        no_charge = true;
+    }
     
     //GPIO
     wiringPiSetupGpio();
