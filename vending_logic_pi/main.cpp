@@ -450,7 +450,7 @@ int main(int argc, const char** argv){
         if(argc>2 && strcmp(argv[2], "voice_off") == 0){
             voice_control = false;
         }
-	if(argc>2 && strcmp(argv[2], "no_charge") == 0){
+	    if(argc>2 && strcmp(argv[2], "no_charge") == 0){
                 no_charge = true;
         }
     }
@@ -484,7 +484,7 @@ int main(int argc, const char** argv){
             std::cout << "Selection made: " << row << col <<std::endl;
 
             play_wav_file("wav files/direct_pay.wav");
-            while(vendor.try_payment(1)){
+            while(!vendor.try_payment(1)){
                 std::cout << "waiting for pay (voiceless)" << std::endl;
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
