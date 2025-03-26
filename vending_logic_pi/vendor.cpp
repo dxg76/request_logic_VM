@@ -20,6 +20,20 @@ void Vendor::set_debug(bool mode){
     }
 }
 
+void Vendor::set_voice_control(bool voice_control){
+    this->voice_control = voice_control;
+    if(voice_control){
+        std::cout<<"STARTING IN VOICE CONTROL MODE" << std::endl;
+    }
+}
+
+void Vendor::set_no_charge(bool no_charge){
+    this->no_charge = no_charge;
+    if(no_charge){
+        std::cout<<"NO CHARGE ACTIVE MODE" << std::endl;
+    }
+}
+
 char Vendor::try_vend(std::string loc, float price, std::vector<int> quantity){
     //fill in with vending sequence
     int offset;

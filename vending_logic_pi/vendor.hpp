@@ -55,6 +55,8 @@ class Vendor{
 
     /*vend methods*/
     void set_debug(bool mode); 
+    void set_no_charge(bool no_charge);
+    void set_voice_control(bool voice_control);
     char try_vend(std::string loc, float price, std::vector<int> quantity);
     bool try_payment(float item_cost);
     bool decrease_quantity(std::vector<int>& quantities,int &offset);
