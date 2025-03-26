@@ -688,7 +688,7 @@ void set_up_interrupts(){
         std::cout << "Pin: " << seven_pin << " interrupt failed." << std::endl;
     if (wiringPiISR(eight_pin, INT_EDGE_FALLING, &click_eight) != 0)
         std::cout << "Pin: " << eight_pin << " interrupt failed." << std::endl;
-    
+    std::cout << "interrupts set " << std::endl;
 }
 void set_all_gpio(){
     //rows
