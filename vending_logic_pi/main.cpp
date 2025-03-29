@@ -174,9 +174,9 @@ int main(int argc, const char** argv){
         //voiceless loop
         if(!vendor.voice_control){
             std::cout << "-----VOICELESS VENDOR ACTIVE-----" << std::endl;
-            while(col == '#' || row == '#') && time_elapsed < 20){
+            while((col == '#' || row == '#') && time_elapsed < 20){
                 auto break_check = std::chrono::steady_clock::now();
-                time_elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - start).count(); 
+                time_elapsed = std::chrono::duration_cast<std::chrono::seconds>(break_check - break_start).count(); 
             }
             if(time_elapsed < 20 ){
                 std::cout << "Selection made: " << row << col <<std::endl;
