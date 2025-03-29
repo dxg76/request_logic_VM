@@ -163,7 +163,7 @@ void Vendor::parse(std::string request, Node* current_node){
 
 void Vendor::print_tokens(){
     for(auto i : tokens){
-        //std::cout << i << std::endl;
+        std::cout << i << std::endl;
     }
     std::cout << "\n\n\n" << std::endl;
 }
@@ -189,9 +189,10 @@ std::string Vendor::check_keywords(){
 }
 
 std::string Vendor::check_inventory(std::vector<Node*> items){
+
     for(long unsigned int i = 0; i <tokens.size(); ++i){
         for(long unsigned int j = 0; j <items.size(); ++j){
-            if(tokens[i] == items[j]->get_id()){
+            if(items[j]->get_id().find(tokens[i]) != std::npos && tokens[i].size() >= (items[j].size()/2)){
                 return tokens[i];
             }
         }
@@ -288,7 +289,7 @@ std::string Vendor::normalize(char* token){
 void Vendor::empty_tokens(){
     tokens.clear();
     if(debug_mode){
-        //std::cout << "Tokens Dumped" << std::endl;
+        std::cout << "Tokens Dumped" << std::endl;
     }
 }
 

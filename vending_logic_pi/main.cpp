@@ -504,7 +504,7 @@ void destroy_list(list_node* head){
     }
 }
 
-std::string get_command(){
+std::string get_command(bool dev_mode = false){
     //audio thread start
 
     std::string text;
@@ -538,6 +538,12 @@ std::string get_command(){
     head = head->next_node;
     delete temp; //delete head
     remove(expired_file.c_str());
+
+    if(dev_mode){
+        std::cout << "hello developer >:) enter command: ";
+        std::cin >> text;
+        return text;
+    }
 
     return text;
 }
