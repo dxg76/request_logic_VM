@@ -272,7 +272,7 @@ int main(int argc, const char** argv){
                 const auto end = std::chrono::high_resolution_clock::now();
                 const std::chrono::duration<double,std::milli> elapsed = end - start;
                 std::cout << "token read time (secs):  " << elapsed.count()/1000.0 << std::endl;
-                std::cout << "vendor result: " << vendor_result << std::endl;  
+                std::cout << "vendor result '" << vendor_result <<"'" << std::endl;  
                 
                 /*Timeout Conditions*/
                 if(vendor_result == "err" && vendor.state != 0){
@@ -510,37 +510,34 @@ std::string get_command(){
     std::string text;
 
     //transcribe loop
-        while(head->filename == "placeholder"){
-            //std::cout << "file not ready" << std::endl;
-            //std::this_thread::sleep_for(std::chrono::milliseconds(500));
-        }
-        std::cout << "exit loop: " << std::endl;
-        //get samples
-        std::vector<float> samples = pcm_buster(head->filename);
+    while(head->filename == "placeholder"){}
 
-        //transcribe the audio from samples
-        std::cout << "transcribing [" << head->filename << "]" << std::endl;
-        const auto start = std::chrono::high_resolution_clock::now();
-        if(whisper_full(ctx, full_params, samples.data(), samples.size()) != 0){
-            std::cerr << "Error: whisper_full failed.\n";
-            whisper_free(ctx);
-            std::cerr << "transcription error" << std::endl;
-            return NULL;
-        }
-        const auto end = std::chrono::high_resolution_clock::now();
-        const std::chrono::duration<double,std::milli> elapsed = end - start;
-        std::cout << "transcription time (secs):  " << elapsed.count()/1000.0 << std::endl;
+    //get samples
+    std::vector<float> samples = pcm_buster(head->filename);
 
-        //store transcribed text as string
-        text = whisper_full_get_segment_text(ctx, 0);
+    //transcribe the audio from samples
+    std::cout << "transcribing [" << head->filename << "]" << std::endl;
+    const auto start = std::chrono::high_resolution_clock::now();
+    if(whisper_full(ctx, full_params, samples.data(), samples.size()) != 0){
+        std::cerr << "Error: whisper_full failed.\n";
+        whisper_free(ctx);
+        std::cerr << "transcription error" << std::endl;
+        return NULL;
+    }
+    const auto end = std::chrono::high_resolution_clock::now();
+    const std::chrono::duration<double,std::milli> elapsed = end - start;
+    std::cout << "transcription time (secs):  " << elapsed.count()/1000.0 << std::endl;
 
-        std::cout << text << std::endl;
-        //delete head, delete file and move
-        list_node* temp = head;
-        std::string expired_file = head->filename;
-        head = head->next_node;
-        delete temp; //delete head
-        remove(expired_file.c_str());
+    //store transcribed text as string
+    text = whisper_full_get_segment_text(ctx, 0);
+
+    std::cout << text << std::endl;
+    //delete head, delete file and move
+    list_node* temp = head;
+    std::string expired_file = head->filename;
+    head = head->next_node;
+    delete temp; //delete head
+    remove(expired_file.c_str());
 
     return text;
 }
