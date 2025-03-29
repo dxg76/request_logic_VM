@@ -11,19 +11,16 @@
 #include "whisper.h" 
 #include "miniaudio.h"
 
-
-/*
+/*** 
 *
-*Developers:
-*Dante Gordon
-*Devan Rivera
+*Developers: Dante Gordon, Devan Rivera
 *
 *This is the driver file for the MRSTV logic and transcription. (See READme for details)
 *
 */
 
-
-/*Keypad Pins*/
+/*GPIO*/
+//keypad pins
 int a_pin = 2;
 int b_pin = 3;
 int c_pin = 4;
@@ -38,8 +35,9 @@ int five_pin = 24;
 int six_pin = 25;
 int seven_pin = 8;
 int eight_pin = 7;
-
+//global bool for voiceless mode
 bool voice_less = false;
+
 //ISR rows
 void click_a();
 void click_b();
@@ -56,11 +54,12 @@ void click_five();
 void click_six();
 void click_seven();
 void click_eight();
-//methods
+//GPIO Methods
 void set_up_interrupts();
 void set_all_gpio();
 void drive_motors(char motor_code);
-/*motor control pins*/
+
+/*Motor Control Pins*/
 int m1 = 0;
 int m2 = 1;
 int m3 = 5;
@@ -120,8 +119,240 @@ void configure_all();
 void list_products(Node* current_node);
 void play_confirm(Node* current_node);
 
+/***
+*
+*
+*
+*MAIN METHOD
+*
+*
+*
+***/
+
+int main(int argc, const char** argv){
+    
+    /*Set Up Begin*/ 
+    //Vendor settings
+    bool debug_mode = false;
+    bool voice_control = true;
+    bool no_charge = false;
+    if(argc>1 && strcmp(argv[1], "-d") == 0){
+        debug_mode = true;
+    }
+    if(argc>2 && strcmp(argv[2], "voice_off") == 0){
+        std::cout << "entered voice off" <<std::endl; 
+        voice_control = false;
+    }
+    if(argc>2 && strcmp(argv[2], "no_charge") == 0){
+        std::cout << "entered no_charge" <<std::endl;        
+        no_charge = true;
+    }
+    
+    //GPIO 
+    wiringPiSetupGpio();
+    set_all_gpio();
+    set_up_interrupts();
+    //initailize vendor
+    Vendor vendor(debug_mode, voice_control, no_charge);
+    int fail_count = 0; //number of fails
+    bool no_answer = false;
+    //Start at the root ("Main Menu")
+    Node* current_node = vendor.vendor_menu.root;
+    std::string vendor_result;
+    //configure whisper
+    configure_all();
+    //setup end
+    
+    
+    //Plays MR STv's wlecome statement before program starts
+    play_wav_file(vendor.WELCOME_AUDIO);
+    //main loop
+    while(true){
+        
+        //voiceless loop
+        while(!vendor.voice_control){
+            std::cout << "-----VOICELESS VENDOR ACTIVE-----" << std::endl;
+            while(col == '#' || row == '#'){}
+            std::cout << "Selection made: " << row << col <<std::endl;
+
+            play_wav_file("wav files/direct_pay.wav");
+            while(!vendor.try_payment(1)){
+                std::cout << "waiting for pay (voiceless)" << std::endl;
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            }
+            /*
+            implement all node and match code to get price 
+            but all product one dollar for rn
+            */
+            motor_control = vendor.get_vend_code(row,col);
+
+            /*exit voiceless loop*/
+            vendor.voice_control = true;
+	        voice_less = false;
+        }
+
+        //standard function loop
+        /*VENDOR STATE 0 IDLE*/
+        if(vendor.state == 0){
+            //person detected
+            if(digitalRead(object_detected) && !no_answer){
+                vendor.state = 1;
+            }
+        }
+        /*VENDOR STATE 1 SELECTION*/
+        else if(vendor.state == 1){
+            std::string file_path = vendor.generate_prompt(current_node);
+
+            //if submenu
+            if(vendor.list_menu){
+                list_products(current_node);
+                vendor.list_menu = false;
+            }
+            //if selection made
+            else if(vendor.confirmation_prompt){
+                play_confirm(current_node);
+                vendor.confirmation_prompt = false;
+            }
+            //other/main
+            else    play_wav_file(file_path);
 
 
+        }
+        /*VENDOR STATE 2 Payment*/
+        else if(vendor.state == 2){
+            play_wav_file("wav files/direct_pay.wav");
+            vendor.try_payment(current_node->get_price());
+
+            /*VENDOR STATE 3*/
+            //payment has been accepted
+            if(vendor.state == 3){
+                //reuse bool
+                if(vendor.list_menu){
+                    play_wav_file("wav files/payment_accepted.wav");
+                    play_wav_file("wav files/now_vending.wav");
+                    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+                    vendor.list_menu = false;
+                }
+                //Simulate vend with sleep (temporary) DG
+                motor_control = vendor.try_vend(current_node->get_loc(), current_node->get_price(),current_node->get_quantity());
+                //dispense snack using motors
+                if(motor_control != 0){
+                    drive_motors(motor_control);
+                }
+                play_wav_file("wav files/anything_else.wav");
+            }
+        }
+        
+
+        //start recording
+        exit_recording.store(false);
+        int recording_size_milli;
+        if(vendor.state == 0){
+            recording_size_milli = 5000;
+        }else recording_size_milli = 3000;
+        std::thread audio_thread(ma_stream, head, recording_size_milli);
+
+        /*Transcribe/Decision Loop*/
+        do{
+            /*Keypad Conditions*/
+            if(voice_less){
+                vendor_result = "silence";
+            }else{
+                /*Get Input, Tokenize, Read*/
+                std::cout << "Vendor state: " << vendor.state << std::endl;
+                vendor.parse(get_command(), current_node);
+                const auto start = std::chrono::high_resolution_clock::now();
+                vendor_result = vendor.read_tokens(current_node);
+                const auto end = std::chrono::high_resolution_clock::now();
+                const std::chrono::duration<double,std::milli> elapsed = end - start;
+                std::cout << "token read time (secs):  " << elapsed.count()/1000.0 << std::endl;
+                std::cout << "vendor result: " << vendor_result << std::endl;  
+                
+                /*Timeout Conditions*/
+                if(vendor_result == "err" && vendor.state != 0){
+                    std::cout << "fail count: " << fail_count << std::endl;
+                    fail_count +=1;
+                    if(fail_count == 5){
+                        std::cout << "failed to understand" <<std::endl;
+                        //play_wav_file("wav files/try_again");
+                    }
+                    if(fail_count == 10){
+                        std::cout << "going to idle " << std::endl;
+                        vendor_result = "idle";
+                        fail_count = 0;
+                        no_answer = true;
+                        break;
+                    }
+                } 
+                if(vendor.state == 0){
+                    //person detected
+                    if(digitalRead(object_detected) && !no_answer){
+                    
+                        vendor_result = "awaken";
+                    }
+                }  
+            }
+        }while(vendor_result == "err");
+        //stop recording
+        exit_recording.store(true);
+        audio_thread.join();
+        std::cout << "audio thread joined!" << std::endl;
+
+
+        //quit sequence
+        if(vendor_result == "critical"){
+            std::cout << "Exiting program." << std::endl;
+            break;
+        }        
+        //return to root node
+        else if(vendor_result == "home"){
+            play_wav_file("wav files/return_home.wav");
+            current_node = vendor.vendor_menu.root;
+        }
+        //go to idle mode
+        else if(vendor_result == "idle"){
+            play_wav_file("wav files/idle_mode.wav");
+            vendor.state = 0;
+            current_node = vendor.vendor_menu.root;
+        }
+        //exit idle mode
+        else if(vendor_result == "awaken"){
+            vendor.state = 1;
+            play_wav_file("wav files/return_from_idle.wav");
+            no_answer = false;
+        }
+        else if(vendor_result == "silence"){
+            vendor.voice_control = false;
+            vendor.state = 0;
+            current_node = vendor.vendor_menu.root;
+        }
+        //navigate node based on command
+        else {
+            //check if leaf before changing node
+            if(!current_node->is_leaf())
+                current_node = current_node->find_child(vendor_result);
+        }
+
+        //debug out
+        std::cout << "Vendor State = "        << vendor.state << std::endl;
+        std::cout << "Current Node = "        << current_node->get_id() <<std::endl;
+        std::cout << "list_menu = "           << vendor.list_menu << std::endl;
+        std::cout << "Confirmation Prompt = " << vendor.confirmation_prompt << std::endl;
+    }
+
+    //Plays the complete statement after the program ends
+    std::cout << "Thank you for using the vending machine." << std::endl;
+    play_wav_file("wav files/exit_statement.wav");
+
+    return 0;
+}
+/*
+*
+*
+*END MAIN
+*
+*
+*/
 
 //fxn definitions
 int new_file(char* filename, ma_encoder_config encoder_config,  ma_encoder encoder){
@@ -142,7 +373,6 @@ int new_file(char* filename, ma_encoder_config encoder_config,  ma_encoder encod
 
 //callback loop for audio capture
 void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount){
-
     ma_encoder* pEncoder = (ma_encoder*)pDevice->pUserData; //TBD
     MA_ASSERT(pEncoder != NULL); //TBD
     ma_encoder_write_pcm_frames(pEncoder, pInput, frameCount, NULL); //recording frames
@@ -448,237 +678,6 @@ void play_confirm(Node* current_node){
     play_wav_file("wav files/Chosen_Statement.wav");
     play_wav_file(current_node->get_audio_path());
     play_wav_file("wav files/Confirm_Deny_Statement.wav");
-}
-
-/*
-*
-*
-*
-*main method
-*
-*
-*
-*/
-
-int main(int argc, const char** argv){
-    
-    //setup begin 
-    //Vendor settings
-    bool debug_mode = false;
-    bool voice_control = true;
-    bool no_charge = false;
-    if(argc>1 && strcmp(argv[1], "-d") == 0){
-        debug_mode = true;
-
-    }
-    if(argc>2 && strcmp(argv[2], "voice_off") == 0){
-        std::cout << "entered voice off" <<std::endl; 
-        voice_control = false;
-    }
-    if(argc>2 && strcmp(argv[2], "no_charge") == 0){
-        std::cout << "entered no_charge" <<std::endl;        
-        no_charge = true;
-    }
-    
-    //GPIO
-    wiringPiSetupGpio();
-    set_all_gpio();
-    set_up_interrupts();
-    //initailize vendor
-    Vendor vendor(debug_mode, voice_control, no_charge);
-    int fail_count = 0; //number of fails
-    bool no_answer = false;
-    //Start at the root ("Main Menu")
-    Node* current_node = vendor.vendor_menu.root;
-    std::string vendor_result;
-    //configure whisper
-    configure_all();
-    //setup end
-        
-    //Plays MR STv's wlecome statement before program starts
-    play_wav_file(vendor.WELCOME_AUDIO);
-
-    //main loop
-    while(true){
-        
-        //voiceless loop
-        while(!vendor.voice_control){
-            std::cout << "-----VOICELESS VENDOR ACTIVE-----" << std::endl;
-            while(col == '#' || row == '#'){}
-            std::cout << "Selection made: " << row << col <<std::endl;
-
-            play_wav_file("wav files/direct_pay.wav");
-            while(!vendor.try_payment(1)){
-                std::cout << "waiting for pay (voiceless)" << std::endl;
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            }
-            /*
-            implement all node and match code to get price 
-            but all product one dollar for rn
-            */
-            motor_control = vendor.get_vend_code(row,col);
-
-            /*exit voiceless loop*/
-            vendor.voice_control = true;
-	    voice_less = false;
-        }
-        //standard function loop
-        /*VENDOR STATE 0 IDLE*/
-        if(vendor.state == 0){
-            //person detected
-            if(digitalRead(object_detected) && !no_answer){
-                vendor.state = 1;
-            }
-        }
-        /*VENDOR STATE 1 SELECTION*/
-        else if(vendor.state ==1){
-            std::string file_path = vendor.generate_prompt(current_node);
-
-            //if submenu
-            if(vendor.list_menu){
-                list_products(current_node);
-                vendor.list_menu = false;
-            }
-            //if selection made
-            else if(vendor.confirmation_prompt){
-                play_confirm(current_node);
-                vendor.confirmation_prompt = false;
-            }
-            //other/main
-            else    play_wav_file(file_path);
-
-
-        }
-        /*VENDOR STATE 2 Payment*/
-        else if(vendor.state == 2){
-            play_wav_file("wav files/direct_pay.wav");
-            vendor.try_payment(current_node->get_price());
-
-            /*VENDOR STATE 3*/
-            //payment has been accepted
-            if(vendor.state == 3){
-                //reuse bool
-                if(vendor.list_menu){
-                    play_wav_file("wav files/payment_accepted.wav");
-                    play_wav_file("wav files/now_vending.wav");
-                    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-                    vendor.list_menu = false;
-                }
-                //Simulate vend with sleep (temporary) DG
-                motor_control = vendor.try_vend(current_node->get_loc(), current_node->get_price(),current_node->get_quantity());
-                //dispense snack using motors
-                if(motor_control != 0){
-                    drive_motors(motor_control);
-                }
-                play_wav_file("wav files/anything_else.wav");
-            }
-
-        }
-        
-
-        //start recording
-        exit_recording.store(false);
-        int recording_size_milli;
-        if(vendor.state == 0){
-            recording_size_milli = 5000;
-        }else recording_size_milli = 3000;
-
-        std::thread audio_thread(ma_stream, head, recording_size_milli);
-
-        /*Transcribe/Decision Loop*/
-        do{
-            /*Keypad Conditions*/
-            if(voice_less){
-                vendor_result = "silence";
-            }else{
-                /*Get Input, Tokenize, Read*/
-                std::cout << "Vendor state: " << vendor.state << std::endl;
-                vendor.parse(get_command(), current_node);
-                const auto start = std::chrono::high_resolution_clock::now();
-                vendor_result = vendor.read_tokens(current_node);
-                const auto end = std::chrono::high_resolution_clock::now();
-                const std::chrono::duration<double,std::milli> elapsed = end - start;
-                std::cout << "token read time (secs):  " << elapsed.count()/1000.0 << std::endl;
-                std::cout << "vendor result: " << vendor_result << std::endl;  
-                
-                /*Timeout Conditions*/
-                if(vendor_result == "err" && vendor.state != 0){
-                    std::cout << "fail count: " << fail_count << std::endl;
-                    fail_count +=1;
-                    if(fail_count == 5){
-                        std::cout << "failed to understand" <<std::endl;
-                        //play_wav_file("wav files/try_again");
-                    }
-                    if(fail_count == 10){
-                        std::cout << "going to idle " << std::endl;
-                        vendor_result = "idle";
-                        fail_count = 0;
-                        no_answer = true;
-                        break;
-                    }
-                } 
-                if(vendor.state == 0){
-                    //person detected
-                    if(digitalRead(object_detected) && !no_answer){
-                    
-                        vendor_result = "awaken";
-                    }
-                }  
-            }
-        }while(vendor_result == "err");
-        //stop recording
-        exit_recording.store(true);
-        audio_thread.join();
-        std::cout << "audio thread joined!" << std::endl;
-
-
-        //quit sequence
-        if(vendor_result == "critical"){
-            std::cout << "Exiting program." << std::endl;
-            break;
-        }        
-        //return to root node
-        else if(vendor_result == "home"){
-            play_wav_file("wav files/return_home.wav");
-            current_node = vendor.vendor_menu.root;
-        }
-        //go to idle mode
-        else if(vendor_result == "idle"){
-            play_wav_file("wav files/idle_mode.wav");
-            vendor.state = 0;
-            current_node = vendor.vendor_menu.root;
-        }
-        //exit idle mode
-        else if(vendor_result == "awaken"){
-            vendor.state = 1;
-            play_wav_file("wav files/return_from_idle.wav");
-            no_answer = false;
-        }
-        else if(vendor_result == "silence"){
-            vendor.voice_control = false;
-            vendor.state = 0;
-            current_node = vendor.vendor_menu.root;
-        }
-        //navigate node based on command
-        else {
-            //check if leaf before changing node
-            if(!current_node->is_leaf())
-                current_node = current_node->find_child(vendor_result);
-        }
-
-        //debug out
-        std::cout << "Vendor State = "        << vendor.state << std::endl;
-        std::cout << "Current Node = "        << current_node->get_id() <<std::endl;
-        std::cout << "list_menu = "           << vendor.list_menu << std::endl;
-        std::cout << "Confirmation Prompt = " << vendor.confirmation_prompt << std::endl;
-    }
-
-    //Plays the complete statement after the program ends
-    std::cout << "Thank you for using the vending machine." << std::endl;
-    play_wav_file("wav files/exit_statement.wav");
-
-
-    return 0;
 }
 
 //method definitions
