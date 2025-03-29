@@ -498,6 +498,7 @@ int main(int argc, const char** argv){
 
             /*exit voiceless loop*/
             vendor.voice_control = true;
+	    voice_less = false;
         }
         //standard function loop
         /*VENDOR STATE 0 IDLE*/
