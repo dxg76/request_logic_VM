@@ -95,14 +95,36 @@ std::atomic<bool> exit_recording(false);
 int list_size = 0;
 
 
-/*
-Transcriber Methods
-*/
-
-
+/*Transcriber Methods*/
+//fxn declarations
 //method for generating new ma files
-int new_file(char* filename, ma_encoder_config encoder_config,  ma_encoder encoder){
+int new_file(char* filename, ma_encoder_config encoder_config,  ma_encoder encoder);
+//callback loop for audio capture
+void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount);
+//Callback that feeds audio to the playback device from the decoder
+void data_decoder_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount);
+//extracts pcm samples from wav
+std::vector<float> pcm_buster(std::string filename);
+//audio capture
+void ma_stream(list_node* head, int recording_length);
+//audio playback
+int play_wav_file(const std::string &filepath);
+void destroy_list(list_node* head);
+std::string get_command();
+/*File Methods*/
+size_t file_read(void * ctx, void * output, size_t read_size);
+bool file_eof(void * ctx);
+void file_close(void * ctx);
+void configure_all();
+/*Playback Methods*/
+void list_products(Node* current_node);
+void play_confirm(Node* current_node);
 
+
+
+
+//fxn definitions
+int new_file(char* filename, ma_encoder_config encoder_config,  ma_encoder encoder){
     //ENCODER CONFIGURATION
     // initializing 2 channel, wave file, 32bit floating point format encoder with sample rate of 44.1 kHz
     encoder_config = ma_encoder_config_init(ma_encoding_format_wav, ma_format_f32, 1, 16000); 
