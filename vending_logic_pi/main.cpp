@@ -459,7 +459,7 @@ void ma_stream(list_node* head, int recording_length){
             return;
         } 
 
-        std::cout << "recording..."<< audio_file <<std::endl;
+        std::cout << "recording ["<< audio_file << "]" <<std::endl;
 
 
         //device failure
@@ -519,7 +519,7 @@ std::string get_command(){
         std::vector<float> samples = pcm_buster(head->filename);
 
         //transcribe the audio from samples
-        std::cout << "transcribing..." << head->filename << std::endl;
+        std::cout << "transcribing [" << head->filename << "]" << std::endl;
         const auto start = std::chrono::high_resolution_clock::now();
         if(whisper_full(ctx, full_params, samples.data(), samples.size()) != 0){
             std::cerr << "Error: whisper_full failed.\n";
