@@ -169,23 +169,29 @@ int main(int argc, const char** argv){
     //main loop
     while(true){
         
+        auto break_start = std::chrono::steady_clock::now();
+        int time_elapsed = 0;
         //voiceless loop
-        while(!vendor.voice_control){
+        if(!vendor.voice_control){
             std::cout << "-----VOICELESS VENDOR ACTIVE-----" << std::endl;
-            while(col == '#' || row == '#'){}
-            std::cout << "Selection made: " << row << col <<std::endl;
-
-            play_wav_file("wav files/direct_pay.wav");
-            while(!vendor.try_payment(1)){
-                std::cout << "waiting for pay (voiceless)" << std::endl;
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            while(col == '#' || row == '#') && time_elapsed < 20){
+                auto break_check = std::chrono::steady_clock::now();
+                time_elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - start).count(); 
             }
-            /*
-            implement all node and match code to get price 
-            but all product one dollar for rn
-            */
-            motor_control = vendor.get_vend_code(row,col);
+            if(time_elapsed < 20 ){
+                std::cout << "Selection made: " << row << col <<std::endl;
 
+                play_wav_file("wav files/direct_pay.wav");
+                while(!vendor.try_payment(1)){
+                    std::cout << "waiting for pay (voiceless)" << std::endl;
+                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                }
+                /*
+                implement all node and match code to get price 
+                but all product one dollar for rn
+                */
+                motor_control = vendor.get_vend_code(row,col);
+            }else std::cout << "incomplete selection timeout..." << std::endl;
             /*exit voiceless loop*/
             vendor.voice_control = true;
 	        voice_less = false;
@@ -287,7 +293,6 @@ int main(int argc, const char** argv){
                 if(vendor.state == 0){
                     //person detected
                     if(digitalRead(object_detected) && !no_answer){
-                    
                         vendor_result = "awaken";
                     }
                 }  
