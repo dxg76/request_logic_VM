@@ -109,7 +109,7 @@ void ma_stream(list_node* head, int recording_length);
 //audio playback
 int play_wav_file(const std::string &filepath);
 void destroy_list(list_node* head);
-std::string get_command();
+std::string get_command(bool dev_mode);
 /*File Methods*/
 size_t file_read(void * ctx, void * output, size_t read_size);
 bool file_eof(void * ctx);
@@ -147,6 +147,7 @@ int main(int argc, const char** argv){
         std::cout << "entered no_charge" <<std::endl;        
         no_charge = true;
     }
+    bool dev_mode = true;
     
     //GPIO 
     wiringPiSetupGpio();
@@ -266,7 +267,7 @@ int main(int argc, const char** argv){
             }else{
                 /*Get Input, Tokenize, Read*/
                 std::cout << "Vendor state: " << vendor.state << std::endl;
-                vendor.parse(get_command(), current_node);
+                vendor.parse(get_command(dev_mode), current_node);
                 const auto start = std::chrono::high_resolution_clock::now();
                 vendor_result = vendor.read_tokens(current_node);
                 const auto end = std::chrono::high_resolution_clock::now();
