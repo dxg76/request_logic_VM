@@ -314,12 +314,11 @@ int main(int argc, const char** argv){
         else if(vendor_result == "home"){
             play_wav_file("wav files/return_home.wav");
             current_node = vendor.vendor_menu.root;
-        }/*
-        //boogy on MR STV
-        else if(vendor_result == "boogy"){
-            play_wav_file("wav files/boogy.wav");
         }
-            */
+        //Boogie on MR STV
+        else if(vendor_result == "boogie"){
+            play_wav_file("wav files/boogie.wav");
+        }
         //go to idle mode
         else if(vendor_result == "idle"){
             play_wav_file("wav files/idle_mode.wav");
