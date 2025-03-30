@@ -1,15 +1,15 @@
 #include "vendor.hpp"
 
 //constructor
-Vendor::Vendor(bool mode){
+Vendor::Vendor(bool mode, bool voice_control, bool no_charge){
     total_currency = 0;
     state = 1;
     list_menu = false;
     confirmation_prompt = false;
-    voice_control = true;
     configure_all();
     set_debug(mode);
-    no_charge = false;
+    set_voice_control(voice_control);
+    set_no_charge(no_charge);
 }
 
 //vendor methods
@@ -17,6 +17,20 @@ void Vendor::set_debug(bool mode){
     debug_mode = mode;
     if(mode){
         std::cout<<"DEBUG MODE ENABLED" << std::endl;
+    }
+}
+
+void Vendor::set_voice_control(bool voice_control){
+    this->voice_control = voice_control;
+    if(voice_control){
+        std::cout<<"STARTING IN VOICE CONTROL MODE" << std::endl;
+    }
+}
+
+void Vendor::set_no_charge(bool no_charge){
+    this->no_charge = no_charge;
+    if(no_charge){
+        std::cout<<"NO CHARGE MODE ACTIVE" << std::endl;
     }
 }
 
@@ -149,7 +163,7 @@ void Vendor::parse(std::string request, Node* current_node){
 
 void Vendor::print_tokens(){
     for(auto i : tokens){
-        //std::cout << i << std::endl;
+        std::cout << i << std::endl;
     }
     std::cout << "\n\n\n" << std::endl;
 }
@@ -175,9 +189,10 @@ std::string Vendor::check_keywords(){
 }
 
 std::string Vendor::check_inventory(std::vector<Node*> items){
+
     for(long unsigned int i = 0; i <tokens.size(); ++i){
         for(long unsigned int j = 0; j <items.size(); ++j){
-            if(tokens[i] == items[j]->get_id()){
+            if(items[j]->get_id().find(tokens[i]) != std::string::npos && tokens[i].size() >= (items[j]->size()/2)){
                 return tokens[i];
             }
         }
@@ -274,7 +289,7 @@ std::string Vendor::normalize(char* token){
 void Vendor::empty_tokens(){
     tokens.clear();
     if(debug_mode){
-        //std::cout << "Tokens Dumped" << std::endl;
+        std::cout << "Tokens Dumped" << std::endl;
     }
 }
 
@@ -524,23 +539,22 @@ bool Vendor::try_payment(float item_cost){
     item_cost = 1;
     //paid by card
     //bool card_payment = false;
-    if(state == 2){
-        std::cout << "paying..." << std::endl;
-        if(!no_charge){
-            total_currency = 0;
-            tcflush(abstract,TCIOFLUSH);
-            //poll payment peripherals
-            while(total_currency < item_cost && !card_payment){
-                //total_currency += check_bills();
-                //total_currency += check_coins();
-                card_payment = check_card_payment(item_cost);
-            }
-        }            
-        std::cout << "payment complete!" << std::endl;
-        list_menu = true;
-        state = 3;
-        return true;
-    }
+    std::cout << "paying..." << std::endl;
+    if(!no_charge){
+        total_currency = 0;
+        tcflush(abstract,TCIOFLUSH);
+        //poll payment peripherals
+        while(total_currency < item_cost && !card_payment){
+            //total_currency += check_bills();
+            //total_currency += check_coins();
+            card_payment = check_card_payment(item_cost);
+        }
+    }            
+    std::cout << "payment complete!" << std::endl;
+    list_menu = true;
+    state = 3;
+    return true;
+
     return false;
 }
 bool Vendor::check_card_payment(float item_cost) {
