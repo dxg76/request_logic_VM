@@ -135,7 +135,7 @@ int main(int argc, const char** argv){
     //Vendor settings
     bool debug_mode = false;
     bool voice_control = true;
-    bool no_ charge = false;
+    bool no_charge = false;
     bool dev_mode = false;
 
     if(argc>1 && strcmp(argv[1], "-d") == 0){
