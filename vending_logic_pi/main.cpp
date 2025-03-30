@@ -135,7 +135,9 @@ int main(int argc, const char** argv){
     //Vendor settings
     bool debug_mode = false;
     bool voice_control = true;
-    bool no_charge = false;
+    bool no_ charge = false;
+    bool dev_mode = false;
+
     if(argc>1 && strcmp(argv[1], "-d") == 0){
         debug_mode = true;
     }
@@ -147,7 +149,10 @@ int main(int argc, const char** argv){
         std::cout << "entered no_charge" <<std::endl;        
         no_charge = true;
     }
-    bool dev_mode = true;
+    if(argc>3 && strcmp(argv[3], "dev") == 0){
+        std::cout << "DEVELOPER MODE >:)" <<std::endl;        
+        dev_mode = true;
+    }
     
     //GPIO 
     wiringPiSetupGpio();
