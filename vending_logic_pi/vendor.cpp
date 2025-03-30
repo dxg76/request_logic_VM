@@ -94,13 +94,11 @@ std::string Vendor::get_hex(std::string response){
 float Vendor::read_hex_code(std::string hex_code){
     //no updates to share
     int compare_code = hex_code.compare("ACK");
-    //std::cout <<"compare code: " << compare_code <<std::endl;
     if(compare_code == 0){
         std::cout <<"no currency added" << std::endl;
         return 0;
     }
     compare_code = hex_code.compare("NACK");
-    //std::cout <<"compare code: " << compare_code <<std::endl;
     if(compare_code == 0){
         return 0;
     }
@@ -538,15 +536,12 @@ void Vendor::print_mdb_response(){
 bool Vendor::try_payment(float item_cost){
     item_cost = 1;
     //paid by card
-    //bool card_payment = false;
     std::cout << "paying..." << std::endl;
     if(!no_charge){
         total_currency = 0;
         tcflush(abstract,TCIOFLUSH);
         //poll payment peripherals
         while(total_currency < item_cost && !card_payment){
-            //total_currency += check_bills();
-            //total_currency += check_coins();
             card_payment = check_card_payment(item_cost);
         }
     }            
@@ -566,17 +561,14 @@ bool Vendor::check_card_payment(float item_cost) {
     std::string vend_confirmed;
     std::string vend_rejected;
     std::string response;
-    //std::cout << "request payment: \n" << request_payment << std::endl;
+
     tcflush(abstract,TCIOFLUSH);
-    //if(write_to_MDB("C,START,1") != 0){
-    //    std::cout << "write error" << std::endl;
-    //}
+
     if(write_to_MDB(request_payment) != 0){
         std::cout << "write error" << std::endl;
     }
 
     response = read_from_MDB();
-    //std::cout << "response: \n" << response << std::endl;
   
     if(response.find("d,STATUS,RESULT,1") == std::string::npos){
         std::cout << "no card..." <<std::endl;

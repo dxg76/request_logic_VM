@@ -1,6 +1,7 @@
 //menu-tree.cpp
 
 #include "menu-tree.hpp"
+
 /*
 *Devan Rivera (See ReadME for details)
 */
@@ -45,6 +46,7 @@ Menu_tree::Menu_tree(){
 void Menu_tree::selection_menu(Node* node, int level) const{
     std::vector<int> stock = node->get_quantity();
     int quantity = 0;
+    
     for(size_t i = 0; i < stock.size(); ++i){
         quantity += stock[i];
     }
@@ -52,33 +54,23 @@ void Menu_tree::selection_menu(Node* node, int level) const{
     if(node == nullptr){
         std::cout << "empty pointer" << std::endl;
         return;
-
     }
 
     for(int i = 0; i < level; ++i){
-
         std::cout << "  ";
-
     }
 
     std::cout << node->get_id();
 
     if(node->get_price() > 0.0){
-        
         std::cout << " - $" << node->get_price() << " " << quantity << " remaining" << std::endl;
-
     }
 
     for(Node* child : node->get_children()){
-
-        selection_menu(child, level + 1);
-        
+        selection_menu(child, level + 1);    
     }
-
 }   
 
 Menu_tree::~Menu_tree(){
-
     delete root;
-
 }
