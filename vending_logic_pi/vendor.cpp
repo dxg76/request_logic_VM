@@ -191,7 +191,7 @@ std::string Vendor::check_inventory(std::vector<Node*> items){
     for(long unsigned int i = 0; i <tokens.size(); ++i){
         for(long unsigned int j = 0; j <items.size(); ++j){
             if(items[j]->get_id().find(tokens[i]) != std::string::npos && tokens[i].size() >= (items[j]->get_id().size()/2)){
-                return tokens[i];
+                return items[j]->get_id();
             }
         }
         if(tokens[i] == HOME_STRING){

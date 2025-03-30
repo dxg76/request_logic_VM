@@ -464,7 +464,7 @@ void ma_stream(list_node* head, int recording_length){
             return;
         } 
 
-        std::cout << "recording ["<< audio_file << "]" <<std::endl;
+        //std::cout << "recording ["<< audio_file << "]" <<std::endl;
 
 
         //device failure
