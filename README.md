@@ -132,6 +132,11 @@ Needs further implementation of length to play audio files to completion
 Created logic for quantity control within the vending algorithm
 Successful testing in seperate file to ensure smooth implementation
 
+3/29/25
+*Devan Rivera*
+Began Implementing "Boogy" function
+Cleaned up code of unecessary comments
+
 ## CAPTURE
 
 #### Dante Gordon
