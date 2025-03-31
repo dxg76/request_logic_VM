@@ -304,6 +304,7 @@ int main(int argc, const char** argv){
                 }  
             }
         }while(vendor_result == "err");
+        fail_count = 0;
         //stop recording
         exit_recording.store(true);
         audio_thread.join();
@@ -690,6 +691,7 @@ void list_products(Node* current_node){
     for(size_t i = 0; i < products.size(); ++i){
         play_wav_file(products[i]->get_audio_path());
     }
+    play_wav_file("to_return.wav");
 }
 
 void play_confirm(Node* current_node){
@@ -878,6 +880,7 @@ void drive_motors(char motor_control){
     digitalWrite(m4,(motor_control >> 3) & 1);
     digitalWrite(m5,(motor_control >> 4) & 1);
     digitalWrite(m6,(motor_control >> 5) & 1);
+    digitalWrite(m7,(motor_control >> 6) & 1);
     
     while(!digitalRead(confirm_pin)){
         std::cout << "vending..." << std::endl;
