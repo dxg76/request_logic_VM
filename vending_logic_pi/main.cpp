@@ -685,6 +685,7 @@ void list_products(Node* current_node){
     for(size_t i = 0; i < products.size(); ++i){
         play_wav_file(products[i]->get_audio_path());
     }
+    play_wav_file("to_return.wav");
 }
 
 void play_confirm(Node* current_node){
