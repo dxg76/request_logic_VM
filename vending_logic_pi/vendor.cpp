@@ -137,7 +137,7 @@ std::string Vendor::generate_prompt(Node* current_node){
     }
     //item selected
     else{
-        confirmation_prompt = true;
+        confirftion_prompt = true;
         return current_node->get_audio_path();
     }
 
@@ -217,7 +217,7 @@ std::string Vendor::confirm_selection(){
                 list_menu = true;
                 return "confirmed";
             }else if(tokens[i] == "no"){
-                return "denied";
+                return "home";
             }
         }
     }else if(state == 3){
