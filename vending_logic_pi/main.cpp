@@ -880,6 +880,7 @@ void drive_motors(char motor_control){
     digitalWrite(m4,(motor_control >> 3) & 1);
     digitalWrite(m5,(motor_control >> 4) & 1);
     digitalWrite(m6,(motor_control >> 5) & 1);
+    digitalWrite(m7,(motor_control >> 6) & 1);
     
     while(!digitalRead(confirm_pin)){
         std::cout << "vending..." << std::endl;
