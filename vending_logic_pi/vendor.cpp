@@ -140,7 +140,7 @@ std::string Vendor::generate_prompt(Node* current_node){
     }
     //item selected
     else{
-        confirftion_prompt = true;
+        confirmation_prompt = true;
         return current_node->get_audio_path();
     }
 
