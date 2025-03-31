@@ -14,7 +14,7 @@ Menu_tree::Menu_tree(){
     //Creating the Candy nodes
     Node* candy = new Node("candy","",0,{},"wav files/what_candy.wav");
         candy->add_child(new Node("kitkat", "E7", 1.00, {4,4}, "wav files/KitKat_Statement.wav")); 
-        candy->add_child(new Node("reese's", "E1", 1.00, {4,4}, "wav files/Reeses_Statement.wav"));
+        candy->add_child(new Node("reeses", "E1", 1.00, {4,4}, "wav files/Reeses_Statement.wav"));
         candy->add_child(new Node("butterfinger", "E3", 1.00, {4,4}, "wav files/Butter_Finger_Statement.wav"));
         candy->add_child(new Node("crunch", "E5", 1.00, {10,10,10,10}, "wav files/Musketeers_Statement.wav"));
 
@@ -22,7 +22,7 @@ Menu_tree::Menu_tree(){
     Node* chips = new Node("chips","",0,{},"wav files/what_chips.wav");
         chips->add_child(new Node("doritos", "A1", 1.00, {10,10,10,10}, "wav files/Doritos_Statement.wav"));
         chips->add_child(new Node("cheetos", "B1", 1.00, {10,10,10,10}, "wav files/Cheetos_Statement.wav"));
-        chips->add_child(new Node("pretzels", "D1", 1.00, {10,10,10,10}, "wav files/Pretzels_Statement.wav"));
+        chips->add_child(new Node("pretzels", "D2", 1.00, {10,10,10,10}, "wav files/Pretzels_Statement.wav"));
         chips->add_child(new Node("barbecue", "C1", 1.00, {10,10,10,10}, "wav files/Barbecue_Statement.wav"));
 
     //Creating the All nodes
