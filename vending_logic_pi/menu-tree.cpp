@@ -30,7 +30,7 @@ Menu_tree::Menu_tree(){
         all->add_child(new Node("kitkat", "E7", 1.00, {4,4}, "wav files/KitKat_Statement.wav")); 
         all->add_child(new Node("reese's", "E1", 1.00, {4,4}, "wav files/Reeses_Statement.wav"));
         all->add_child(new Node("butterfinger", "E3", 1.00, {4,4}, "wav files/Butter_Finger_Statement.wav"));
-        all->add_child(new Node("crunch", "E5", 1.00, {4,4}, "wav files/Musketeers_Statement.wav"));
+        all->add_child(new Node("crunch", "E5", 1.00, {4,4}, "wav files/crunch_statement.wav"));
         all->add_child(new Node("doritos", "A1", 1.00, {10,10,10,10}, "wav files/Doritos_Statement.wav"));
         all->add_child(new Node("cheetos", "B1", 1.00, {10,10,10,10}, "wav files/Cheetos_Statement.wav"));
         all->add_child(new Node("pretzels", "D1", 1.00, {10,10,10,10}, "wav files/Pretzels_Statement.wav"));
