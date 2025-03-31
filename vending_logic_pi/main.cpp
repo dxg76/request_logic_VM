@@ -136,6 +136,8 @@ int main(int argc, const char** argv){
     bool debug_mode = false;
     bool voice_control = true;
     bool no_charge = false;
+    bool dev_mode = false;
+
     if(argc>1 && strcmp(argv[1], "-d") == 0){
         debug_mode = true;
     }
@@ -147,7 +149,10 @@ int main(int argc, const char** argv){
         std::cout << "entered no_charge" <<std::endl;        
         no_charge = true;
     }
-    bool dev_mode = true;
+    if(argc>3 && strcmp(argv[3], "dev") == 0){
+        std::cout << "DEVELOPER MODE >:)" <<std::endl;        
+        dev_mode = true;
+    }
     
     //GPIO 
     wiringPiSetupGpio();
@@ -299,6 +304,7 @@ int main(int argc, const char** argv){
                 }  
             }
         }while(vendor_result == "err");
+        fail_count = 0;
         //stop recording
         exit_recording.store(true);
         audio_thread.join();

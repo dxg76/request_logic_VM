@@ -39,7 +39,6 @@ char Vendor::try_vend(std::string loc, float price, std::vector<int> quantity){
     int offset;
     if(debug_mode){
         std::cout << "Vending: " << loc << "..." << std::endl;
-        
     }
     if(decrease_quantity(quantity, offset)){
         char row = loc[0];
@@ -47,7 +46,6 @@ char Vendor::try_vend(std::string loc, float price, std::vector<int> quantity){
         col += offset;
         return get_vend_code(row,col);
     }else return 0;
-    
 }
 
 bool Vendor::decrease_quantity(std::vector<int>& quantities, int &offset){ /*Function to decrement quantities*/
@@ -85,9 +83,8 @@ std::string Vendor::get_hex(std::string response){
         if (!std::isprint(hex_code[i])) { // Checks for non-printable characters
             std::cout << i << " (ASCII " << static_cast<int>(hex_code[i]) << "), ";
         }
-   }
+    }
     std::cout << std::endl;
-    
     return hex_code;
 }
 
@@ -113,10 +110,15 @@ float Vendor::read_hex_code(std::string hex_code){
     //convert the string to a hexadecimal integer
     int hex = std::stoi(hex_code, nullptr, 16);
     //coin detected
-    if((hex >> 15) != 1) //need to fix this statement because bill returns 2 byte code also
+    if(hex == 1){
+        coin_return();
+    }else if((hex >> 15) != 1){ 
         return accept_coins(hex);
+    }
     //bill detected
-    else return accept_bills(hex);
+    else {
+       return accept_bills(hex);
+    }
 
 }
 
@@ -542,7 +544,9 @@ bool Vendor::try_payment(float item_cost){
         tcflush(abstract,TCIOFLUSH);
         //poll payment peripherals
         while(total_currency < item_cost && !card_payment){
-            card_payment = check_card_payment(item_cost);
+	    total_currency = check_coins();
+	    total_currency = check_bills(); 
+            //card_payment = check_card_payment(item_cost);
         }
     }            
     std::cout << "payment complete!" << std::endl;
@@ -689,6 +693,10 @@ float Vendor::accept_bills(int hex) {
 
         return 0; //unknown bill type  
     }
+}
+
+void Vendor::coin_return(){
+    
 }
 
 
