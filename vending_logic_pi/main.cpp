@@ -304,6 +304,7 @@ int main(int argc, const char** argv){
                 }  
             }
         }while(vendor_result == "err");
+        fail_count = 0;
         //stop recording
         exit_recording.store(true);
         audio_thread.join();

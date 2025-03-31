@@ -112,10 +112,13 @@ float Vendor::read_hex_code(std::string hex_code){
     //coin detected
     if(hex == 1){
         coin_return();
-    }else if((hex >> 15) != 1) 
+    }else if((hex >> 15) != 1){ 
         return accept_coins(hex);
+    }
     //bill detected
-    else return accept_bills(hex);
+    else {
+       return accept_bills(hex);
+    }
 
 }
 
@@ -541,7 +544,9 @@ bool Vendor::try_payment(float item_cost){
         tcflush(abstract,TCIOFLUSH);
         //poll payment peripherals
         while(total_currency < item_cost && !card_payment){
-            card_payment = check_card_payment(item_cost);
+	    total_currency = check_coins();
+	    total_currency = check_bills(); 
+            //card_payment = check_card_payment(item_cost);
         }
     }            
     std::cout << "payment complete!" << std::endl;
