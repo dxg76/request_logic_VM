@@ -16,7 +16,7 @@ Menu_tree::Menu_tree(){
         candy->add_child(new Node("kitkat", "E7", 1.00, {4,4}, "wav files/KitKat_Statement.wav")); 
         candy->add_child(new Node("reeses", "E1", 1.00, {4,4}, "wav files/Reeses_Statement.wav"));
         candy->add_child(new Node("butterfinger", "E3", 1.00, {4,4}, "wav files/Butter_Finger_Statement.wav"));
-        candy->add_child(new Node("crunch", "E5", 1.00, {10,10,10,10}, "wav files/Musketeers_Statement.wav"));
+        candy->add_child(new Node("crunch", "E5", 1.00, {10,10,10,10}, "wav files/crunch_statement.wav"));
 
     //Creating the Chip nodes
     Node* chips = new Node("chips","",0,{},"wav files/what_chips.wav");

@@ -184,6 +184,10 @@ std::string Vendor::check_keywords(){
             if(debug_mode)
                 std::cout << "keyword detected: " << KILL_STRING << "\n" << std::endl;
             return KILL_STRING;
+        }else if(tokens[i] == GROOVE_STRING){
+            if(debug_mode)
+                std::cout << "keyword detected: " << GROOVE_STRING << "\n" << std::endl;
+            return GROOVE_STRING;
         }
     }
     return "err";
@@ -221,7 +225,7 @@ std::string Vendor::confirm_selection(){
                 list_menu = true;
                 return "confirmed";
             }else if(tokens[i] == "no"){
-                return "home";
+                return "denied";
             }
         }
     }else if(state == 3){

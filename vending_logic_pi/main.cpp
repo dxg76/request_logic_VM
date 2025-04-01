@@ -310,7 +310,6 @@ int main(int argc, const char** argv){
         audio_thread.join();
         std::cout << "audio thread joined!" << std::endl;
 
-
         //quit sequence
         if(vendor_result == "critical"){
             std::cout << "Exiting program." << std::endl;
