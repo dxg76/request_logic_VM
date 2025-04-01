@@ -286,7 +286,7 @@ int main(int argc, const char** argv){
                     fail_count +=1;
                     if(fail_count == 5){
                         std::cout << "failed to understand" <<std::endl;
-                        //play_wav_file("wav files/try_again");
+                        play_wav_file("wav files/try_again");
                     }
                     if(fail_count == 10){
                         std::cout << "going to idle " << std::endl;
