@@ -281,7 +281,7 @@ int main(int argc, const char** argv){
                 
                 //person detected
                 if(digitalRead(object_detected) && vendor.state == 0){
-                    vendor_result = "home";
+                    vendor_result = "awaken";
                 }else {
                     if(vendor.state == 0)
 		        std::cout << "object detection pin: " << digitalRead(object_detected) << std::endl;
