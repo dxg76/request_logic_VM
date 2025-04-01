@@ -325,6 +325,9 @@ int main(int argc, const char** argv){
             play_wav_file("wav files/wrong_selection.wav");
             current_node = vendor.vendor_menu.root;
         }
+        else if(vendor_result == "introduce"){
+            play_wav_file("wav files/Hello_Statement.wav");
+        }
         //Boogie on MR STV
         else if(vendor_result == "boogie"){
             play_wav_file("wav files/boogie.wav");
