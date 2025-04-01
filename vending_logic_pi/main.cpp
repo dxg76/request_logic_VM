@@ -286,6 +286,7 @@ int main(int argc, const char** argv){
                 //didnt hear request
                 if(vendor_result == "blankaudio" && vendor.state != 0){
                     no_response_count++;
+                    vendor_result = "err"
                     if(no_response_count == 2){
                         play_wav_file("wav files/try_again.wav");
                     }
