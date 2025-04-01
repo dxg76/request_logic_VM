@@ -257,8 +257,8 @@ int main(int argc, const char** argv){
         exit_recording.store(false);
         int recording_size_milli;
         if(vendor.state == 0){
-            recording_size_milli = 5000;
-        }else recording_size_milli = 3000;
+            recording_size_milli = 3000;
+        }else recording_size_milli = 2000;
         std::thread audio_thread(ma_stream, head, recording_size_milli);
 
         /*Transcribe/Decision Loop*/
@@ -280,8 +280,11 @@ int main(int argc, const char** argv){
                 std::cout << "vendor result '" << vendor_result <<"'" << std::endl;  
                 
                 //person detected
-                if(digitalRead(object_detected)){
-                    vendor.state = 1;
+                if(digitalRead(object_detected) && vendor.state == 0){
+                    vendor_result = "home";
+                }else {
+                    if(vendor.state == 0)
+		        std::cout << "object detection pin: " << digitalRead(object_detected) << std::endl;
                 }
                 //didnt hear request
                 if(vendor_result == "blankaudio" && vendor.state != 0){

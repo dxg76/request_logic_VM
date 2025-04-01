@@ -3,7 +3,7 @@
 //constructor
 Vendor::Vendor(bool mode, bool voice_control, bool no_charge){
     total_currency = 0;
-    state = 1;
+    state = 0;
     list_menu = false;
     confirmation_prompt = false;
     configure_all();
