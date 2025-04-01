@@ -322,6 +322,7 @@ int main(int argc, const char** argv){
         }
         else if(vendor_result == "denied"){
             play_wav_file("wav files/wrong_selection.wav");
+            current_node = vendor.vendor_menu.root;
         }
         //Boogie on MR STV
         else if(vendor_result == "boogie"){
