@@ -208,7 +208,7 @@ int main(int argc, const char** argv){
         /*VENDOR STATE 0 IDLE*/
         if(vendor.state == 0){
             //person detected
-            if(digitalRead(object_detected) && !no_answer){
+            if(digitalRead(object_detected)){
                 vendor.state = 1;
             }
         }

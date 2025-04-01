@@ -171,6 +171,7 @@ void Vendor::print_tokens(){
 
 std::string Vendor::check_keywords(){
     for(long unsigned int i = 0; i <tokens.size(); ++i){
+        //std::cout <<"compare token '" << tokens[i] << "'" << std::endl;
         if(tokens[i] == CHIPS_MENU_STRING){
             if(debug_mode)
                 std::cout << "keyword detected: " << CHIPS_MENU_STRING << "\n" << std::endl;
