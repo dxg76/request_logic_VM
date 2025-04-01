@@ -207,10 +207,6 @@ int main(int argc, const char** argv){
         //standard function loop
         /*VENDOR STATE 0 IDLE*/
         if(vendor.state == 0){
-            //person detected
-            if(digitalRead(object_detected)){
-                vendor.state = 1;
-            }
         }
         /*VENDOR STATE 1 SELECTION*/
         else if(vendor.state == 1){
@@ -283,6 +279,10 @@ int main(int argc, const char** argv){
                 std::cout << "token read time (secs):  " << elapsed.count()/1000.0 << std::endl;
                 std::cout << "vendor result '" << vendor_result <<"'" << std::endl;  
                 
+                //person detected
+                if(digitalRead(object_detected)){
+                    vendor.state = 1;
+                }
                 //didnt hear request
                 if(vendor_result == "blankaudio" && vendor.state != 0){
                     no_response_count++;
