@@ -194,7 +194,6 @@ std::string Vendor::check_keywords(){
                 std::cout << "keyword detected: " << GREETING_STRING << "\n" << std::endl;
             return GREETING_STRING;
         }
-    }
     return "err";
 }
 
