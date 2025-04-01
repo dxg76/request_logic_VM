@@ -214,6 +214,10 @@ std::string Vendor::check_inventory(std::vector<Node*> items){
         if(debug_mode)
             std::cout << "keyword detected: " << HOME_STRING << "\n" << std::endl;
         return HOME_STRING;
+        }else if(tokens[i] == NO_RESPONSE_STRING){
+            if(debug_mode)
+                std::cout << "keyword detected: " << NO_RESPONSE_STRING << "\n" << std::endl;
+            return NO_RESPONSE_STRING;
         }
     }
     

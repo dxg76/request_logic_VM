@@ -179,7 +179,7 @@ int main(int argc, const char** argv){
         auto break_start = std::chrono::steady_clock::now();
         int time_elapsed = 0;
         //voiceless loop
-        if(!vendor.voice_control){
+        if(!vendor.voice_control && state == 0){
             std::cout << "-----VOICELESS VENDOR ACTIVE-----" << std::endl;
             while((col == '#' || row == '#') && time_elapsed < 20){
                 auto break_check = std::chrono::steady_clock::now();
@@ -284,7 +284,7 @@ int main(int argc, const char** argv){
                     vendor_result = "awaken";
                 }else {
                     if(vendor.state == 0)
-		        std::cout << "object detection pin: " << digitalRead(object_detected) << std::endl;
+		                std::cout << "object detection pin: " << digitalRead(object_detected) << std::endl;
                 }
                 //didnt hear request
                 if(vendor_result == "blankaudio" && vendor.state != 0){
