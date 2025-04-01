@@ -321,7 +321,7 @@ int main(int argc, const char** argv){
             current_node = vendor.vendor_menu.root;
         }
         else if(vendor_result == "denied"){
-            play_wav_file("wav files/wrong_selection.wav")
+            play_wav_file("wav files/wrong_selection.wav");
         }
         //Boogie on MR STV
         else if(vendor_result == "boogie"){
