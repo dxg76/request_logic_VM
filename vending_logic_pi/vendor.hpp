@@ -91,10 +91,6 @@ class Vendor{
     bool debug_mode = false;
 
     //string constants
-
-    const std::string GREETING_STRING = "Hello my name is MRSTV, I am a vending machine specializing in accessibility.\n"   //mrstv intro greeting 
-                                   "To begin, you may call my name and speak a request word, such as chips or candy.\n" 
-                                   "For more information use request word help.\n";
     
     //menu prompts
     const std::string RETURN_TO_MAIN = "Respond with one of the selections, or say home to return to main menu.\n";
@@ -104,6 +100,7 @@ class Vendor{
     const std::string KILL_STRING =  "critical"; //dev code for ending the loop temporarily DG
     const std::string HOME_STRING = "home"; //returns to root menu
     const std::string GROOVE_STRING = "boogie";
+    const std::string GREETING_STRING = "introduce"; //says greeting string
 
 
 };

@@ -189,6 +189,11 @@ std::string Vendor::check_keywords(){
                 std::cout << "keyword detected: " << GROOVE_STRING << "\n" << std::endl;
             return GROOVE_STRING;
         }
+        }else if(tokens[i] == GREETING_STRING){
+            if(debug_mode)
+                std::cout << "keyword detected: " << GREETING_STRING << "\n" << std::endl;
+            return GREETING_STRING;
+        }
     }
     return "err";
 }

@@ -273,6 +273,7 @@ int main(int argc, const char** argv){
                 /*Get Input, Tokenize, Read*/
                 std::cout << "Vendor state: " << vendor.state << std::endl;
                 vendor.parse(get_command(dev_mode), current_node);
+                //get read time
                 const auto start = std::chrono::high_resolution_clock::now();
                 vendor_result = vendor.read_tokens(current_node);
                 const auto end = std::chrono::high_resolution_clock::now();
