@@ -179,7 +179,7 @@ int main(int argc, const char** argv){
         auto break_start = std::chrono::steady_clock::now();
         int time_elapsed = 0;
         //voiceless loop
-        if(!vendor.voice_control && state == 0){
+        if(!vendor.voice_control && vendor.state == 0){
             std::cout << "-----VOICELESS VENDOR ACTIVE-----" << std::endl;
             while((col == '#' || row == '#') && time_elapsed < 20){
                 auto break_check = std::chrono::steady_clock::now();

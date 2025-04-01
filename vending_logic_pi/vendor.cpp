@@ -3,7 +3,7 @@
 //constructor
 Vendor::Vendor(bool mode, bool voice_control, bool no_charge){
     total_currency = 0;
-    state = 2;
+    state = 1;
     list_menu = false;
     confirmation_prompt = false;
     configure_all();
@@ -315,7 +315,7 @@ char Vendor::get_vend_code(char row, char col){
     char row_code;
     char col_code;
     //form row 
-    switch('C'){
+    switch(row){
         case 'A':
             row_code = 0;
             break;
@@ -336,7 +336,7 @@ char Vendor::get_vend_code(char row, char col){
             row_code = 0;
     }
     //form col
-    switch('2'){
+    switch(col){
         case '1':
             col_code = 1;
             break;
