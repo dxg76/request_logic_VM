@@ -179,7 +179,7 @@ int main(int argc, const char** argv){
         auto break_start = std::chrono::steady_clock::now();
         int time_elapsed = 0;
         //voiceless loop
-        if(!vendor.voice_control && state == 0){
+        if(!vendor.voice_control && vendor.state == 0){
             std::cout << "-----VOICELESS VENDOR ACTIVE-----" << std::endl;
             while((col == '#' || row == '#') && time_elapsed < 20){
                 auto break_check = std::chrono::steady_clock::now();
@@ -263,56 +263,51 @@ int main(int argc, const char** argv){
 
         /*Transcribe/Decision Loop*/
         do{
-            /*Keypad Conditions*/
-            if(voice_less){
-                vendor_result = "silence";
-            }else{
-                /*Get Input, Tokenize, Read*/
-                std::cout << "Vendor state: " << vendor.state << std::endl;
-                vendor.parse(get_command(dev_mode), current_node);
-                
-                //get read time
-                const auto start = std::chrono::high_resolution_clock::now();
-                vendor_result = vendor.read_tokens(current_node);
-                const auto end = std::chrono::high_resolution_clock::now();
-                const std::chrono::duration<double,std::milli> elapsed = end - start;
-                std::cout << "token read time (secs):  " << elapsed.count()/1000.0 << std::endl;
-                std::cout << "vendor result '" << vendor_result <<"'" << std::endl;  
-                
-                //person detected
-                if(digitalRead(object_detected) && vendor.state == 0){
-                    vendor_result = "awaken";
-                }else {
-                    if(vendor.state == 0)
-		                std::cout << "object detection pin: " << digitalRead(object_detected) << std::endl;
+            /*Get Input, Tokenize, Read*/
+            std::cout << "Vendor state: " << vendor.state << std::endl;
+            vendor.parse(get_command(dev_mode), current_node);
+            
+            //get read time
+            const auto start = std::chrono::high_resolution_clock::now();
+            vendor_result = vendor.read_tokens(current_node);
+            const auto end = std::chrono::high_resolution_clock::now();
+            const std::chrono::duration<double,std::milli> elapsed = end - start;
+            std::cout << "token read time (secs):  " << elapsed.count()/1000.0 << std::endl;
+            std::cout << "vendor result '" << vendor_result <<"'" << std::endl;  
+            
+            //person detected
+            if(digitalRead(object_detected) && vendor.state == 0){
+                vendor_result = "awaken";
+            }else {
+                if(vendor.state == 0)
+                    std::cout << "object detection pin: " << digitalRead(object_detected) << std::endl;
+            }
+            //didnt hear request
+            if(vendor_result == "blankaudio" && vendor.state != 0){
+                no_response_count++;
+                std::cout << "no response count: " << no_response_count<< std::endl;
+                vendor_result = "err";
+                if(no_response_count == 2){
+                    play_wav_file("wav files/try_again.wav");
                 }
-                //didnt hear request
-                if(vendor_result == "blankaudio" && vendor.state != 0){
-                    no_response_count++;
-                    std::cout << "no response count: " << no_response_count<< std::endl;
-                    vendor_result = "err";
-                    if(no_response_count == 2){
-                        play_wav_file("wav files/try_again.wav");
-                    }
-                }else no_response_count = 0;
-                /*Timeout Conditions*/
-                if(vendor_result == "err" && vendor.state != 0){
-                    fail_count++;
-                    std::cout << "fail count: " << fail_count << std::endl;
-                    if(fail_count == 20){
-                        std::cout << "going to idle " << std::endl;
-                        vendor_result = "idle";
-                        fail_count = 0;
-                        no_answer = true;
-                        break;
-                    }
-                } 
-                if(vendor.state == 0){
-                    //person detected
-                    if(digitalRead(object_detected) && !no_answer){
-                        vendor_result = "awaken";
-                    }
-                }  
+            }else no_response_count = 0;
+            /*Timeout Conditions*/
+            if(vendor_result == "err" && vendor.state != 0){
+                fail_count++;
+                std::cout << "fail count: " << fail_count << std::endl;
+                if(fail_count == 20){
+                    std::cout << "going to idle " << std::endl;
+                    vendor_result = "idle";
+                    fail_count = 0;
+                    no_answer = true;
+                    break;
+                }
+            } 
+            if(vendor.state == 0){
+                //person detected
+                if(digitalRead(object_detected) && !no_answer){
+                    vendor_result = "awaken";
+                }
             }
         }while(vendor_result == "err");
         fail_count = 0;
