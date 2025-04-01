@@ -3,7 +3,7 @@
 //constructor
 Vendor::Vendor(bool mode, bool voice_control, bool no_charge){
     total_currency = 0;
-    state = 0;
+    state = 2;
     list_menu = false;
     confirmation_prompt = false;
     configure_all();
@@ -41,7 +41,7 @@ char Vendor::try_vend(std::string loc, float price, std::vector<int> quantity){
         std::cout << "Vending: " << loc << "..." << std::endl;
     }
     /*DEV NOTE GET RID OF THIS '!'*/
-    if(decrease_quantity(quantity, offset)){
+    if(!decrease_quantity(quantity, offset)){
         char row = loc[0];
         char col = loc[1];
         col += offset;
@@ -311,7 +311,7 @@ char Vendor::get_vend_code(char row, char col){
     char row_code;
     char col_code;
     //form row 
-    switch(row){
+    switch('C'){
         case 'A':
             row_code = 0;
             break;
@@ -332,7 +332,7 @@ char Vendor::get_vend_code(char row, char col){
             row_code = 0;
     }
     //form col
-    switch(col){
+    switch('2'){
         case '1':
             col_code = 1;
             break;
