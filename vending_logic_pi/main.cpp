@@ -66,7 +66,7 @@ int m3 = 5;
 int m4 = 6;
 int m5 = 12;
 int m6 = 13;
-int m7 = 19;
+int m7 = 26;
 int confirm_pin = 16;
 /*Ultrasound Pin*/
 int object_detected = 21;
@@ -758,6 +758,8 @@ void set_all_gpio(){
     pinMode(m4, OUTPUT);
     pinMode(m5, OUTPUT);
     pinMode(m6, OUTPUT);
+    pinMode(m7, OUTPUT);
+    
     pinMode(confirm_pin, INPUT);
     digitalWrite(m1, 0);
     digitalWrite(m2, 0);
@@ -765,6 +767,7 @@ void set_all_gpio(){
     digitalWrite(m4, 0);
     digitalWrite(m5, 0);
     digitalWrite(m6, 0);
+    digitalWrite(m7, 0);
     //ultrasound
     pinMode(object_detected, INPUT);
     //rows pullups
@@ -873,6 +876,7 @@ void click_eight(){
 }
 
 void drive_motors(char motor_control){
+    std::cout << "start drive motors" <<std::endl;
     //output motor code
     digitalWrite(m1,motor_control & 1);
     digitalWrite(m2,(motor_control >> 1) & 1);
@@ -881,6 +885,8 @@ void drive_motors(char motor_control){
     digitalWrite(m5,(motor_control >> 4) & 1);
     digitalWrite(m6,(motor_control >> 5) & 1);
     digitalWrite(m7,(motor_control >> 6) & 1);
+    //digitalWrite(m7,HIGH);
+
     
     while(!digitalRead(confirm_pin)){
         std::cout << "vending..." << std::endl;
@@ -893,5 +899,6 @@ void drive_motors(char motor_control){
     digitalWrite(m4, 0);
     digitalWrite(m5, 0);
     digitalWrite(m6, 0);
+    digitalWrite(m7, 0);
     std::cout << "done vending!" << std::endl;
 }
