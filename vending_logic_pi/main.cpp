@@ -284,7 +284,7 @@ int main(int argc, const char** argv){
                 std::cout << "vendor result '" << vendor_result <<"'" << std::endl;  
                 
                 //didnt hear request
-                if(vendor_result = "blankaudio" && vendor.state != 0){
+                if(vendor_result == "blankaudio" && vendor.state != 0){
                     no_response_count++;
                     if(no_response_count == 2){
                         play_wav_file("wav files/try_again.wav");
