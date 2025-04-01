@@ -193,6 +193,11 @@ std::string Vendor::check_keywords(){
                 std::cout << "keyword detected: " << GREETING_STRING << "\n" << std::endl;
             return GREETING_STRING;
         }
+        }else if(tokens[i] == NO_RESPONSE_STRING){
+            if(debug_mode)
+                std::cout << "keyword detected: " << NO_RESPONSE_STRING << "\n" << std::endl;
+            return NO_RESPONSE_STRING;
+        }
     }
     return "err";
 }

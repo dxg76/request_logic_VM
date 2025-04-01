@@ -161,6 +161,7 @@ int main(int argc, const char** argv){
     //initailize vendor
     Vendor vendor(debug_mode, voice_control, no_charge);
     int fail_count = 0; //number of fails
+    int no_response_count = 0;
     bool no_answer = false;
     //Start at the root ("Main Menu")
     Node* current_node = vendor.vendor_menu.root;
@@ -273,6 +274,7 @@ int main(int argc, const char** argv){
                 /*Get Input, Tokenize, Read*/
                 std::cout << "Vendor state: " << vendor.state << std::endl;
                 vendor.parse(get_command(dev_mode), current_node);
+                
                 //get read time
                 const auto start = std::chrono::high_resolution_clock::now();
                 vendor_result = vendor.read_tokens(current_node);
@@ -281,15 +283,18 @@ int main(int argc, const char** argv){
                 std::cout << "token read time (secs):  " << elapsed.count()/1000.0 << std::endl;
                 std::cout << "vendor result '" << vendor_result <<"'" << std::endl;  
                 
-                /*Timeout Conditions*/
-                if(vendor_result == "err" && vendor.state != 0){
-                    std::cout << "fail count: " << fail_count << std::endl;
-                    fail_count +=1;
-                    if(fail_count == 5){
-                        std::cout << "failed to understand" <<std::endl;
+                //didnt hear request
+                if(vendor_result = "blankaudio" && vendor.state != 0){
+                    no_response_count++;
+                    if(no_response_count == 2){
                         play_wav_file("wav files/try_again.wav");
                     }
-                    if(fail_count == 10){
+                }else no_response_count = 0;
+                /*Timeout Conditions*/
+                if(vendor_result == "err" && vendor.state != 0){
+                    fail_count++;
+                    std::cout << "fail count: " << fail_count << std::endl;
+                    if(fail_count == 20){
                         std::cout << "going to idle " << std::endl;
                         vendor_result = "idle";
                         fail_count = 0;

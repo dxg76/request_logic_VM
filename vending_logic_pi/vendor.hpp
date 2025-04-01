@@ -101,6 +101,7 @@ class Vendor{
     const std::string HOME_STRING = "home"; //returns to root menu
     const std::string GROOVE_STRING = "boogie";
     const std::string GREETING_STRING = "introduce"; //says greeting string
+    const std::string NO_RESPONSE_STRING = "blankaudio";
 
 
 };
