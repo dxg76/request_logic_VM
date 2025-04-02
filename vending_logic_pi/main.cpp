@@ -198,6 +198,7 @@ int main(int argc, const char** argv){
                 but all product one dollar for rn
                 */
                 motor_control = vendor.get_vend_code(row,col);
+                drive_motors(motor_control);
             }else std::cout << "incomplete selection timeout..." << std::endl;
             /*exit voiceless loop*/
             vendor.voice_control = true;
