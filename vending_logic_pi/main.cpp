@@ -179,7 +179,7 @@ int main(int argc, const char** argv){
         auto break_start = std::chrono::steady_clock::now();
         int time_elapsed = 0;
         //voiceless loop
-        if(!vendor.voice_control && vendor.state == 0){
+        if(voice_less && vendor.state == 0){
             std::cout << "-----VOICELESS VENDOR ACTIVE-----" << std::endl;
             while((col == '#' || row == '#') && time_elapsed < 20){
                 auto break_check = std::chrono::steady_clock::now();
@@ -201,8 +201,10 @@ int main(int argc, const char** argv){
                 drive_motors(motor_control);
             }else std::cout << "incomplete selection timeout..." << std::endl;
             /*exit voiceless loop*/
-            vendor.voice_control = true;
-	        voice_less = false;
+            vendor.state = 0;
+	    current_node = vendor.vendor_menu.root;
+	    voice_less = false;
+            vendor.list_menu = false;
         }
 
         //standard function loop
@@ -276,13 +278,6 @@ int main(int argc, const char** argv){
             std::cout << "token read time (secs):  " << elapsed.count()/1000.0 << std::endl;
             std::cout << "vendor result '" << vendor_result <<"'" << std::endl;  
             
-            //person detected
-            if(digitalRead(object_detected) && vendor.state == 0){
-                vendor_result = "awaken";
-            }else {
-                if(vendor.state == 0)
-                    std::cout << "object detection pin: " << digitalRead(object_detected) << std::endl;
-            }
             //didnt hear request
             if(vendor_result == "blankaudio" && vendor.state != 0){
                 no_response_count++;
@@ -304,14 +299,14 @@ int main(int argc, const char** argv){
                     break;
                 }
             } 
-            if(vendor.state == 0){
+            if(vendor.state == 0 ){
                 //person detected
-                if(digitalRead(object_detected) && !no_answer){
+                if(digitalRead(object_detected) && !no_answer && !voice_less){
                     std::cout << "OBJECT AWAKEN" << std::endl;
                     vendor_result = "awaken";
                 }
             }
-        }while(vendor_result == "err");
+        }while(vendor_result == "err" && !voice_less);
         fail_count = 0;
         //stop recording
         exit_recording.store(true);

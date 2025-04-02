@@ -3,7 +3,7 @@
 //constructor
 Vendor::Vendor(bool mode, bool voice_control, bool no_charge){
     total_currency = 0;
-    state = 1;
+    state = 0;
     list_menu = false;
     confirmation_prompt = false;
     configure_all();
@@ -562,8 +562,8 @@ bool Vendor::try_payment(float item_cost){
         tcflush(abstract,TCIOFLUSH);
         //poll payment peripherals
         while(total_currency < item_cost && !card_payment){
-	    total_currency = check_coins();
-	    total_currency = check_bills(); 
+	    total_currency += check_coins();
+	    total_currency += check_bills(); 
             //card_payment = check_card_payment(item_cost);
         }
     }            
