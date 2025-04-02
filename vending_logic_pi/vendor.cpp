@@ -41,7 +41,7 @@ char Vendor::try_vend(std::string loc, float price, std::vector<int> quantity){
         std::cout << "Vending: " << loc << "..." << std::endl;
     }
     /*DEV NOTE GET RID OF THIS '!'*/
-    if(!decrease_quantity(quantity, offset)){
+    if(decrease_quantity(quantity, offset)){
         char row = loc[0];
         char col = loc[1];
         col += offset;
