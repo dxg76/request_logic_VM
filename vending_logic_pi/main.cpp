@@ -307,6 +307,7 @@ int main(int argc, const char** argv){
             if(vendor.state == 0){
                 //person detected
                 if(digitalRead(object_detected) && !no_answer){
+                    std::cout << "OBJECT AWAKEN" << std::endl;
                     vendor_result = "awaken";
                 }
             }
@@ -347,6 +348,7 @@ int main(int argc, const char** argv){
         //exit idle mode
         else if(vendor_result == "awaken"){
             vendor.state = 1;
+            current_node = vendor.vendor_menu.root;
             play_wav_file("wav files/return_from_idle.wav");
             no_answer = false;
         }
