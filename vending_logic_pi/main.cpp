@@ -181,7 +181,8 @@ int main(int argc, const char** argv){
         if(voice_less && vendor.state == 0){
             std::cout << "-----VOICELESS VENDOR ACTIVE-----" << std::endl;
             while((col == '#' || row == '#') && time_elapsed < 20){
-try
+                auto break_check = std::chrono::steady_clock::now();
+                time_elapsed = std::chrono::duration_cast<std::chrono::seconds>(break_check - break_start).count(); 
             }
             if(time_elapsed < 20 ){
                 std::cout << "Selection made: " << row << col <<std::endl;

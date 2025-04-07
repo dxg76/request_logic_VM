@@ -758,7 +758,7 @@ void Vendor::coin_return(){
             //dispense quarter
             //poll
         }
-        for(int i = 0; i < nickes; ++i){
+        for(int i = 0; i < nickels; ++i){
             //dispense quarter
             //poll
         }
