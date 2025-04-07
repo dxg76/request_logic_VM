@@ -73,9 +73,13 @@ bool Vendor::decrease_quantity(std::vector<int>& quantities, int &offset){ /*Fun
 //token methods
 std::string Vendor::get_hex(std::string response){
     std::string hex_code;
-    std::cout << "this is response: " << response <<std::endl;
+    std::cout << "this is response: \n " << response <<std::endl;
     size_t start_index = response.find(',');
     int end_index = response.find('\n');
+    int end_compare = response.find('\r');
+    if(end_compare != std::string::npos && end_compare < end_index){
+        end_index = end_compare;
+    }
 
     hex_code = response.substr(start_index+1, end_index-start_index-1);
     
