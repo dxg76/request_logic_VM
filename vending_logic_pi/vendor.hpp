@@ -8,6 +8,7 @@
 #include <termios.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <chrono>
 #include <errno.h>
 #include <wiringPi.h>
 #include "menu-tree.hpp"
@@ -52,7 +53,7 @@ class Vendor{
     float check_bills();
     float accept_coins(int hex); //returns 0 if no currency input to machine
     float accept_bills(int hex); //returns 0 if no currency input to machine
-    void coin_return();
+    void coin_return( float);
 
     /*vend methods*/
     void set_debug(bool mode); 

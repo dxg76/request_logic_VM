@@ -559,24 +559,39 @@ void Vendor::print_mdb_response(){
 
 bool Vendor::try_payment(float item_cost){
     item_cost = 1;
+    int pay_timeout = 20;
     //paid by card
     std::cout << "paying..." << std::endl;
     if(!no_charge){
         total_currency = 0;
         tcflush(abstract,TCIOFLUSH);
+        
+        //start timer
+        auto break_start = std::chrono::steady_clock::now();
+        int time_elapsed = 0;
         //poll payment peripherals
-        while(total_currency < item_cost && !card_payment){
-	    total_currency += check_coins();
-	    total_currency += check_bills(); 
-            //card_payment = check_card_payment(item_cost);
+        while(total_currency < item_cost && !card_payment && time_elapsed > pay_timeout ){
+            total_currency += check_coins();
+            total_currency += check_bills(); 
+            auto break_check = std::chrono::steady_clock::now();
+            time_elapsed = std::chrono::duration_cast<std::chrono::seconds>(break_check - break_start).count(); 
+                //card_payment = check_card_payment(item_cost);
         }
     }            
-    std::cout << "payment complete!" << std::endl;
-    list_menu = true;
-    state = 3;
-    return true;
 
-    return false;
+    if(total_currency >= item_cost){
+        std::cout << "payment complete!" << std::endl;
+        list_menu = true;
+        state = 3;
+        return true;
+    }else{
+        if(total_currency > 0){
+            coin_return();
+        }
+        return false;
+    }
+    
+    
 }
 bool Vendor::check_card_payment(float item_cost) {
     std::cout << "card waiting." << std::endl;
@@ -718,7 +733,36 @@ float Vendor::accept_bills(int hex) {
 }
 
 void Vendor::coin_return(){
-    
+    int quarters = 0;
+    int dimes = 0;
+    int nickels = 0;
+    if(total_currency > 0){
+        int cents = total_currency * 100;
+        while(cents >= 25){
+            cents -= 25;
+            quarters++;
+        }
+        while(cents >= 10){
+            cents -= 10;
+            dimes++;
+        }
+        while(cents >= 5){
+            cents -= 5;
+            nickels++;
+        }
+        for(int i = 0; i < quarters; ++i){
+            //dispense quarter
+            //poll
+        }
+        for(int i = 0; i < dimes; ++i){
+            //dispense quarter
+            //poll
+        }
+        for(int i = 0; i < nickes; ++i){
+            //dispense quarter
+            //poll
+        }
+    }
 }
 
 

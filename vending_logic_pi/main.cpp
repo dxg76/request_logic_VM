@@ -4,10 +4,9 @@
 #include <thread>
 #include <mutex>
 #include <atomic>
-#include <chrono>
 #include <stdlib.h>
 #include <sndfile.h>
-#define MINIAUDIO_IMPLEMENTATION
+#define MINIAUDIO_IMPLEMENTATION //needs to be before #include "miniaudio.h"
 #include "whisper.h" 
 #include "miniaudio.h"
 
@@ -182,8 +181,7 @@ int main(int argc, const char** argv){
         if(voice_less && vendor.state == 0){
             std::cout << "-----VOICELESS VENDOR ACTIVE-----" << std::endl;
             while((col == '#' || row == '#') && time_elapsed < 20){
-                auto break_check = std::chrono::steady_clock::now();
-                time_elapsed = std::chrono::duration_cast<std::chrono::seconds>(break_check - break_start).count(); 
+try
             }
             if(time_elapsed < 20 ){
                 std::cout << "Selection made: " << row << col <<std::endl;
