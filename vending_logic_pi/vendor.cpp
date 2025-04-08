@@ -87,7 +87,7 @@ std::string Vendor::get_hex(std::string response){
     for (size_t i = 0; i < hex_code.size(); ++i) {
         if (!std::isprint(hex_code[i])) { // Checks for non-printable characters
             std::cout << i << " (ASCII " << static_cast<int>(hex_code[i]) << "), ";
-        }th
+        }
     }
     std::cout << std::endl;
     return hex_code;
