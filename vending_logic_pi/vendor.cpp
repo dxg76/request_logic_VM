@@ -664,7 +664,6 @@ float Vendor::check_coins(){
     response = get_hex(response);
     //read code
     std::cout <<"hex code: " << response << std::endl;
-    std::cout << "\nend hex code" << std::endl;
     inserted_currency = read_hex_code(response);
 
     if(inserted_currency > .01){
@@ -774,6 +773,7 @@ void Vendor::coin_return(float return_amount){
             std::cout << "dispensing nickel!" << std::endl;
         }
     }
+    total_currency = 0;
 }
 
 
