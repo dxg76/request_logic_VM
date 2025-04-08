@@ -535,6 +535,8 @@ int Vendor::configure_coin_mech() {
     if(write_to_MDB(coin_setup) < 0){
         return -1;
     }
+    //poll to clear
+    write_to_MDB("R,0B");
     std::cout << read_from_MDB() <<std::endl;
     std::cout << "[coin mech configured]" << std::endl;
     return 0;
@@ -546,6 +548,7 @@ int Vendor::configure_bill_validator() {
     if(write_to_MDB(bill_setup) < 0){
         return -1;
     }
+    write_to_MDB("R,33");
     std::cout << read_from_MDB() <<std::endl;
     std::cout << "[bill validator configured]" << std::endl;
     return 0;
