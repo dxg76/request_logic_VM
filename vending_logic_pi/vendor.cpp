@@ -121,7 +121,7 @@ float Vendor::read_hex_code(std::string hex_code){
         return accept_coins(hex);
     }
     //bill detected
-    return accept_bills(hex);s
+    return accept_bills(hex);
 }
 
 std::string Vendor::generate_prompt(Node* current_node){
