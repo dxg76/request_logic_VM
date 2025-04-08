@@ -119,9 +119,10 @@ float Vendor::read_hex_code(std::string hex_code){
         coin_return(total_currency);
     }else if((hex >> 15) != 1){ 
         return accept_coins(hex);
-    }
+    }else{
     //bill detected
     return accept_bills(hex);
+    }
 }
 
 std::string Vendor::generate_prompt(Node* current_node){
