@@ -232,7 +232,12 @@ int main(int argc, const char** argv){
         /*VENDOR STATE 2 Payment*/
         else if(vendor.state == 2){
             play_wav_file("wav files/direct_pay.wav");
-            vendor.try_payment(current_node->get_price());
+
+            if(!vendor.try_payment(current_node->get_price())){
+                play_wav_file("wav files/payment_failed");
+                vendor.state  = 1;
+                current_node = vendor.vendor_menu.root; 
+            }
 
             /*VENDOR STATE 3*/
             //payment has been accepted

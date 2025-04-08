@@ -53,7 +53,7 @@ class Vendor{
     float check_bills();
     float accept_coins(int hex); //returns 0 if no currency input to machine
     float accept_bills(int hex); //returns 0 if no currency input to machine
-    void coin_return();
+    void coin_return( float return_amount);
 
     /*vend methods*/
     void set_debug(bool mode); 

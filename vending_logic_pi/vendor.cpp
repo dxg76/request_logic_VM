@@ -3,7 +3,7 @@
 //constructor
 Vendor::Vendor(bool mode, bool voice_control, bool no_charge){
     total_currency = 0;
-    state = 0;
+    state = 2;
     list_menu = false;
     confirmation_prompt = false;
     configure_all();
@@ -49,7 +49,8 @@ char Vendor::try_vend(std::string loc, float price, std::vector<int> quantity){
     }else return 0;
 }
 
-bool Vendor::decrease_quantity(std::vector<int>& quantities, int &offset){ /*Function to decrement quantities*/
+/*Function to decrement quantities*/
+bool Vendor::decrease_quantity(std::vector<int>& quantities, int &offset){ 
     int quantity = 0;
 
     for(size_t i = 0; i < quantities.size(); ++i){
@@ -567,7 +568,7 @@ bool Vendor::try_payment(float item_cost){
         auto break_start = std::chrono::steady_clock::now();
         int time_elapsed = 0;
         //poll payment peripherals
-        while(total_currency < item_cost && !card_payment && time_elapsed > pay_timeout ){
+        while(total_currency < item_cost && !card_payment && time_elapsed < pay_timeout ){
             total_currency += check_coins();
             total_currency += check_bills(); 
             auto break_check = std::chrono::steady_clock::now();
@@ -580,10 +581,13 @@ bool Vendor::try_payment(float item_cost){
         std::cout << "payment complete!" << std::endl;
         list_menu = true;
         state = 3;
+        if((total_currency - item_cost) >.01){
+            coin_return(total_currency- item_cost);
+        }
         return true;
     }else{
         if(total_currency > 0){
-            coin_return();
+            coin_return(total_currency);
         }
         return false;
     }
@@ -729,13 +733,13 @@ float Vendor::accept_bills(int hex) {
     }
 }
 
-void Vendor::coin_return(){
+void Vendor::coin_return(float return_amount){
     int quarters = 0;
     int dimes = 0;
     int nickels = 0;
     tcflush(abstract, TCIOFLUSH);
-    if(total_currency > 0){
-        int cents = total_currency * 100;
+    if(return_amount > 0){
+        int cents = return_amount * 100;
         while(cents >= 25){
             cents -= 25;
             quarters++;
@@ -753,18 +757,21 @@ void Vendor::coin_return(){
             write_to_MDB("R,0D,02");
             //poll
             write_to_MDB("R,0B");
+            std::cout << "dispensing quarter!" << std::endl;
         }
         for(int i = 0; i < dimes; ++i){
             //dispense quarter
             write_to_MDB("R,0D,01");
             //poll
             write_to_MDB("R,0B");
+            std::cout << "dispensing dime!" << std::endl;
         }
         for(int i = 0; i < nickels; ++i){
             //dispense quarter
             write_to_MDB("R,0D,00");
             //poll
             write_to_MDB("R,0B");
+            std::cout << "dispensing nickel!" << std::endl;
         }
     }
 }
