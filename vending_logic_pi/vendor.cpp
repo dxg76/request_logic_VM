@@ -736,6 +736,7 @@ void Vendor::coin_return(){
     int quarters = 0;
     int dimes = 0;
     int nickels = 0;
+    tcflush(abstract, TCIOFLUSH);
     if(total_currency > 0){
         int cents = total_currency * 100;
         while(cents >= 25){
@@ -752,15 +753,21 @@ void Vendor::coin_return(){
         }
         for(int i = 0; i < quarters; ++i){
             //dispense quarter
+            write_to_MDB("R,0D,02");
             //poll
+            write_to_MDB("R,0B");
         }
         for(int i = 0; i < dimes; ++i){
             //dispense quarter
+            write_to_MDB("R,0D,01");
             //poll
+            write_to_MDB("R,0B");
         }
         for(int i = 0; i < nickels; ++i){
             //dispense quarter
+            write_to_MDB("R,0D,00");
             //poll
+            write_to_MDB("R,0B");
         }
     }
 }
