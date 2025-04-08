@@ -74,7 +74,7 @@ bool Vendor::decrease_quantity(std::vector<int>& quantities, int &offset){
 //token methods
 std::string Vendor::get_hex(std::string response){
     std::string hex_code;
-    std::cout << "this is response: \n " << response <<std::endl;
+    //std::cout << "this is response: \n " << response <<std::endl;
     size_t start_index = response.find(',');
     size_t end_index = response.find('\n');
     size_t end_compare = response.find('\r');
@@ -84,11 +84,10 @@ std::string Vendor::get_hex(std::string response){
 
     hex_code = response.substr(start_index+1, end_index-start_index-1);
     
-    std::cout << "Invisible characters found at indices: ";
     for (size_t i = 0; i < hex_code.size(); ++i) {
         if (!std::isprint(hex_code[i])) { // Checks for non-printable characters
             std::cout << i << " (ASCII " << static_cast<int>(hex_code[i]) << "), ";
-        }
+        }th
     }
     std::cout << std::endl;
     return hex_code;
@@ -429,7 +428,6 @@ bool Vendor::configure_serial(int speed) {
 //mdb methods
 int Vendor::write_to_MDB(std::string msg) {
     msg = msg + '\n';
-    std::cout <<"MDB WRITE!!!!!! " << msg << std::endl;
     const char* msg_ready = msg.c_str();
     if (write(abstract, msg_ready, strlen(msg_ready)) < 0) {
         std::cerr << "write error: "
@@ -443,7 +441,6 @@ std::string Vendor::read_from_MDB() {
     char buffer[BUFFER_SIZE] = "";
     int bytes_read = 1;
     std::string response = "";
-    std::cout << "MDB READ!!!!! " << std::endl;
     while(bytes_read>0){
         bytes_read = read(abstract,buffer,BUFFER_SIZE);
         response += buffer;
@@ -454,7 +451,7 @@ std::string Vendor::read_from_MDB() {
 
 
 
-   std::cout << "this is the read repsonse: " << response << "\n\nthe number of bytes transmitted is: " <<strlen(buffer) <<std::endl;
+    //std::cout << "this is the read repsonse: " << response << "\n\nthe number of bytes transmitted is: " <<strlen(buffer) <<std::endl;
     return response; //success    
 }
 
@@ -645,8 +642,6 @@ float Vendor::check_bills(){
     response = get_hex(response);
     //read code
     std::cout <<"hex code: " << response << std::endl;
-    std::cout << "\nend hex code" << std::endl;
-
     inserted_currency = read_hex_code(response);
     //implement some string parsing and cost calculation
     if(inserted_currency > .01){
@@ -758,8 +753,10 @@ void Vendor::coin_return(float return_amount){
         for(int i = 0; i < quarters; ++i){
             //dispense quarter
             write_to_MDB("R,0D,12");
+            print_mdb_response();
             //poll
             write_to_MDB("R,0B");
+            print_mdb_response();
             std::cout << "dispensing quarter!" << std::endl;
         }
         for(int i = 0; i < dimes; ++i){

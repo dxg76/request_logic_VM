@@ -234,7 +234,7 @@ int main(int argc, const char** argv){
             play_wav_file("wav files/direct_pay.wav");
 
             if(!vendor.try_payment(current_node->get_price())){
-                play_wav_file("wav files/payment_failed");
+                play_wav_file("wav files/payment_failed.wav");
                 vendor.state  = 1;
                 current_node = vendor.vendor_menu.root; 
             }
