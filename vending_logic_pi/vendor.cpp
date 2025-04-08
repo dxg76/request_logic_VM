@@ -117,7 +117,7 @@ float Vendor::read_hex_code(std::string hex_code){
     int hex = std::stoi(hex_code, nullptr, 16);
     //coin detected
     if(hex == 1){
-        coin_return();
+        coin_return(total_currency);
     }else if((hex >> 15) != 1){ 
         return accept_coins(hex);
     }
