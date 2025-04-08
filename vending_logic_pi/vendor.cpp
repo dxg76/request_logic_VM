@@ -757,21 +757,21 @@ void Vendor::coin_return(float return_amount){
         }
         for(int i = 0; i < quarters; ++i){
             //dispense quarter
-            write_to_MDB("R,0D,02");
+            write_to_MDB("R,0D,12");
             //poll
             write_to_MDB("R,0B");
             std::cout << "dispensing quarter!" << std::endl;
         }
         for(int i = 0; i < dimes; ++i){
             //dispense quarter
-            write_to_MDB("R,0D,01");
+            write_to_MDB("R,0D,11");
             //poll
             write_to_MDB("R,0B");
             std::cout << "dispensing dime!" << std::endl;
         }
         for(int i = 0; i < nickels; ++i){
             //dispense quarter
-            write_to_MDB("R,0D,00");
+            write_to_MDB("R,0D,10");
             //poll
             write_to_MDB("R,0B");
             std::cout << "dispensing nickel!" << std::endl;
