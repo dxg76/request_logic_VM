@@ -75,8 +75,8 @@ std::string Vendor::get_hex(std::string response){
     std::string hex_code;
     std::cout << "this is response: \n " << response <<std::endl;
     size_t start_index = response.find(',');
-    int end_index = response.find('\n');
-    int end_compare = response.find('\r');
+    size_t end_index = response.find('\n');
+    size_t end_compare = response.find('\r');
     if(end_compare != std::string::npos && end_compare < end_index){
         end_index = end_compare;
     }
