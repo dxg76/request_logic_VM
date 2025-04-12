@@ -20,7 +20,7 @@ class Vendor{
 
     /*serial variables*/
     int abstract;
-    std::string port_name = "/dev/ttyACM1";
+    std::string port_name = "/dev/ttyACM0";
     float total_currency;
     bool card_payment;
 
