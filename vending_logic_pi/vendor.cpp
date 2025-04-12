@@ -533,11 +533,14 @@ int Vendor::configure_coin_mech() {
     tcflush(abstract,TCIOFLUSH);
     std::string coin_setup = "R,0C,FFFFFFFF";
     if(write_to_MDB(coin_setup) < 0){
+        std::cout << "coin mech configuration (FAILED)" <<std::endl;
         return -1;
     }
+    print_mdb_response();
+
     //poll to clear
     write_to_MDB("R,0B");
-    std::cout << read_from_MDB() <<std::endl;
+    print_mdb_response();
     std::cout << "[coin mech configured]" << std::endl;
     return 0;
 }
@@ -546,10 +549,14 @@ int Vendor::configure_bill_validator() {
     tcflush(abstract,TCIOFLUSH);
     std::string bill_setup = "R,34,FFFFFFFF";
     if(write_to_MDB(bill_setup) < 0){
+        std::cout << "bill validator configuration (FAILED)" <<std::endl;
         return -1;
     }
-    write_to_MDB("R,33");
-    std::cout << read_from_MDB() <<std::endl;
+    print_mdb_response();
+
+    //poll to clear
+    write_to_MDB("R,33");    
+    print_mdb_response();
     std::cout << "[bill validator configured]" << std::endl;
     return 0;
 }
