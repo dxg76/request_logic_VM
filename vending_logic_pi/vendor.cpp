@@ -629,7 +629,8 @@ bool Vendor::check_card_payment(float item_cost) {
 
     //approve vend
     write_to_MDB("C,VEND,1");
-    if(read_from_MDB() != "d,status,result,-1"){
+    response = read_from_MDB(); 
+    if(response.find("d,STATUS,RESULT,-1") == std::string::npos){
         write_to_MDB("D,END,-1");
         return false;
     }else write_to_MDB("D,END");
