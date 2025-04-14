@@ -583,10 +583,14 @@ bool Vendor::try_payment(float item_cost){
             total_currency += check_bills(); 
             auto break_check = std::chrono::steady_clock::now();
             time_elapsed = std::chrono::duration_cast<std::chrono::seconds>(break_check - break_start).count(); 
-                //card_payment = check_card_payment(item_cost);
+            card_payment = check_card_payment(item_cost);
         }
-    }            
-
+        
+    if(card_payment){
+        list_menu = true;
+        state = 3;
+	return true;
+    }
     if(total_currency >= item_cost){
         std::cout << "payment complete!" << std::endl;
         list_menu = true;
@@ -601,13 +605,15 @@ bool Vendor::try_payment(float item_cost){
         }
         return false;
     }
-    
+    }
+state = 3;
+return true;
     
 }
 bool Vendor::check_card_payment(float item_cost) {
-    std::cout << "card waiting." << std::endl;
-    std::this_thread::sleep_for(std::chrono::milliseconds(5000));
-    int item_cost_int = item_cost;
+    //std::cout << "card waiting." << std::endl;
+    //std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+    int item_cost_int = 1;
     std::string request_payment = "D,REQ," + std::to_string(item_cost_int);
     
     std::string vend_confirmed;
@@ -621,19 +627,22 @@ bool Vendor::check_card_payment(float item_cost) {
     }
 
     response = read_from_MDB();
-  
-    if(response.find("d,STATUS,RESULT,1") == std::string::npos){
+    std::cout << "this is response: " << response << std::endl;
+    if(response.find("d,STATUS,RESULT,-1") != std::string::npos){
         std::cout << "no card..." <<std::endl;
         return false;
     }
-
+  
     //approve vend
     write_to_MDB("C,VEND,1");
     response = read_from_MDB(); 
-    if(response.find("d,STATUS,RESULT,-1") == std::string::npos){
-        write_to_MDB("D,END,-1");
+    std::cout << "attempting vend this is response: " << response << std::endl;
+    if(response.find("d,STATUS,RESULT,-1") != std::string::npos){
+        std::cout << "vend failed" << std::endl;
+	write_to_MDB("D,END,-1");
         return false;
     }else write_to_MDB("D,END");
+    std::cout << "vend successful" << std::endl;
     return true;
 }
 
