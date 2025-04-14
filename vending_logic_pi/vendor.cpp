@@ -289,7 +289,15 @@ std::string Vendor::read_tokens(Node* current_node){
     //in main menu
     if(current_node == vendor_menu.root){ 
         result = check_keywords();
-        empty_tokens();
+        std::cout << "this is after select: " << result <<std::endl;
+        if(result != "select"){
+            empty_tokens();
+        }
+    }else
+    //select clause
+    if(current_node->get_id() == "select"){
+       result = check_inventory(current_node->get_children());
+       empty_tokens();
     }
     //in menu searching for item
     else if(current_node->get_price() < .1){

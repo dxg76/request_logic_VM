@@ -340,8 +340,6 @@ int main(int argc, const char** argv){
         }
         //select item
         else if(vendor_result == "select"){
-            play_wav_file("wav files/select_skip.wav");
-            vendor.state = 1;
             vendor.list_menu = false;
             vendor.print_tokens();
             current_node = current_node->find_child(vendor_result);
@@ -351,6 +349,7 @@ int main(int argc, const char** argv){
                 play_wav_file("wav files/return_home.wav");
                 current_node = vendor.vendor_menu.root;
             }else current_node = current_node->find_child(vendor_result);
+            vendor.empty_tokens();
         }
 	//go to idle mode
         else if(vendor_result == "idle"){
