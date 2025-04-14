@@ -99,7 +99,9 @@ class Vendor{
     const std::string CANDY_MENU_STRING = "candy"; //opens candy menu
     const std::string KILL_STRING =  "critical"; //dev code for ending the loop temporarily DG
     const std::string HOME_STRING = "home"; //returns to root menu
-    const std::string GROOVE_STRING = "boogie";
+    const std::string GROOVE_STRING = "boogie"; //Mr STV boogies
+    const std::string SEQUENCE_RED_STRING = "destruct"; //says red sequence string
+    const std::string SELECT_STRING = "select"; //says select string
     const std::string GREETING_STRING = "introduce"; //says greeting string
     const std::string NO_RESPONSE_STRING = "blankaudio";
 
