@@ -25,21 +25,21 @@ Menu_tree::Menu_tree(){
         chips->add_child(new Node("pretzels", "D2", 1.00, {10,10,10,10}, "wav files/Pretzels_Statement.wav"));
         chips->add_child(new Node("barbecue", "C1", 1.00, {10,10,10,10}, "wav files/Barbecue_Statement.wav"));
 
-    //Creating the All nodes
-    Node* all = new Node("all");
-        all->add_child(new Node("kitkat", "E7", 1.00, {4,4}, "wav files/KitKat_Statement.wav")); 
-        all->add_child(new Node("reese's", "E1", 1.00, {4,4}, "wav files/Reeses_Statement.wav"));
-        all->add_child(new Node("butterfinger", "E3", 1.00, {4,4}, "wav files/Butter_Finger_Statement.wav"));
-        all->add_child(new Node("crunch", "E5", 1.00, {4,4}, "wav files/crunch_statement.wav"));
-        all->add_child(new Node("doritos", "A1", 1.00, {10,10,10,10}, "wav files/Doritos_Statement.wav"));
-        all->add_child(new Node("cheetos", "B1", 1.00, {10,10,10,10}, "wav files/Cheetos_Statement.wav"));
-        all->add_child(new Node("pretzels", "D1", 1.00, {10,10,10,10}, "wav files/Pretzels_Statement.wav"));
-        all->add_child(new Node("barbecue", "C1", 1.00, {10,10,10,10}, "wav files/Barbecue_Statement.wav"));
+    //Creating the select nodes
+    Node* select = new Node("select","",0,{},"wav files/select_skip.wav"); //need to create wav file
+        select->add_child(new Node("kitkat", "E7", 1.00, {4,4}, "wav files/KitKat_Statement.wav")); 
+        select->add_child(new Node("reese's", "E1", 1.00, {4,4}, "wav files/Reeses_Statement.wav"));
+        select->add_child(new Node("butterfinger", "E3", 1.00, {4,4}, "wav files/Butter_Finger_Statement.wav"));
+        select->add_child(new Node("crunch", "E5", 1.00, {4,4}, "wav files/crunch_statement.wav"));
+        select->add_child(new Node("doritos", "A1", 1.00, {10,10,10,10}, "wav files/Doritos_Statement.wav"));
+        select->add_child(new Node("cheetos", "B1", 1.00, {10,10,10,10}, "wav files/Cheetos_Statement.wav"));
+        select->add_child(new Node("pretzels", "D1", 1.00, {10,10,10,10}, "wav files/Pretzels_Statement.wav"));
+        select->add_child(new Node("barbecue", "C1", 1.00, {10,10,10,10}, "wav files/Barbecue_Statement.wav"));
 
     //Attaches categories to the root node
     root->add_child(candy);
     root->add_child(chips);
-    root->add_child(all);
+    root->add_child(select);
 
 }
 

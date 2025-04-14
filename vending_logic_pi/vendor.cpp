@@ -193,6 +193,14 @@ std::string Vendor::check_keywords(){
             if(debug_mode)
                 std::cout << "keyword detected: " << GROOVE_STRING << "\n" << std::endl;
             return GROOVE_STRING;
+        }else if(tokens[i] == SEQUENCE_RED_STRING){
+            if(debug_mode)
+                std::cout << "keyword detected: " << SEQUENCE_RED_STRING << "\n" << std::endl;
+            return SEQUENCE_RED_STRING;
+        }else if(tokens[i] == SELECT_STRING){
+            if(debug_mode)
+                std::cout << "keyword detected: " << SELECT_STRING << "\n" << std::endl;
+            return SELECT_STRING;
         }else if(tokens[i] == GREETING_STRING){
             if(debug_mode)
                 std::cout << "keyword detected: " << GREETING_STRING << "\n" << std::endl;

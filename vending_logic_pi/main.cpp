@@ -334,6 +334,16 @@ int main(int argc, const char** argv){
         else if(vendor_result == "boogie"){
             play_wav_file("wav files/boogie.wav");
         }
+        //Sequence Red
+        else if(vendor_result == "destruct"){
+            play_wav_file("wav files/sequence_red.wav");
+        }
+        //select item
+        else if(vendor_result == "select"){
+            play_wav_file("wav files/select_skip.wav");
+            vendor.state = 1;
+            current_node = current_node->find_child(vendor_result);
+        }
         //go to idle mode
         else if(vendor_result == "idle"){
             play_wav_file("wav files/idle_mode.wav");
