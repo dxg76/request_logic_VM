@@ -345,11 +345,7 @@ int main(int argc, const char** argv){
             vendor.list_menu = false;
             vendor.print_tokens();
             current_node = current_node->find_child(vendor_result);
-<<<<<<< HEAD
             vendor_result =vendor.check_inventory(current_node->get_children());
-=======
-            vendor_result = vendor.check_inventory(current_node);
->>>>>>> f6cd434acca0b354011027ed685d9030272eaa0b
             if(vendor_result == "err"){
                 play_wav_file("wav files/invalid_selection.wav"); //DEV NOTE make this audio file
                 play_wav_file("wav files/return_home.wav");
