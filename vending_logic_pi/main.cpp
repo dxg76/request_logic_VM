@@ -341,7 +341,7 @@ int main(int argc, const char** argv){
         //select item
         else if(vendor_result == "select"){
             play_wav_file("wav files/select_skip.wav");
-            vendor.state = ;
+            vendor.state = 1;
             current_node = current_node->find_child(vendor_result);
         }
         //go to idle mode
