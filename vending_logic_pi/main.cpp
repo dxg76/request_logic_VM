@@ -344,13 +344,14 @@ int main(int argc, const char** argv){
             vendor.state = 1;
             vendor.list_menu = false;
             current_node = current_node->find_child(vendor_result);
-            vendor_result =vendor.check_inventory(current_node);
+            vendor_result =vendor.check_inventory(current_node->get_children());
             if(vendor_result == "err"){
                 play_wav_file("wav files/invalid_selection.wav"); //DEV NOTE make this audio file
                 play_wav_file("wav files/return_home.wav");
                 current_node = vendor.vendor_menu.root;
             }else current_node = current_node->find_child(vendor_result);
-        //go to idle mode
+        }
+	//go to idle mode
         else if(vendor_result == "idle"){
             play_wav_file("wav files/idle_mode.wav");
             vendor.state = 0;
