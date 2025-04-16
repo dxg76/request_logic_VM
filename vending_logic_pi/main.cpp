@@ -90,6 +90,9 @@ list_node* tail = head;
 int file_index = 1;
 //atomic bool to quit recording
 std::atomic<bool> exit_recording(false);
+std::atomic<bool> exit_recording(false);
+std::atomic<bool> pause_recording(false);
+
 int list_size = 0;
 
 
@@ -288,11 +291,9 @@ int main(int argc, const char** argv){
                 std::cout << "no response count: " << no_response_count<< std::endl;
                 vendor_result = "err";
                 if(no_response_count == 2){
-                    exit_recording.store(true);
-                    audio_thread.join();
+                    pause_recording.store(true);
                     play_wav_file("wav files/try_again.wav");
-                    exit_recording.store(false);
-                    std::thread audio_thread(ma_stream, head, recording_size_milli);
+                    pause_recording.store(false);
                 }
             }else no_response_count = 0;
             /*Timeout Conditions*/
@@ -470,7 +471,8 @@ void ma_stream(list_node* head, int recording_length){
 
     //Audio Capture Loop
     while(!exit_recording){
-        
+        while(pause_recording){}; // busy loop to pause recording
+
         std::string audio_file = std::to_string(file_index) + ".wav";
 
         //ENCODER CONFIGURATION
