@@ -90,7 +90,6 @@ list_node* tail = head;
 int file_index = 1;
 //atomic bool to quit recording
 std::atomic<bool> exit_recording(false);
-std::atomic<bool> exit_recording(false);
 std::atomic<bool> pause_recording(false);
 
 int list_size = 0;
@@ -292,6 +291,7 @@ int main(int argc, const char** argv){
                 vendor_result = "err";
                 if(no_response_count == 2){
                     pause_recording.store(true);
+		    std::this_thread::sleep_for(std::chrono::milliseconds(200));
                     play_wav_file("wav files/try_again.wav");
                     pause_recording.store(false);
                 }
