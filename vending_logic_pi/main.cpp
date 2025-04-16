@@ -338,7 +338,24 @@ int main(int argc, const char** argv){
         else if(vendor_result == "boogie"){
             play_wav_file("wav files/boogie.wav");
         }
-        //go to idle mode
+        //Sequence Red
+        else if(vendor_result == "destruct"){
+            play_wav_file("wav files/sequence_red.wav");
+        }
+        //select item
+        else if(vendor_result == "select"){
+            vendor.list_menu = false;
+            vendor.print_tokens();
+            current_node = current_node->find_child(vendor_result);
+            vendor_result =vendor.check_inventory(current_node->get_children());
+            if(vendor_result == "err"){
+                play_wav_file("wav files/invalid_selection.wav"); //DEV NOTE make this audio file
+                play_wav_file("wav files/return_home.wav");
+                current_node = vendor.vendor_menu.root;
+            }else current_node = current_node->find_child(vendor_result);
+            vendor.empty_tokens();
+        }
+	//go to idle mode
         else if(vendor_result == "idle"){
             play_wav_file("wav files/idle_mode.wav");
             vendor.state = 0;

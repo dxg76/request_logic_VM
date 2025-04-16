@@ -193,6 +193,14 @@ std::string Vendor::check_keywords(){
             if(debug_mode)
                 std::cout << "keyword detected: " << GROOVE_STRING << "\n" << std::endl;
             return GROOVE_STRING;
+        }else if(tokens[i] == SEQUENCE_RED_STRING){
+            if(debug_mode)
+                std::cout << "keyword detected: " << SEQUENCE_RED_STRING << "\n" << std::endl;
+            return SEQUENCE_RED_STRING;
+        }else if(tokens[i] == SELECT_STRING){
+            if(debug_mode)
+                std::cout << "keyword detected: " << SELECT_STRING << "\n" << std::endl;
+            return SELECT_STRING;
         }else if(tokens[i] == GREETING_STRING){
             if(debug_mode)
                 std::cout << "keyword detected: " << GREETING_STRING << "\n" << std::endl;
@@ -281,7 +289,15 @@ std::string Vendor::read_tokens(Node* current_node){
     //in main menu
     if(current_node == vendor_menu.root){ 
         result = check_keywords();
-        empty_tokens();
+        std::cout << "this is after select: " << result <<std::endl;
+        if(result != "select"){
+            empty_tokens();
+        }
+    }else
+    //select clause
+    if(current_node->get_id() == "select"){
+       result = check_inventory(current_node->get_children());
+       empty_tokens();
     }
     //in menu searching for item
     else if(current_node->get_price() < .1){
