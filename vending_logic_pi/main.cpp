@@ -291,6 +291,7 @@ int main(int argc, const char** argv){
                     exit_recording.store(true);
                     audio_thread.join();
                     play_wav_file("wav files/try_again.wav");
+                    exit_recording.store(false);
                     std::thread audio_thread(ma_stream, head, recording_size_milli);
                 }
             }else no_response_count = 0;
