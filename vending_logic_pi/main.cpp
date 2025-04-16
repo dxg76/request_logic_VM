@@ -313,6 +313,8 @@ int main(int argc, const char** argv){
                 if(digitalRead(object_detected) && !no_answer && !voice_less){
                     std::cout << "OBJECT AWAKEN" << std::endl;
                     vendor_result = "awaken";
+                }else if(!digitalRead(object_detected)){
+                    no_answer = false; //obstruction moved
                 }
             }
         }while(vendor_result == "err" && !voice_less);
@@ -518,7 +520,7 @@ void ma_stream(list_node* head, int recording_length){
         }
 
         
-        //5 second clips
+        //n second clips
         std::this_thread::sleep_for(std::chrono::milliseconds(recording_length));
         ma_device_uninit(&device);
         ma_encoder_uninit(&encoder);
