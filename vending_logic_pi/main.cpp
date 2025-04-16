@@ -311,8 +311,11 @@ int main(int argc, const char** argv){
             if(vendor.state == 0 ){
                 //person detected
                 if(digitalRead(object_detected) && !no_answer && !voice_less){
-                    std::cout << "OBJECT AWAKEN" << std::endl;
-                    vendor_result = "awaken";
+                    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+                    if(digitalRead(object_detected)){
+                        std::cout << "OBJECT AWAKEN" << std::endl;
+                        vendor_result = "awaken";
+                    }
                 }else if(!digitalRead(object_detected)){
                     no_answer = false; //obstruction moved
                 }
