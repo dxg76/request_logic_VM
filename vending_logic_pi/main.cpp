@@ -276,7 +276,9 @@ int main(int argc, const char** argv){
             
             //get read time
             const auto start = std::chrono::high_resolution_clock::now();
-            vendor_result = vendor.read_tokens(current_node);
+            if(no_response_count == 2){
+                vendor_result = "blankaudio";
+            }else vendor_result = vendor.read_tokens(current_node);
             const auto end = std::chrono::high_resolution_clock::now();
             const std::chrono::duration<double,std::milli> elapsed = end - start;
             std::cout << "token read time (secs):  " << elapsed.count()/1000.0 << std::endl;
@@ -288,11 +290,7 @@ int main(int argc, const char** argv){
                 std::cout << "no response count: " << no_response_count<< std::endl;
                 vendor_result = "err";
                 if(no_response_count == 2){
-                    exit_recording.store(true);
-                    audio_thread.join();
                     play_wav_file("wav files/try_again.wav");
-                    exit_recording.store(false);
-                    std::thread audio_thread(ma_stream, head, recording_size_milli);
                 }
             }else no_response_count = 0;
             /*Timeout Conditions*/
