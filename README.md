@@ -1,7 +1,12 @@
  # request_logic_VM
 ---
-This is the directory for all MRSTV logic  
+This Repository contains all the source code for the MRSTV talking vending machine project.  
+MRSTV allows people to select snacks within the vending machine through audio interaction.  
+The controller for the project is a Raspberry Pi 5, the software in this repository runs on the RPI.  
+The RPI connects via USB to an MDB-USB interface which connects to the payment peripherals within the vending machine.  
+
  Repo Creation Date 10/13/24  
+ Project Completion Date 4/14/25
 
 ## Contributors
 Dante Gordon dxg2@students.uwf.edu  
@@ -10,24 +15,28 @@ Devan Rivera dmr76@students.uwf.edu
 
 
 
-## VENDING_LOGIC
-
-#### Dante Gordon
+## VENDING_LOGIC_PI  
 ### Overview:  
-The intention of this program is to run as a beta of the vending logic used for communicating with the customer. 
-Currently the program supports parsing and checking strings for a few key words. These key words will be used to navigate a tree data structure representing menus in which to communicate with the machine. These will include a  main menu which will act as the root node of the tree with pointers to each of the submenus. These submenus will include the menus for each type of snack as well as a help menu.
+The Vending Logic Directory Contains 
+This Directory contains the source code to run the vending machine controller program on the Raspberry Pi 5 
+It also contains the cpp port of OpenAI's Whisper transcriber https://github.com/ggml-org/whisper.cpp as well as a directory containing the responses the vending machine will  
+respond with during different user interactions
 
 ### Dev Info:
-Compile the vendor using:
+To compile the VMC program use:
 make -f vendor.mk
 
 Since the vendor now includes whisper to access the whisper library you must run this command before running the program:  
-export LD_LIBRARY_PATH=./whisper.cpp-master/build/src:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=./whisper.cpp-master/build/src:$LD_LIBRARY_PATH  
 
-run tokenizer:
-./main 
-for debug mode
-./main -d 
+To run the program you may use
+./main
+the following flags are applicable
+./main -d no_charge dev
+-d  debug mode  
+no_charge bypasses payment stage in vending machine  
+dev allows command line input to be used instead of voice for faster debugging  
+
 
 ### Program History:
 11/14/24 
@@ -105,6 +114,10 @@ with whispers output.
 Began implementation of decoder device to play .wav files
 Researched into whispers decoder capabilties
 
+3/2/25  
+*Dante Gordon*:
+Implemented functions to enable and configure the MDB payment peripherals
+
 3/4/25
 *Devan Rivera*:
 Implemented more of the decoder and added a function to play the .wav files
@@ -134,7 +147,7 @@ Successful testing in seperate file to ensure smooth implementation
 
 3/29/25
 *Devan Rivera*
-Began Implementing "Boogy" function
+Began Implementing "Boogie" function
 Cleaned up code of unecessary comments
 
 ## CAPTURE
