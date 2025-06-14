@@ -1,7 +1,7 @@
  # request_logic_VM
 ---
 This Repository contains all the source code for the MRSTV talking vending machine project.  
-MRSTV allows people to select snacks within the vending machine through audio interaction.  
+MRSTV stands for Machine Raspberry Pi Snack talking vendor, and it adds the ability to select snacks within the vending machine through audio interaction in addition to standard vending functionality.  
 The controller for the project is a Raspberry Pi 5, the software in this repository runs on the RPI.  
 The RPI connects via USB to an MDB-USB interface which connects to the payment peripherals within the vending machine.  
 
@@ -19,7 +19,7 @@ Devan Rivera dmr76@students.uwf.edu
 ### Overview:  
 The Vending Logic Directory Contains 
 This Directory contains the source code to run the vending machine controller program on the Raspberry Pi 5 
-It also contains the cpp port of OpenAI's Whisper transcriber https://github.com/ggml-org/whisper.cpp as well as a directory containing the responses the vending machine will  
+It also contains the cpp port of OpenAI's Whisper transcription software https://github.com/ggml-org/whisper.cpp as well as a directory containing the responses the vending machine will  
 respond with during different user interactions
 
 ### Dev Info:
