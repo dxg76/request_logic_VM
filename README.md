@@ -212,11 +212,8 @@ This program will be intended to initiate a serial connection via usb with the M
 It will interface with the vending algorithm and send the correct commands via the serial connection
 This must be done for a linux system, complications may occur using a linux subsystem
 
-### Program History:
-1/17/25
-*Dante Gordon*:
-folder created
 
+### Dev Info:  
 MDB device Serial communication information
 Baudrate - 115200
 Data bits - 8
@@ -224,26 +221,32 @@ Parity - none
 Stop Bits - 1
 
 Need Linux Machine
+### Program History:
+- 1/17/25
+*Dante Gordon*:
+folder created
 
-1/30/25 
+
+
+- 1/30/25 
 *Dante Gordon*:  
 Fleshing out and annotating serial connection using POSIX commands
 
-2/17/25
+- 2/17/25
 *Devan Rivera*:
 Researched possible MDB commands to be passed through qibbix to the card reader
 
-2/18/25
+- 2/18/25
 *Devan Rivera*:
 Determined appropriate command format through Generic Master
 Began Setup/Config Process Commands
 
-2/23/25
+- 2/23/25
 *Devan Rivera*:
 Setup/Config Process Commands
 Vend Process Commands
 
-2/24/25
+- 2/24/25
 *Dante Gordon*: 
 Crypto Key error fixed
 Full vend communication testing can begin 
@@ -275,30 +278,30 @@ run:
 ./voice_assistant
 
 ### Program History
-2/7/25
+- 2/7/25
 *Dante Gordon*:  
 working on initializing whisper. Needs more dependencies I think  
 
-2/8/25
+- 2/8/25
 *Dante Gordon*:  
 Building steps complete working on programming live audio transcription
 
-2/9/25
+- 2/9/25
 *Dante Gordon*:  
 Transcription complete whisper stores transcription in char* segments  
 
-2/12/26
+- 2/12/26
 *Dante Gordon*:  
 Begin unifying capture and transcription  
 Convert filename vector to linked list Where the capture adds new nodes and follows  
 the tail of the linked list and the transcriber reads the file at the head before deleting  
 that node from the list  
 
-2/17/26
+- 2/17/26
 *Dante Gordon*:  
 Fully unified capture and transcription
 
-2/24/25
+- 2/24/25
 *Dante Gordon*:  
 Unified with main vending logic  
 Program history will remain open to address changes in latency.  
