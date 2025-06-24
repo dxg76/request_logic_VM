@@ -1,13 +1,8 @@
  # request_logic_VM
 ---
-This Repository contains all the source code for the MRSTV talking vending machine project.  
-MRSTV stands for Machine Raspberry Pi Snack Talking Vendor. It is a VMC program capable of addressing all of the typical vending machine functions.  
-What makes our projects special is the additional feature allowing users to select snacks within the vending machine through
-audio interaction. Similar to a cellular automative assistant, the user talks to the vending machine, and the vending machine seeks key words to navigate the vending options  
-and make a selectiom.
+    This Repository contains all the source code for the MRSTV talking vending machine project. MRSTV stands for Machine Raspberry Pi Snack Talking Vendor. It is a VMC program capable of addressing all of the typical vending machine functions. What makes our projects special is the additional feature allowing users to select snacks within the vending machine through audio interaction. Similar to a cellular automative assistant, the user talks to the vending machine, and the vending machine seeks key words to navigate the vending options and make a selection.
 
-For this project we used a Raspberry Pi 5 to run the vendor program. The RPI shared GPIO, the software in this repository runs on the RPI.  
-The RPI connects via USB to an MDB-USB interface which connects to the payment peripherals within the vending machine.  
+    For this project we used a Raspberry Pi 5 to run the vendor program. The RPI uses its on board GPIO pins to communicate with the keypad, and a arduino mega 2560. The mega2560 handled control of the motorized coils within the vending machine. The main program runs on the RPI. The RPI connects via USB to an MDB-USB interface which connects to the payment peripherals within the vending machine allowing serial communication.  
 
  Repo Creation Date 10/13/24  
  Project Completion Date 4/14/25
