@@ -44,7 +44,7 @@ Basic loop created,
 The program requests a string from the command line. and compares each token to certain request words
 currently there is an error with the token vector where it the tokens have changed unexpectedly  
 
-- 1/23/25  
+- 1/23/25
 *Dante Gordon*:
 Fixed vector error working on implementing menu data structure
 
@@ -113,7 +113,7 @@ with whispers output.
 Began implementation of decoder device to play .wav files
 Researched into whispers decoder capabilties
 
-- 3/2/25  
+- 3/2/25
 *Dante Gordon*:
 Implemented functions to enable and configure the MDB payment peripherals
 
@@ -145,6 +145,13 @@ Needs testing with a speaker to ensure audio output
 *Devan Rivera*:
 Successful compilation of decoder logic 
 Needs further implementation of length to play audio files to completion
+
+- 3/13-3/15/2025
+*Dante Gordon*:  
+Adjusted phrasing of MRSTV's responses to the user to make browsing the menus
+easier and more intuitive. Began experimenting with states using an integer variable to keep track of individual states. An "idle mode",
+in this mode MRSTV would not speak to the user and transcribe less frequently, a "selection state" where MRSTV and the user interact to make a snack selection,
+a "payment state", and a "vend state"
 
 - 3/22/25
 *Devan Rivera*
@@ -222,13 +229,11 @@ Data bits - 8
 Parity - none
 Stop Bits - 1
 
-Need Linux Machine
+Must run on a Unix-like OS.
 ### Program History:
 - 1/17/25
 *Dante Gordon*:
 folder created
-
-
 
 - 1/30/25 
 *Dante Gordon*:  
@@ -310,4 +315,12 @@ Program history will remain open to address changes in latency.
 Strategy to try to reduce this is padding the audio files allowing the recordings to be done faster
 
 - 3/11/25
-*
+*Dante Gordon*':
+I attempted to improvet the transcription latency. I experimented with using shorter clips (2 sec)
+This reduced time spent waiting for the audio files to be recorded before transcription. It would be beneficial to
+discover a way to transcribe the audio files immediately as the audio data is recorded. I also added some padding to the
+audio files to prevent audio "roll over" errors where Whisper attempts to fill in the blanks  when an audio file ends abruptly.
+This improved roll over errors, but did not fully address the issue, since the audio clips are sectioned and not continuous.
+In addition, punctuation and captilization are arbitrary for the purpose of matching keywords at least in the case of this
+project. So to ensure proper string matching I implemented a function that normalizes all text transcribed by Whisper
+removing capitalization and trailing punctuation.
