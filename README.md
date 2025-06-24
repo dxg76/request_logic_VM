@@ -45,7 +45,7 @@ dev allows command line input to be used instead of voice for faster debugging
 ### Program History:
 11/14/24 
 *Dante Gordon*:
-Basic loop created,
+- Basic loop created,
 The program requests a string from the command line. and compares each token to certain request words
 currently there is an error with the token vector where it the tokens have changed unexpectedly  
 
