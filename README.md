@@ -126,7 +126,14 @@ Added "wav files" folder into "vending_logic" to reach the audio files
 *Devan Rivera*:
 Managed to compile decoder device (Unable to test locally currently)
 Began implementing audio playback logic down tree structure
-Added All class to Tree Data Structure 
+Added All class to Tree Data Structure
+
+- 3/5/25
+*Dante Gordon*:
+Added methods to accept payment from the coin and bill acceptors
+These methods poll the payment peripherals and read the 8 bit response code from the MDB-USB interface
+depending on the way the bits are organized in this code, the program can determine
+what type of currency was input to the machine.   
 
 - 3/9/25
 *Devan Rivera*:
@@ -300,4 +307,7 @@ Fully unified capture and transcription
 *Dante Gordon*:  
 Unified with main vending logic  
 Program history will remain open to address changes in latency.  
-Strategy to try to reduce this is padding the audio files allowing the recordings to be done faster  
+Strategy to try to reduce this is padding the audio files allowing the recordings to be done faster
+
+- 3/11/25
+*
