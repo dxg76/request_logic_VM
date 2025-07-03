@@ -158,10 +158,18 @@ a "payment state", and a "vend state"
 Created logic for quantity control within the vending algorithm
 Successful testing in seperate file to ensure smooth implementation
 
+- 3/22/25
+*Dante Gordon*:
+Added hardware interrupts for keypad input from the vending machine to the RPI using the WirinPI library.
+
 - 3/29/25
 *Devan Rivera*
 Began Implementing "Boogie" function
 Cleaned up code of unecessary comments
+
+- 4/1/25
+*Dante Gordon*:
+Added GPIO confirmation between the RPI and Arduino that activates when the ultrasound sensors are triggered continuously for a fixed duration.  
 
 ## CAPTURE
 
